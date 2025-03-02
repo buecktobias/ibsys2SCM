@@ -283,17 +283,90 @@ Also muss ich vielleicht einfach so planen dass der Lagerwert unter 230 000 blei
 
 ## Wichtiges zur Optimierung zu Beachten
 
+### Lagerkosten:
+- Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag(250 000) zu kommen.
+- Ich kann die Lagerkosten nicht genau planen, da es Lieferabweichungen gibt und die Bestellungen zu zufälligen Zeiten eintreffen ?
+- Werden die Lagerkosten über die durchschnittlische Lagermenge berechnet? Oder zahle ich die spungfixen Kosten wenn Lager kurze Zeit zu voll ist?
+- Risiko dafür berechnen, dass Lager zu voll. Risiko Lagerwert > 250 k. Risiko sollte unter 10% sein;
+- Durch Eilbestellungen höheres Risiko, aber höhere Bestellkosten.
+- Kaufteile mit größten Abweichungen führen zu höheren Risiken.
+- Von Kaufteilen mit langer Lieferzeit mehr im Lager haben. Von Kaufteilen mit hoher Abweichung mehr auf Lager haben.
+- Teile welche für mehrere Endprodukte benötigt werden, mehr auf Lager haben.
 
-- **Lagerkosten:**  
-    - Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag(250 000) zu kommen.
-    - Ich kann die Lagerkosten nicht genau planen, da es Lieferabweichungen gibt und die Bestellungen zu zufälligen Zeiten eintreffen ?
-    - Werden die Lagerkosten über die durchschnittlische Lagermenge berechnet? Oder zahle ich die spungfixen Kosten wenn Lager kurze Zeit zu voll ist?
-    - Risiko dafür berechnen, dass Lager zu voll. Risiko Lagerwert > 250 k. Risiko sollte unter 10% sein;
-    - Durch Eilbestellungen höheres Risiko, aber höhere Bestellkosten.
-    - Kaufteile mit größten Abweichungen führen zu höheren Risiken.
-    - Von Kaufteilen mit langer Lieferzeit mehr im Lager haben. Von Kaufteilen mit hoher Abweichung mehr auf Lager haben.
-    - Teile welche für mehrere Endprodukte benötigt werden, mehr auf Lager haben.
+#### Berechnung der Lagerkosten
+If the **expected storage value** \(E[X] = e\) follows a **normal distribution** with **standard deviation** \(\sigma = sd\), the expected storage cost \(E[f(X)]\) can be computed as follows:
+
+### **1. Understanding the Expected Cost Calculation**
+Since your cost function is piecewise-defined:
+
+\[
+f(x) =
+\begin{cases}
+0.006 \cdot x, & x < 250,000 \\
+5,000 + 0.012 \cdot x, & x \geq 250,000
+\end{cases}
+\]
+
+the expectation has to be split into two regions:
+
+\[
+E[f(X)] = E[0.006X \mid X < 250,000] P(X < 250,000) + E[5000 + 0.012X \mid X \geq 250,000] P(X \geq 250,000)
+\]
+
+which simplifies to:
+
+\[
+E[f(X)] = 0.006 \cdot E[X \mid X < 250,000] P(X < 250,000) + (5000 + 0.012 \cdot E[X \mid X \geq 250,000]) P(X \geq 250,000)
+\]
+
+where:
+- \( P(X \geq 250,000) \) is the probability that the storage value exceeds the threshold.
+- \( E[X \mid X \geq 250,000] \) and \( E[X \mid X < 250,000] \) are the expected values of \(X\) above and below the threshold.
+
+### **2. Computing the Probability \( P(X \geq 250,000) \)**
+Since \( X \sim N(e, sd^2) \), we compute:
+
+\[
+P(X \geq 250,000) = 1 - \Phi\left(\frac{250,000 - e}{sd} \right)
+\]
+
+where \( \Phi \) is the cumulative distribution function (CDF) of the standard normal distribution.
+
+### **3. Computing the Truncated Expectations**
+Using properties of the **truncated normal distribution**, the expected values can be derived:
+
+\[
+E[X \mid X < 250,000] = e - sd \frac{\phi(z)}{\Phi(z)}
+\]
+
+\[
+E[X \mid X \geq 250,000] = e + sd \frac{\phi(z)}{1 - \Phi(z)}
+\]
+
+where:
+- \( z = \frac{250,000 - e}{sd} \)
+- \( \phi(z) \) is the standard normal probability density function (PDF)
+- \( \Phi(z) \) is the standard normal cumulative distribution function (CDF)
+
+### **4. Computing the Expected Storage Cost**
+Now, plugging everything back:
+
+\[
+E[f(X)] = 0.006 \left(e - sd \frac{\phi(z)}{\Phi(z)}\right) \Phi(z) + (5000 + 0.012 \left(e + sd \frac{\phi(z)}{1 - \Phi(z)}\right)) (1 - \Phi(z))
+\]
+
+I will compute and visualize this for given values of \( e \) and \( sd \). Let me know if you have specific values in mind, otherwise, I will choose representative ones.
+
+For an expected storage value of **200,000** and a standard deviation of **50,000**, the **expected storage cost** is approximately **2,256.25**.
+
+If you have different values for \( e \) (expected value) and \( sd \) (standard deviation), I can compute and plot the relationship between risk and expected storage costs dynamically. Let me know what ranges you'd like to explore!
+
+
+
 - **Kaufbestellungen**
     - Fixe Bestellkosten und 10% Rabatt ab bestimmter Menge.
+
+
+
 
 
