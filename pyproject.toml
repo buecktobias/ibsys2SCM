@@ -3,4 +3,9 @@ name = "ibsys2scm"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.10.1",
+    "notebook>=7.3.2",
+    "numpy>=2.2.3",
+    "scipy>=1.15.2",
+]

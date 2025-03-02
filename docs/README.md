@@ -1,5 +1,5 @@
 # Supply Chain Management
-
+## Allgemeine Informationen
 Wichtige Informationen:
 
 1 Periode = 5 Tage = 40 Stunden = 2400 Minuten
@@ -18,8 +18,6 @@ Zwischen Berechnungen:
 Aus Inventar und aufträge ergebende benötigte Produkte für nächste Periode ? Risiko
 
 Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
-
-Hier ist die **Markdown-zusammengefasste Dokumentation**, basierend auf den PDFs, die du hochgeladen hast:
 
 # Supply Chain Simulation – Datenbasis und Planungsablauf
 
@@ -83,7 +81,6 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
     - Lagerhaltungskostensatz (z. B. 0,6 % pro Woche)
 - **Anfangsbestände:**
     - Lagerbestände für Kaufteile, Eigenfertigungsprodukte (inkl. Zwischenprodukte) und Endprodukte sind vorgegeben.
-
 ---
 
 ## 2. Periodenspezifische Daten (Variabel von Periode zu Periode)
@@ -215,7 +212,7 @@ flowchart TD
 
 %% Periodendaten (variabel)
     subgraph "Periodendaten"
-        OPEN_SALES["noch offene Aufträge"]
+        OPEN_SALES["Offene Aufträge"]
         SALES["Neue Aufträge"]
         CURINV["Lagerbestand"]
     end
@@ -230,7 +227,7 @@ flowchart TD
     end
 
 %% Ergebnis
-    RES["Result\n(ProdPlan, BestPlan, Lager, Kosten)"]
+    RES["Result\n(ProdPlan, BestPlan)"]
 
 %% Datenfluss
     SALES --> PRIM
@@ -252,7 +249,7 @@ flowchart TD
     NEWINV --> RES
 
 %% CSS Klassen
-    class PRODSTR,STKL,TEILDAT,CAPCOST,SALES,CURINV inputData;
+    class PRODSTR,STKL,TEILDAT,CAPCOST,SALES,OPEN_SALES,CURINV inputData;
     class PRIM,NET,SEK,TER,CAPREQ,PRODORD,BESTORD,NEWINV,COSTCALC calcData;
     class RES resultData;
 
@@ -274,4 +271,29 @@ und je nach Ausfallrisiko lohnt es sich größere Sicher Lagerung Sicherungsbest
 1. Primärbedarf berechnen
 Also wie viel Endprodukte benötige ich in der nächsten Periode.
 Dies berechne ich aus den vorherigen Aufträgen und den jetzigen Aufträgen. Dann habe ich noch die 10% Ausfall
+
+https://www.scm-planspiel.de/scs_15/downloadFile?folderName=download&fileName=Foliensatz_DE.pdf
+
+https://www.scm-planspiel.de/scs_15/downloadFile?folderName=output&fileName=63_3_3result.xml
+
+Woher kommt der Unterschied im Stockvalue zu dem anderen Lager Gesamt Wert ? 
+
+Also muss ich vielleicht einfach so planen dass der Lagerwert unter 230 000 bleibt!?
+
+
+## Wichtiges zur Optimierung zu Beachten
+
+
+- **Lagerkosten:**  
+    - Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag(250 000) zu kommen.
+    - Ich kann die Lagerkosten nicht genau planen, da es Lieferabweichungen gibt und die Bestellungen zu zufälligen Zeiten eintreffen ?
+    - Werden die Lagerkosten über die durchschnittlische Lagermenge berechnet? Oder zahle ich die spungfixen Kosten wenn Lager kurze Zeit zu voll ist?
+    - Risiko dafür berechnen, dass Lager zu voll. Risiko Lagerwert > 250 k. Risiko sollte unter 10% sein;
+    - Durch Eilbestellungen höheres Risiko, aber höhere Bestellkosten.
+    - Kaufteile mit größten Abweichungen führen zu höheren Risiken.
+    - Von Kaufteilen mit langer Lieferzeit mehr im Lager haben. Von Kaufteilen mit hoher Abweichung mehr auf Lager haben.
+    - Teile welche für mehrere Endprodukte benötigt werden, mehr auf Lager haben.
+- **Kaufbestellungen**
+    - Fixe Bestellkosten und 10% Rabatt ab bestimmter Menge.
+
 

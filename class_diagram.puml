@@ -1,0 +1,52 @@
+@startuml
+' Abstract base class for items
+abstract class Item {
+  + id : int
+  + value : float
+}
+
+class EndProduct extends Item{
+}
+class InHouseProduct extends Item
+class PurchasePart extends Item {
+  + discountQuantity : int
+  + orderTime : float
+  + orderTimeDeviation : float
+}
+
+' A container for an item and its quantity in the inventory
+class InventoryEntry {
+  + item : Item
+  + quantity : int
+}
+
+' The inventory holds a mapping from an item's id to its inventory entry
+class Inventory {
+  - entries : Map<int, InventoryEntry>
+  + getQuantity(itemId: int) : int
+  + calculateTotalValue() : float
+}
+
+' Contains period-specific planning inputs
+class PlanningData {
+  + forecast : Map<EndProduct, int>
+  + currentInventory : Inventory
+}
+
+' Calculates the primary demand based on forecast, open orders and current inventory
+class PrimaryDemandCalculator {
+  - data : PlanningData
+  + calculate() : Map<int, int>
+}
+
+' Loads planning data from an XML file
+class XMLDataLoader {
+  - filename : String
+  + loadData() : PlanningData
+}
+
+PlanningData --> Inventory : "currentInventory"
+PrimaryDemandCalculator --> PlanningData : "uses"
+XMLDataLoader --> PlanningData : "creates"
+
+@enduml
