@@ -1,6 +1,8 @@
 # Supply Chain Management
+
 ## Allgemeine Informationen
-Wichtige Informationen:
+
+### Wichtige Informationen:
 
 1 Periode = 5 Tage = 40 Stunden = 2400 Minuten
 
@@ -9,56 +11,45 @@ Statischer Wert des Inventars, daraus ergeben sich die Lagerkosten, welche Sprun
 Die benötigten Ressourcen, Kaufteile und Eigen Erzeugnisse.
 Daraus ergibt sich ein Produktionsgraph, ein Gozinto Graph
 
-Wichtige Eingabe Daten je Periode:
+### Wichtige Eingabe Daten je Periode:
 
-Aktuelles Inventar und Aufträge, Vorhersage der Aufträge (bzw. ich weiß die genaue Zahl der zukünftigen Nachfrage)
+Aktuelles Inventar und Aufträge, Vorhersage der Aufträge (bzw. ich weiß die genaue Zahl der
+zukünftigen Nachfrage)
 
-Zwischen Berechnungen:
+### Zwischen Berechnungen:
 
 Aus Inventar und aufträge ergebende benötigte Produkte für nächste Periode ? Risiko
 
 Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
 
-# Supply Chain Simulation – Datenbasis und Planungsablauf
+## Ausgangsdaten
 
-Diese Zusammenfassung fasst alle relevanten Daten zusammen, die von Beginn an vorliegen, und zeigt, welche
-periodenspezifischen Werte sich ändern. Dabei wird insbesondere darauf eingegangen, wie Endprodukte, Zwischenprodukte,
-Eigenfertigungsprodukte und Kaufteile in den Planungsprozess einfließen – inklusive der zugehörigen Stücklisten und
-Werte. Diese Informationen bilden die Grundlage für ein automatisiertes Planungsprogramm.
-
----
-
-## 1. Ausgangsdaten (Konstant über alle Perioden)
-
-### 1.1 Produktionsstruktur und Produktkategorien
+### Produktionsstruktur
 
 - **Endprodukte (Erzeugnisse):**
     - **P1:** Kinderfahrrad
     - **P2:** Damenfahrrad
     - **P3:** Herrenfahrrad
 - **Zwischenprodukte / Baugruppen:**
-    - Teilfertigungen, die als Zwischenstufen in der Produktion (z. B. Rahmen- und Radsätze) hergestellt werden.
-    - Werden sowohl als eigenfertigte Produkte (E) als auch als Baugruppen in den Stücklisten aufgeführt.
+    - Teilfertigungen, die als Zwischenstufen in der Produktion (z. B. Rahmen- und Radsätze)
+      hergestellt werden.
+    - Werden sowohl als eigenfertigte Produkte (E) als auch als Baugruppen in den Stücklisten
+      aufgeführt.
 - **Eigenfertigungsprodukte (E):**
     - 27 intern hergestellte Teile, die direkt in die Fertigung der Endprodukte eingehen.
 - **Kaufteile (K):**
     - 29 von externen Lieferanten bezogene Teile.
-
-Welche der Eigenfertigungsprodukte werden für mehrere Endproduke benötigt?
-
-
-### 1.2 Stücklisten und Werte
 
 - **Stücklisten der Endprodukte:**  
   Jede Endproduktdefinition (P1, P2, P3) enthält:
     - **Zwischenprodukte** (z. B. Baugruppen) und direkt verwendete Eigenfertigungsprodukte (E).
     - **Zuordnung der benötigten Kaufteile (K)** über die Stücklisten der Eigenfertigungsprodukte.
 - **Werte der Teile:**
-    - Jeder Artikel (Endprodukt, Zwischenprodukt, Eigenfertigungsprodukt, Kaufteil) hat einen zugeordneten **Wert** (
-      Preis pro Stück).
+    - Jeder Artikel (Endprodukt, Zwischenprodukt, Eigenfertigungsprodukt, Kaufteil) hat einen
+      zugeordneten **Wert** (Preis pro Stück).
     - Diese Werte fließen in die Herstellkosten- und Kostenkalkulation ein.
 
-### 1.3 Produktionskapazitäten und Kostenparameter
+### Produktionskapazitäten und Kostenparameter
 
 - **Arbeitsplätze:**
     - Teilefertigung: 5 Arbeitsplätze
@@ -66,13 +57,16 @@ Welche der Eigenfertigungsprodukte werden für mehrere Endproduke benötigt?
     - Endmontage: 1 Arbeitsplatz
 - **Verfügbare Zeit pro Periode:**  
   (z. B. 2400 Minuten pro Periode, je nachdem wie viele Schichten und Überstunden man anordnet.
->Überstunden sind viel teurer als Schichten. Jede weiter Schicht ist teurer als bisher!
-Außerdem sind die Variablen machinenkosten fast immer billiger als Lohnkosten und die Fixenmaschinenkosten noch billiger.
-Kaufteile welche eine längere Bestellzeit haben sollte ich natürlich deutlich mehr einlagern. 
-> (Obwohl ich ja weiß wie viel in den nächsten Perioden benötigt wird; eigentlich sollte ich diese Info nicht haben; Bug im Programm)
-Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu kommen.
 
-
+> Überstunden sind viel teurer als Schichten. Jede weiter Schicht ist teurer als bisher!
+> Außerdem sind die Variablen machinenkosten fast immer billiger als Lohnkosten und die
+> Fixenmaschinenkosten noch
+> billiger.
+> Kaufteile welche eine längere Bestellzeit haben sollte ich natürlich deutlich mehr einlagern.
+> (Obwohl ich ja weiß wie viel in den nächsten Perioden benötigt wird; eigentlich sollte ich diese
+> Info nicht haben; Bug
+> im Programm)
+> Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu kommen.
 
 - **Rüstzeiten:**
     - Für jeden Arbeitsplatz sind feste Rüstzeiten vor Produktionswechseln definiert.
@@ -80,12 +74,12 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
     - Lohn-/Maschinenkosten (variable und fixe Anteile)
     - Lagerhaltungskostensatz (z. B. 0,6 % pro Woche)
 - **Anfangsbestände:**
-    - Lagerbestände für Kaufteile, Eigenfertigungsprodukte (inkl. Zwischenprodukte) und Endprodukte sind vorgegeben.
----
+    - Lagerbestände für Kaufteile, Eigenfertigungsprodukte (inkl. Zwischenprodukte) und Endprodukte
+      sind vorgegeben.
 
-## 2. Periodenspezifische Daten (Variabel von Periode zu Periode)
+## Periodenspezifische Daten
 
-### 2.1 Nachfrage / Primärbedarf (Endprodukte)
+### Nachfrage / Primärbedarf
 
 - **Verbindliche Verkaufsaufträge und Prognosen:**
     - Beispielwerte (Periode 1):
@@ -95,7 +89,7 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
 - **Abgleich mit Sicherheitsbeständen:**
     - Geplanter Lagerbestand am Periodenende (Sicherheitsbestand).
 
-### 2.2 Lagerbestand und Bestandsveränderungen
+### Lagerbestand und Bestandsveränderungen
 
 - **Lagerbestand Vorperiode:**
     - Aktuelle Bestände an Endprodukten, Zwischenprodukten und Kaufteilen.
@@ -103,23 +97,21 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
   ```plaintext
   Neuer Lagerbestand = Alter Lagerbestand + Produktion – Verkäufe
   ```
+
 - **Auswirkung:**
     - Bestimmt, ob zusätzliche Produktionsaufträge notwendig sind.
 
-### 2.3 Sekundärbedarf – Eigenfertigungsprodukte und Zwischenprodukte
+### Sekundärbedarf
 
 - **Ermittlung über Stücklisten:**
-    - Abgeleitet aus der Endproduktnachfrage wird der Bedarf an internen Fertigungsprodukten (E) und *
-      *Zwischenprodukten/Baugruppen** berechnet.
-    - Beispiel:
-        - 1× P1 benötigt 1× E26, 1× E16, 1× E50, 1× E4, …
-        - Zusätzlich sind Baugruppen (Zwischenprodukte) in den Stücklisten definiert, deren Herstellung ebenfalls
-          geplant werden muss.
+    - Abgeleitet aus der Endproduktnachfrage wird der Bedarf an internen Fertigungsprodukten (E) und
+    - **Zwischenprodukten/Baugruppen** berechnet.
 - **Wertinformationen:**
-    - Die Stücklisten enthalten auch die Werte der einzelnen Komponenten, die in die Herstellkostenkalkulation
+    - Die Stücklisten enthalten auch die Werte der einzelnen Komponenten, die in die
+      Herstellkostenkalkulation
       einfließen.
 
-### 2.4 Tertiärbedarf – Kaufteile
+### Tertiärbedarf – Kaufteile
 
 - **Ableitung aus den Stücklisten der Eigenfertigungsprodukte:**
     - Ermittelt, welche und in welcher Menge Kaufteile (K) benötigt werden.
@@ -127,7 +119,7 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
     - Lieferzeiten und Lieferabweichungen müssen berücksichtigt werden.
     - Lagerbestand der Kaufteile ist abzufragen, um Überbestellungen zu vermeiden.
 
-### 2.5 Kapazitätsprüfung
+### Kapazitätsprüfung
 
 - **Berechnung des Gesamt-Kapazitätsbedarfs:**
     - Zusammensetzung aus:
@@ -137,54 +129,299 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
 - **Verfügbare Kapazitäten:**
     - Stunden pro Arbeitsplatz und Schicht, Überstundenoptionen.
 - **Ziel:**
-    - Sicherstellen, dass die geplanten Produktionsaufträge innerhalb der verfügbaren Kapazitäten realisierbar sind.
+    - Sicherstellen, dass die geplanten Produktionsaufträge innerhalb der verfügbaren Kapazitäten
+      realisierbar sind.
 
 ---
 
-## 3. Schritt-für-Schritt-Planungsablauf für die nächste Periode
+## Berechnungen
 
-1. **Primärbedarf ermitteln:**
-    - Einlesen der Verkaufsaufträge und Prognosen.
-    - Berechnung des Bedarfs an Endprodukten (P1, P2, P3) unter Abzug des vorhandenen Lagerbestands.
+### Materialbedarf
 
-2. **Bestandsprüfung:**
-    - Abgleich des vorhandenen Lagerbestands (Vorperiode) mit dem Bedarf.
-    - Festlegung des Soll-Lagerbestands (Sicherheitsbestand).
+- **Endprodukte:**
+    - Jedes Endprodukt (P1, P2, P3) besteht aus einer Kombination von Zwischenprodukten und
+      Eigenfertigungsprodukten.
+    - Die Stücklisten enthalten auch die benötigten Kaufteile.
 
-3. **Berechnung des Sekundärbedarfs:**
-    - Auswertung der Stücklisten der Endprodukte.
-    - Ermittlung des Bedarfs an Eigenfertigungsprodukten und Zwischenprodukten.
-    - Berücksichtigung der Werte der einzelnen Komponenten zur späteren Kostenkalkulation.
+Wir können die Stücklisten in einem Directed Acyclic Graph (DAG) darstellen, um die Abhängigkeiten
+der Produkte darzustellen.
 
-4. **Berechnung des Tertiärbedarfs:**
-    - Ableitung der benötigten Kaufteile aus den Stücklisten der internen Fertigungsprodukte.
-    - Abgleich mit vorhandenen Beständen und Ermittlung von Bestellmengen unter Berücksichtigung von Lieferzeiten.
+````mermaid
+%%{init: {"themeVariables": {"fontSize": 16, "lineHeight": 1.1}}}%%
+graph TD
+%% Ebene 1: Endprodukte
+    subgraph Level1[Endprodukte]
+        direction LR
+        P1
+        P2
+        P3
+    end
 
-5. **Kapazitätsprüfung:**
-    - Ermittlung des Gesamt-Kapazitätsbedarfs (Produktionszeit + Rüstzeiten + Rückstände).
-    - Vergleich mit den verfügbaren Kapazitäten der Arbeitsplätze.
-    - Falls Engpässe vorliegen: Priorisierung und ggf. Verteilung der Aufträge über mehrere Perioden.
+%% Ebene 2: Herstellte Baugruppen
+    subgraph Level2[Eigen Fabrikate 1]
+        direction LR
+        E1
+        E2
+    end
 
-6. **Erstellung der Produktions- und Bestellaufträge:**
-    - Festlegung der **Produktionsaufträge** für Endprodukte sowie für Zwischen- und Eigenfertigungsprodukte.
-    - Ableiten von **Bestellaufträgen** für Kaufteile.
-    - Zusammenführung aller Aufträge und Festschreibung der geplanten Produktion.
+%% Ebene 3: Unterbaugruppen
+    subgraph Level3[Eigen Fabrikate 2]
+        direction LR
+        E11
+        E12
+        E13
+    end
 
-7. **Kalkulation und Dokumentation:**
-    - Berechnung der Herstellkosten unter Einbeziehung:
-        - Materialwerte (aus Stücklisten, inkl. Zwischenprodukte)
-        - Fertigungs- und Rüstzeiten (Arbeits- und Maschinenkosten)
-        - Lagerhaltungskosten (auf Basis des Lagerwerts)
-    - Speicherung der **geplanten Produktionsaufträge**, der **Bestellaufträge** sowie der **erwarteten Lagerbestände**
-      als Eingangsgrößen für die nächste Periode.
+%% Ebene 4: Gekaufte Materialien
+    subgraph Level4[Gekaufte Materialien]
+        direction LR
+        K1
+        K2
+        K3
+    end
+
+%% Abhängigkeiten der Endprodukte
+    P1 -->|1x| E1
+    P1 -->|3x| E11
+    P2 -->|10x| E2
+    P3 -->|2x| E2
+    P3 -->|2x| K3
+%% Abhängigkeiten der Baugruppen
+    E1 -->|3x| E11
+    E2 -->|2x| E12
+    E2 -->|4x| E13
+    E2 -->|1x| K3
+%% Abhängigkeiten der Unterbaugruppen
+    E11 -->|1x| K1
+    E11 -->|2x| K2
+    E12 -->|8x| K2
+    E13 -->|1x| K3
+%% Klassen-Definition für Gekaufte Materialien (Dark Theme)
+    classDef bought fill: #222222, stroke: #f39c12, stroke-width: 2px, color: #ffffff;
+    class K1 bought;
+    class K2 bought;
+    class K3 bought;
+    classDef product fill: #222222, stroke: #66dd33, stroke-width: 2px, color: #ffffff;
+    class P1 product;
+    class P2 product;
+    class P3 product;
+````
+
+#### Einleiung
+
+Eine Stückliste (Bill of Materials, BOM) kann als gerichteter azyklischer Graph (DAG) dargestellt
+werden. Dabei repräsentieren die Knoten die einzelnen **Produkte**, **Eigenfabrikate**
+und **Kaufteile** (zusammenfassend als **Komponenten** bezeichnet). Die gerichteten Kanten zwischen
+den
+Knoten geben an, welche Komponenten zur Herstellung einer übergeordneten Komponente benötigt werden.
+Jeder Kante ist eine **Menge** $q$ zugeordnet, die angibt, wie viele Einheiten der
+untergeordneten Komponente benötigt werden.
+
+#### Mathematische Herleitung
+
+Sei $ P $ ein Endprodukt und $ X $ eine beliebige Komponente (Eigenfabrikat oder Kaufteil). Die
+gesamte benötigte Menge von $ X $ ergibt sich aus der Summe der Mengen,
+die auf allen möglichen **Pfade** von $ P $ zu $ X $ benötigt werden.
+Jeder einzelne Pfad $ p $ von $ P $ nach $ X $ trägt
+dabei mit folgender Berechnung zur Gesamtmenge bei:
+
+$$
+\text{Total}_p(X) = \prod_{(i \rightarrow j) \in p} q_{ij}
+$$
+
+Die gesamte benötigte Menge von $ X $ ist dann:
+
+$$
+\text{Total}(X) = \sum_{p \in \text{Pfade}(P \rightarrow X)} \text{Total}_p(X)
+$$
+
+Das bedeutet: Für jede einzelne **Komponente** summieren wir über alle möglichen Produktionspfade
+hinweg das Produkt der aufeinanderfolgenden Mengen entlang der Kanten.
 
 ---
 
-## 4. Datenfluss im Planungsprogramm
+#### Produkt Materialanforderungen
+
+Wir verwenden eine rekursive Methode zur Berechnung des gesamten Materialbedarfs einer Komponente,
+indem wir den Graphen von oben nach unten durchlaufen. Jeder Knoten multipliziert seinen aktuellen
+Bedarfsfaktor mit der benötigten Menge seiner untergeordneten Komponenten.
+
+##### Python-Implementierung
+
+```python
+def compute_requirements(component, multiplier):
+    """
+    Berechnet den gesamten Materialbedarf für eine gegebene Komponente.
+
+    :param component: Die aktuelle Komponente (Produkt, Eigenfabrikat oder Kaufteil)
+    :param multiplier: Die Menge, die von dieser Komponente benötigt wird
+    :return: Ein Dictionary mit der Gesamtmenge jeder benötigten Komponente
+    """
+    requirements = {}
+
+    # Wenn die Komponente keine weiteren Abhängigkeiten hat (also ein Kaufteil ist)
+    if component.is_leaf():
+        requirements[component] = multiplier
+        return requirements
+
+    # Iteriere über alle abhängigen Komponenten
+    for child, amount in component.children:
+        quantity = multiplier * amount
+        child_requirements = compute_requirements(child, quantity)
+
+        # Aggregiere die Anforderungen
+        for item, count in child_requirements.items():
+            requirements[item] = requirements.get(item, 0) + count
+
+    return requirements
+```
+
+---
+
+#### Gesamtbedarfs für Produktionsplan
+
+Ein **Produktionsplan** gibt an, wie viele Einheiten jedes Endprodukts produziert werden sollen. Um
+den gesamten Materialbedarf für die geplante Produktion zu berechnen, iterieren wir über alle
+Endprodukte und summieren die berechneten Anforderungen.
+
+##### Python-Implementierung
+
+```python
+def compute_total_requirements(production_plan):
+    """
+    Berechnet den gesamten Materialbedarf für einen Produktionsplan.
+
+    :param production_plan: Dictionary mit Endprodukten und geplanten Produktionsmengen
+    :return: Dictionary mit der Gesamtmenge jeder benötigten Komponente
+    """
+    total_requirements = {}
+
+    for product, planned_quantity in production_plan.items():
+        # Berechne Anforderungen für das einzelne Endprodukt
+        requirements = compute_requirements(product, planned_quantity)
+
+        # Summiere die Mengen für alle Komponenten auf
+        for component, amount in requirements.items():
+            total_requirements[component] = total_requirements.get(component, 0) + amount
+
+    return total_requirements
+```
+
+---
+
+#### Materialbedarf bei vorhandenem Lagerbestand
+
+Neben den berechneten Anforderungen aus dem Produktionsplan gibt es auch einen **Lagerbestand**, der
+angibt, wie viele Einheiten jeder Komponente bereits verfügbar sind. Um zu bestimmen, wie viel
+zusätzlich produziert oder eingekauft werden muss, vergleichen wir die berechneten *
+*Gesamtanforderungen** mit dem vorhandenen Bestand.
+
+##### Vorgehensweise
+
+1. Berechne mit `compute_total_requirements` den gesamten Materialbedarf für den Produktionsplan.
+2. Vergleiche den berechneten Bedarf mit dem vorhandenen Lagerbestand.
+3. Falls der Lagerbestand eine Komponente bereits abdeckt, wird diese nicht weiter produziert oder
+   gekauft.
+4. Falls der Lagerbestand nicht ausreicht, wird die Differenz als **tatsächlicher Produktions- oder
+   Beschaffungsbedarf** gespeichert.
+
+##### Python-Implementierung
+
+```python
+def compute_production_needs(production_plan, inventory):
+    """
+    Berechnet den Produktions-, Bestellbedarfs basierend auf dem Produktionsplan und Lager.
+
+    :param production_plan: Dictionary mit geplanten Produktionsmengen für Endprodukte
+    :param inventory: Dictionary mit der vorhandenen Menge jeder Komponente im Lager
+    :return: Dictionary mit der zusätzlichen Menge, die produziert oder eingekauft werden muss
+    """
+    total_requirements = compute_total_requirements(production_plan)
+    production_needs = {}
+
+    for component, required_amount in total_requirements.items():
+        stock = inventory.get(component, 0)
+
+        # Falls Lagerbestand reicht, Bedarf = 0
+        production_needs[component] = max(required_amount - stock, 0)
+
+    return production_needs
+```
+
+---
+
+#### Fazit
+
+Mit diesem Ansatz kann für einen gegebenen Produktionsplan der **exakte Materialbedarf** für alle
+Komponenten berechnet werden. Zudem kann durch den Abgleich mit dem Lagerbestand bestimmt werden,
+**wie viel tatsächlich hergestellt oder beschafft** werden muss.
+
+**Vorteile dieser Methode:**
+
+- Berücksichtigt verschachtelte Stücklisten (mehrstufige BOMs)
+- Aggregiert Materialanforderungen über verschiedene Endprodukte hinweg
+- Verhindert Überproduktion durch Einbezug des Lagerbestands
+- Nutzt eine rekursive Implementierung zur einfachen Verarbeitung des BOM-Graphs
+
+Dieser Algorithmus ist essenziell für die **Produktionsplanung**,
+**Materialdisposition** und **Lageroptimierung** in Fertigungsunternehmen. 🚀
+
+## Schritt-für-Schritt-Planungsablauf
+
+### Primärbedarf ermitteln:
+
+- Einlesen der Verkaufsaufträge und Prognosen.
+- Berechnung des Bedarfs an Endprodukten (P1, P2, P3) unter Abzug des vorhandenen Lagerbestands.
+
+### Bestandsprüfung:
+
+- Abgleich des vorhandenen Lagerbestands (Vorperiode) mit dem Bedarf.
+- Festlegung des Soll-Lagerbestands (Sicherheitsbestand).
+
+### Berechnung des Sekundärbedarfs
+
+- Auswertung der Stücklisten der Endprodukte.
+- Ermittlung des Bedarfs an Eigenfertigungsprodukten und Zwischenprodukten.
+- Berücksichtigung der Werte der einzelnen Komponenten zur späteren Kostenkalkulation.
+
+### Berechnung des Tertiärbedarfs
+
+- Ableitung der benötigten Kaufteile aus den Stücklisten der internen Fertigungsprodukte.
+- Abgleich mit vorhandenen Beständen und Ermittlung von Bestellmengen unter Berücksichtigung von
+  Lieferzeiten.
+
+### Kapazitätsprüfung:
+
+- Ermittlung des Gesamt-Kapazitätsbedarfs (Produktionszeit + Rüstzeiten + Rückstände).
+- Vergleich mit den verfügbaren Kapazitäten der Arbeitsplätze.
+- Falls Engpässe vorliegen: Priorisierung und ggf. Verteilung der Aufträge über mehrere Perioden.
+
+### Erstellung der Produktions- und Bestellaufträge:
+
+- Festlegung der **Produktionsaufträge** für Endprodukte sowie für Zwischen- und
+  Eigenfertigungsprodukte.
+- Ableiten von **Bestellaufträgen** für Kaufteile.
+- Zusammenführung aller Aufträge und Festschreibung der geplanten Produktion.
+
+### Kalkulation und Dokumentation:
+
+- Berechnung der Herstellkosten unter Einbeziehung:
+    - Materialwerte (aus Stücklisten, inkl. Zwischenprodukte)
+    - Fertigungs- und Rüstzeiten (Arbeits- und Maschinenkosten)
+    - Lagerhaltungskosten (auf Basis des Lagerwerts)
+- Speicherung der **geplanten Produktionsaufträge**, der **Bestellaufträge** sowie der **erwarteten
+  Lagerbestände**
+  als Eingangsgrößen für die nächste Periode.
+
+---
+
+## Datenfluss im Planungsprogramm
 
 1. **Eingabe:**
-    - **Stammdaten:** Produktionsstruktur, Stücklisten (mit Mengen und Werten), Kapazitätsdaten, Anfangslagerbestände.
-    - **Periodenspezifische Daten:** Verkaufsaufträge, Prognosen, Rückstände, Bestände, offene Fertigungsaufträge.
+    - **Stammdaten:** Produktionsstruktur, Stücklisten (mit Mengen und Werten), Kapazitätsdaten,
+      Anfangslagerbestände.
+    - **Periodenspezifische Daten:** Verkaufsaufträge, Prognosen, Rückstände, Bestände, offene
+      Fertigungsaufträge.
 
 2. **Berechnungsmodul:**
     - Ermittlung von Primär-, Sekundär- und Tertiärbedarf.
@@ -192,7 +429,8 @@ Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu 
     - Kostenkalkulation (Materialwerte, Produktionszeiten, Lagerhaltung).
 
 3. **Ausgabe:**
-    - Produktionsplan: Welche Endprodukte, Zwischenprodukte und Eigenfertigungsprodukte in welcher Menge hergestellt
+    - Produktionsplan: Welche Endprodukte, Zwischenprodukte und Eigenfertigungsprodukte in welcher
+      Menge hergestellt
       werden.
     - Bestellplan: Welche Kaufteile in welcher Menge bestellt werden müssen.
     - Aktualisierte Lagerbestände und Kapazitätsauslastungen.
@@ -207,7 +445,6 @@ flowchart TD
 %% Stammdaten (konstant)
     subgraph "Stammdaten"
         PRODSTR["Produktionsstruktur"]
-        STKL["Stückliste & Werte"]
     end
 
 %% Periodendaten (variabel)
@@ -221,152 +458,397 @@ flowchart TD
     subgraph "Berechnungen"
         PRIM["Primärbedarf"]
         SEK["Sekundärbedarf"]
-        PRODORD["Produktionsaufträge"]
-        BESTORD["Bestellaufträge"]
-        NEWINV["Neuer Lagerbestand"]
     end
 
 %% Ergebnis
-    RES["Result\n(ProdPlan, BestPlan)"]
+    subgraph "Ergebnis"
+        PRODORD["Produktionsaufträge"]
+        BESTORD["Bestellaufträge"]
+    end
 
 %% Datenfluss
     SALES --> PRIM
     OPEN_SALES --> PRIM
     CURINV --> PRIM
     PRODSTR --> SEK
-
     PRIM --> SEK
-    STKL --> SEK
-
     SEK --> BESTORD
     SEK --> PRODORD
-
-    PRODORD --> NEWINV
-
-
-    PRODORD --> RES
-    BESTORD --> RES
-    NEWINV --> RES
-
-%% CSS Klassen
-    class PRODSTR,STKL,TEILDAT,CAPCOST,SALES,OPEN_SALES,CURINV inputData;
-    class PRIM,NET,SEK,TER,CAPREQ,PRODORD,BESTORD,NEWINV,COSTCALC calcData;
-    class RES resultData;
-
-    classDef inputData fill:#223,stroke:#000,stroke-width:2px,color:#fff;
-    classDef calcData fill:#333,stroke:#000,stroke-width:2px,color:#fff;
-    classDef resultData fill:#232,stroke:#000,stroke-width:2px,color:#fff;
+class PRODSTR, TEILDAT, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
+class PRIM, NET, SEK, TER, PRODORD, BESTORD, NEWINV calcData;
+class RES resultData;
+classDef inputData fill: #223;
+classDef calcData fill: #333;
+classDef resultData fill: #232;
 
 ````
 
-Ist es theoretisch einfach eine eigene Simulation zu schreiben als ein Programm dass die Planung genau berechnet.
-Außerdem kann ich ja sonst schwer prüfen ob meine Planung richtig ist ?
-
-Alles nicht unbedingt ganz genau berechnen ?
-
-
-Doch Abweichung macht auf jeden fall Unterschied bezüglich des Ausfall risikos 
-und je nach Ausfallrisiko lohnt es sich größere Sicher Lagerung Sicherungsbestand
-
-1. Primärbedarf berechnen
-Also wie viel Endprodukte benötige ich in der nächsten Periode.
-Dies berechne ich aus den vorherigen Aufträgen und den jetzigen Aufträgen. Dann habe ich noch die 10% Ausfall
-
-https://www.scm-planspiel.de/scs_15/downloadFile?folderName=download&fileName=Foliensatz_DE.pdf
-
-https://www.scm-planspiel.de/scs_15/downloadFile?folderName=output&fileName=63_3_3result.xml
-
-Woher kommt der Unterschied im Stockvalue zu dem anderen Lager Gesamt Wert ? 
-
-Also muss ich vielleicht einfach so planen dass der Lagerwert unter 230 000 bleibt!?
-
-
-## Wichtiges zur Optimierung zu Beachten
+## Wichtiges zur Optimierung
 
 ### Lagerkosten:
+
 - Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag(250 000) zu kommen.
-- Ich kann die Lagerkosten nicht genau planen, da es Lieferabweichungen gibt und die Bestellungen zu zufälligen Zeiten eintreffen ?
-- Werden die Lagerkosten über die durchschnittlische Lagermenge berechnet? Oder zahle ich die spungfixen Kosten wenn Lager kurze Zeit zu voll ist?
-- Risiko dafür berechnen, dass Lager zu voll. Risiko Lagerwert > 250 k. Risiko sollte unter 10% sein;
-- Durch Eilbestellungen höheres Risiko, aber höhere Bestellkosten.
+- Ich kann die Lagerkosten nicht genau planen, da es Lieferabweichungen gibt und die Bestellungen zu
+  zufälligen Zeiten
+  eintreffen ?
+- Werden die Lagerkosten über die durchschnittlische Lagermenge berechnet? Oder zahle ich die
+  spungfixen Kosten wenn
+  Lager kurze Zeit zu voll ist?
+- Risiko dafür berechnen, dass Lager zu voll. Risiko Lagerwert > 250 k. Risiko sollte unter 10%
+  sein;
+- Durch Eilbestellungen niedrigeres Risiko, aber höhere Bestellkosten.
 - Kaufteile mit größten Abweichungen führen zu höheren Risiken.
-- Von Kaufteilen mit langer Lieferzeit mehr im Lager haben. Von Kaufteilen mit hoher Abweichung mehr auf Lager haben.
+- Von Kaufteilen mit langer Lieferzeit mehr im Lager haben. Von Kaufteilen mit hoher Abweichung mehr
+  auf Lager haben.
 - Teile welche für mehrere Endprodukte benötigt werden, mehr auf Lager haben.
 
-#### Berechnung der Lagerkosten
-If the **expected storage value** \(E[X] = e\) follows a **normal distribution** with **standard deviation** \(\sigma = sd\), the expected storage cost \(E[f(X)]\) can be computed as follows:
+#### Lagerkosten Funktion
 
-### **1. Understanding the Expected Cost Calculation**
-Since your cost function is piecewise-defined:
-
-\[
+$$
 f(x) =
 \begin{cases}
-0.006 \cdot x, & x < 250,000 \\
-5,000 + 0.012 \cdot x, & x \geq 250,000
+0.006 \cdot x, & x < 250\,000 \\
+5\,000 + 0.012 \cdot x, & x \geq 250\,000
 \end{cases}
-\]
+$$
 
-the expectation has to be split into two regions:
+![Lagerkosten Funktion](images/storage_cost.png)
 
-\[
-E[f(X)] = E[0.006X \mid X < 250,000] P(X < 250,000) + E[5000 + 0.012X \mid X \geq 250,000] P(X \geq 250,000)
-\]
+#### Erwartungswert des Lagerwertes
 
-which simplifies to:
+Der Lagerwert kann nicht genau hervorgesagt werden. Es gibt Unsicherheiten in den Bestellungen.
+Wir definieren den Lagerwert $X$ als normalverteilte Zufallsvariable mit Erwartungswert $e$ und
+Standardabweichung $sd$.
 
-\[
-E[f(X)] = 0.006 \cdot E[X \mid X < 250,000] P(X < 250,000) + (5000 + 0.012 \cdot E[X \mid X \geq 250,000]) P(X \geq 250,000)
-\]
+Aus den genannten Lagerkostenfunktion und der genannten Verteilung des Lagerwertes können wir eine
+erwartete
+Kostenwertfunktion
+$f(X)$ ableiten.
+muss der Erwartungswert in zwei Bereiche aufgeteilt werden:
 
-where:
-- \( P(X \geq 250,000) \) is the probability that the storage value exceeds the threshold.
-- \( E[X \mid X \geq 250,000] \) and \( E[X \mid X < 250,000] \) are the expected values of \(X\) above and below the threshold.
+$$
+E[f(X)] = E[0.006X \mid X < 250 \cdot e^{3}] \, P(X < 250 \cdot e^{3}) + E[5000 + 0.012X \mid X \geq 250 \cdot e^{3}] \, P(X \geq 250 \cdot e^{3})
+$$
 
-### **2. Computing the Probability \( P(X \geq 250,000) \)**
-Since \( X \sim N(e, sd^2) \), we compute:
+was sich vereinfacht zu:
 
-\[
-P(X \geq 250,000) = 1 - \Phi\left(\frac{250,000 - e}{sd} \right)
-\]
+$$
+E[f(X)] = 0.006 \cdot E[X \mid X < 250 \cdot e^{3}] \, P(X < 250 \cdot e^{3}]) + \Bigl(5000 + 0.012 \cdot E[X \mid X \geq 250\cdot e^{3}]\Bigr) \, P(X \geq 250\cdot e^{3})
+$$
 
-where \( \Phi \) is the cumulative distribution function (CDF) of the standard normal distribution.
+wobei:
 
-### **3. Computing the Truncated Expectations**
-Using properties of the **truncated normal distribution**, the expected values can be derived:
+- $P(X \geq 250\,000)$ die Wahrscheinlichkeit ist, dass der Speicherkapazitätswert den Schwellenwert
+  überschreitet.
+- $E[X \mid X \geq 250\,000]$ und $E[X \mid X < 250\,000]$ die bedingten Erwartungswerte von $X$
+  oberhalb bzw. unterhalb
+  des Schwellenwerts sind.
 
-\[
-E[X \mid X < 250,000] = e - sd \frac{\phi(z)}{\Phi(z)}
-\]
+#### Berechnung der Wahrscheinlichkeit $P(X \geq 250\,000)$
 
-\[
-E[X \mid X \geq 250,000] = e + sd \frac{\phi(z)}{1 - \Phi(z)}
-\]
+Da $X \sim N(e, sd^2)$, berechnet man:
 
-where:
-- \( z = \frac{250,000 - e}{sd} \)
-- \( \phi(z) \) is the standard normal probability density function (PDF)
-- \( \Phi(z) \) is the standard normal cumulative distribution function (CDF)
+$$
+P(X \geq 250\,000) = 1 - \Phi\Bigl(\frac{250\,000 - e}{sd}\Bigr)
+$$
 
-### **4. Computing the Expected Storage Cost**
-Now, plugging everything back:
+wobei $\Phi$ die kumulative Verteilungsfunktion (CDF) der Standardnormalverteilung ist.
 
-\[
-E[f(X)] = 0.006 \left(e - sd \frac{\phi(z)}{\Phi(z)}\right) \Phi(z) + (5000 + 0.012 \left(e + sd \frac{\phi(z)}{1 - \Phi(z)}\right)) (1 - \Phi(z))
-\]
+#### Berechnung der beschnittenen Erwartungswerte
 
-I will compute and visualize this for given values of \( e \) and \( sd \). Let me know if you have specific values in mind, otherwise, I will choose representative ones.
+Mit Hilfe der Eigenschaften der **beschnittenen Normalverteilung** lassen sich die Erwartungswerte
+wie folgt ableiten:
 
-For an expected storage value of **200,000** and a standard deviation of **50,000**, the **expected storage cost** is approximately **2,256.25**.
+$$
+E[X \mid X < 250\,000] = e - sd \, \frac{\phi(z)}{\Phi(z)}
+$$
 
-If you have different values for \( e \) (expected value) and \( sd \) (standard deviation), I can compute and plot the relationship between risk and expected storage costs dynamically. Let me know what ranges you'd like to explore!
+$$
+E[X \mid X \geq 250\,000] = e + sd \, \frac{\phi(z)}{1 - \Phi(z)}
+$$
 
+wobei:
 
+- $z = \frac{250\,000 - e}{sd}$
+- $\phi(z)$ die Dichtefunktion (PDF) der Standardnormalverteilung ist
+- $\Phi(z)$ die kumulative Verteilungsfunktion (CDF) der Standardnormalverteilung darstellt
 
-- **Kaufbestellungen**
-    - Fixe Bestellkosten und 10% Rabatt ab bestimmter Menge.
+#### Berechnung der erwarteten Speicherpreis
 
+Setzt man nun alles zusammen:
 
+$$
+E[f(X)] = 0.006 \Bigl(e - sd \, \frac{\phi(z)}{\Phi(z)}\Bigr) \, \Phi(z) + \Bigl(5000 + 0.012 \Bigl(e + sd \, \frac{\phi(z)}{1 - \Phi(z)}\Bigr)\Bigr) \, (1 - \Phi(z))
+$$
 
+#### Lagerkosten Berechnung
 
+Für einen erwarteten Lagerwert von $e$ und einer Standardabweichung von $sd$ ergibt sich der
+Erwartungswert der
+Lagerkosten
 
+$$
+E[f(X)] = 0.006\Bigl(e - sd\frac{\phi(z)}{\Phi(z)}\Bigr)\Phi(z) + \Bigl(5000+0.012\Bigl(e+ sd\frac{\phi(z)}{1-\Phi(z)}\Bigr)\Bigr)(1-\Phi(z))
+$$
+
+wobei
+$$
+z=\frac{250000-e}{sd}\quad\text{und}\quad sd=r\cdot e.
+$$
+
+##### Graph für ausgewählte Abweichungen
+
+![Lagerkosten Funktion](images/relative_storage_cost_optimal.png)
+
+Für ausgewählte Abweichungen $sd=0.05e$, $sd=0.1e$ und $sd=0.25e$; Diese wurden einfach für diesen
+Graphen ausgewählt
+und
+haben keine spezielle Bedeutung. Die wirklichen Abweichungen ergeben sich aus den Lieferer
+Zeitenabweichungen.
+Die Berechnung der genauen Abweichung für eine Periode ist kompliziert.
+
+Unter der Betrachtung, dass eine Abweichung von unter 10% realistisch ist, wäre es wahrscheinlich am
+Besten,
+mit einem Lagerwert von 230 000 zu planen.
+Ein zu kleiner Lagerwert würde dazu führen, dass wir zu iel für die fix Kosten der Maschinen zahlen.
+Daher muss der Lagerwert optimiert werden.
+
+##### Color Map Standard Deviation, Erwartungswert
+
+Die erwarteten Lagerkosten berechnen sich aus Erwartungswert und Standardabweichung der Erwartung.
+Dies
+können wir nicht in einem normalen 2d Plot darstellen. Daher verwenden wir eine Color Map, um die
+erwarteten
+Lagerkosten für verschiedene Erwartungswerte und Standardabweichungen darzustellen.
+![Lagerkosten Funktion](images/color_map_standard_deviation_expected_optimal_large.png)
+$$ e = \text{erwartete Lagerkosten}$$
+$$ sd = Standardabweichung $$
+$$ESC(e, sd) = \text{Erwartete Lagerkosten } (\textit{expected storage cost})$$
+somit ist:
+$$ \frac{ESC(e, sd)}{e} = \text{relative erwartete Lagerkosten} $$
+Wahrscheinlich ist es am besten mit einem $e$ und $sd$ zu planen, bei
+dem $\frac{ESC(e, sd)}{e} < 0.01$
+Dies ist ungefähr in der Abbildung gezeigtem Dreieck der Fall:
+
+Dreieck:
+$$ e = 200 \cdot e^3\, sd=001$$
+$$ e = 200 \cdot e^3\, sd=0.20$$
+$$ e = 240 \cdot e^3\, sd =0.01$$
+
+| Erwartungswert $e$ | $sd=0.05e$ | $sd=0.1e$ | $sd=0.25e$ |
+|--------------------|------------|-----------|------------|
+| 200k               | 1 200      | 1 200     | 2 200      |
+| 225k               | 1 400      | 2 000     | 3 500      |
+| 250k               | 5 000      | 5 000     | 5 000      |
+| 275k               | 8 000      | 7 000     | 6 000      |
+| 300k               | 8 600      | 8 000     | 7 500      |
+
+**Relative Kosten**:
+
+| Erwartungswert $e$ | $sd=0.05e$ | $sd=0.1e$ | $sd=0.25e$ |
+|--------------------|------------|-----------|------------|
+| 200k               | 0,6%       | 0,6%      | 1,1%       |
+| 225k               | 0,6%       | 0,9%      | 1,6%       |
+| 250k               | 2,0%       | 2,0%      | 2,0%       |
+| 275k               | 2,9%       | 2,6%      | 2,2%       |
+| 300k               | 2,9%       | 2,7%      | 2,5%       |
+
+### Primärbedarf
+
+Der Primärbedarf berechnet sich sehr einfach aus den Verkaufsaufträgen und den offenen Aufträgen.
+Wie optimiert man den Primärbedarf? Sollte man immer genau so viel produzieren wie beauftragt wird.
+Es könnte durchaus Sinn machen mehr zu produzieren vorallem wenn das Inventar niedrig ist und es
+wenig Bestellungen
+gibt.
+Da man so schon für die nächste Periode produziert hat. Dies führt zu komplizierten Berechnungen.
+Man sollte weniger produzieren als bestellt wurde, wenn bei weiterer Produktion die Kosten anfangen
+höher zu sien als
+der Verkaufswert.
+
+Dadurch dass es nur drei Produkte gibt, somit hier nur 3 Variblen, kann man ziemlich einfach
+optimieren.
+Wenn man die andeen Werte auds dem Primärbedarf berechnen kann. Dann kann ich ja einfach:
+Bei Basislösung
+$$x_0; y_0; z_0$$
+Nächste Lösung berechnen in dem ich das Maximum aller Möglichkeiten nehme eins der Werte +1 oder -1
+zu rechnen.
+Das sind zum Glück nur 6 Möglichkeiten. Dann dies höchstens 3_000 wiederholen, da Werte im Spiel
+keinesfalls über 1000
+liegen.
+$$ x+1 \, y\, z$$
+
+### Sekundärbedarf
+
+Der Sekundärbedarf wird ganz einfach berechnet. Dort gibt es nicht zu optimieren. Die Frage ist ob
+es Sinn machen kann
+mehr von etwas zu produzieren was man aber garniucht direkt benötigt.
+Je nach Rüstzeiten und Kosten kann es durchaus Sinn machen mehr von einem Zwischenprodukt zu
+produzieren. Vorallem wenn
+dies
+von mehreren Endprodukten benötigt wird. Oder Rüstzeiten an Maschine hoch sind. Diese Periode eine
+geringe Auslastung
+ist und im Lager noch Platz ist.
+
+### Tertiärbedarf - Kaufteile
+
+Die Kaufteile sind ziemlich kompliziert zu optimieren. Je nachdem kann es durchaus Sinn ergeben mehr
+zu Kaufen als
+direkt benötigt wird. Vorallem wenn Lager Platz hat und Lieferzeiten große Abweichungen haben.
+Außerdem ist es wichtig
+10% Rabatt zu bekommen durch die Bestellte Menge. Sodass man prinzipiell einen Kostevorteil hat wenn
+man mehr Bestellt.
+
+### Benötigte Workstations
+
+Aus Sekundärbedarf berechnet sich die Benötigten Arbeiten je Arbeitsstation Workstation
+
+### Arbeitsschichten
+
+Wie viele Schichten müssen für welche Workstations angeordnet werden?
+Kann das klar berechnet werden? Also für festgelegte Produktionen, gibt es eine direkt zu
+berechnende einfache optimale ?
+Könnte es Sinn machen etwas zu produzieren aber dann nicht die Kapazität zu haben ?
+Eher nicht.
+
+### Maschinenkosten & Arbeitskosten
+
+Aus den Arbeitsschichten und der Produktion berechnen sich die Arbeitskostren und die
+Maschinenkosten. Diese sind sehr wichtig. Müssen auf jedenfall optimiert werden.
+Also wenn Kosten zu hoch muss weniger produziert werden.
+Nötige Kapazitäten sollten natürlich optimal genutzt werden. Weitere Schichten kosten deutlich mehr
+als vorherige.
+
+### Geplantes Inventar
+
+Aus den KKaufteilen sowie dem geplanten Verbrauch ergibt sich natürlich ein Plan dafür wie viel das
+Lager kosten wird
+
+### Gesamt Kosten
+
+Aus den Maschinenkosten, Arbeitskosten und Lagerkosten ergibt sich die Gesamtkosten. Diese sollten
+natürlich minimiert werden.
+
+### Erträge
+
+Aus den Verkaufsaufträgen und den geplanten Produktionen ergibt sich der Ertrag.
+
+### Gewinn
+
+Der Gewinn ergibt sich aus den Erträgen abzüglich der Gesamtkosten.
+
+### Flowchart Planung Optimiert
+
+```mermaid
+flowchart TD
+
+%% Stammdaten (konstant)
+    subgraph "Stammdaten"
+        PRODSTR["Produktionsstruktur"]
+    end
+
+%% Periodendaten (variabel)
+    subgraph "Periodendaten"
+        OPEN_SALES["Offene Aufträge"]
+        SALES["Neue Aufträge"]
+        CURINV["Lagerbestand"]
+    end
+
+%% Berechnungen
+    subgraph "Berechnungen"
+        PRIM["Primärbedarf"]
+        SEK["Sekundärbedarf"]
+        WORKSTATION_REQ["Zeit je WS"]
+        WORK_TIMES["WS Schichten"]
+        WORK_COST["Personal Kosten"]
+        MACHINE_COST["Machinen Kosten"]
+        PLANNED_INV["Geplantes Inventar"]
+        EXPECTED_INV_COST["Erwartete Lagerkosten"]
+        TOTAL_COST["Gesamt Kosten"]
+        REVENUE["Erträge"]
+        EARNINGS["Gewinn"]
+        PRODORD["Produktionsaufträge"]
+        BESTORD["Bestellaufträge"]
+    end
+
+%% Datenfluss
+    SALES --> PRIM
+    OPEN_SALES --> PRIM
+    CURINV --> PRIM
+    PRODSTR --> SEK
+    PRIM --> SEK
+    PRODORD --> WORKSTATION_REQ
+    PRODORD --> PLANNED_INV
+    WORKSTATION_REQ --> WORK_TIMES
+    WORK_TIMES --> WORK_COST
+    WORK_TIMES --> MACHINE_COST
+    PRIM --> REVENUE
+    WORK_COST --> TOTAL_COST
+    MACHINE_COST --> TOTAL_COST
+    SEK --> BESTORD
+    SEK --> PRODORD
+    BESTORD --> PLANNED_INV
+    PLANNED_INV --> EXPECTED_INV_COST
+    EXPECTED_INV_COST --> TOTAL_COST
+    REVENUE --> EARNINGS
+    TOTAL_COST --> EARNINGS
+class PRODSTR, TEILDAT, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
+class PRIM, NET, SEK, TER, PRODORD, BESTORD, NEWINV calcData;
+class RES resultData;
+classDef inputData fill: #223, stroke: #000, stroke-width: 2px, color: #fff;
+classDef calcData fill: #333, stroke: #000, stroke-width: 2px, color: #fff;
+classDef resultData fill: #232, stroke: #000, stroke-width: 2px, color: #fff;
+````
+
+Ist das ganze nicht ein lineares Optimierungsproblem?
+mit Variablen und Bedingungen?
+Sowie einer Zielfunktion!
+
+Optimierungsproblem mit Variablen und Bedingungen, sollte man mit Google OR Tools lösen können.
+
+## Python Implementierung
+
+### Produktionsplanung
+
+In diesem Modell gehen wir davon aus, dass unsere Produktionsstruktur (BOM – Bill of Materials) als
+gerichteter azyklischer Graph (DAG) modelliert wird. Jeder Kante wird eine Menge zugeordnet, die
+angibt, wie viele Einheiten einer untergeordneten Komponente benötigt werden. Alle Komponenten –
+seien es Endprodukte, In-House-Products (Eigenfabrikate) oder PurchaseParts (Kaufteile) – werden
+zusammenfassend als *Items* betrachtet.
+
+#### Konzept
+
+- **Item (Basisklasse):**  
+  Enthält gemeinsame Attribute wie `id`, `value` und zusätzlich eine BOM-Struktur, dargestellt durch
+  ein Attribut `children`.
+    - **children:** Eine Liste von Tupeln `(child: Item, quantity: int)`.  
+      Komponenten ohne weitere Abhängigkeiten (z.B. Kaufteile) haben keine Kinder.
+
+- **Spezialisierungen:**
+    - `EndProduct`: Repräsentiert das Endprodukt.
+    - `InHouseProduct`: Repräsentiert intern hergestellte Produkte (Eigenfabrikate).
+    - `PurchasePart`: Repräsentiert zugekaufte Teile mit zusätzlichen Attributen wie
+      `discountQuantity`, `orderTime` und `orderTimeDeviation`.
+
+- **Inventory:**  
+  Ein `InventoryEntry` verbindet ein `Item` mit dem Lagerbestand. Die Klasse `Inventory` verwaltet
+  diese Einträge (z.B. in einem Dictionary) und bietet Methoden wie `getQuantity` und
+  `calculateTotalValue`.
+
+- **PlanningData & PrimaryDemandCalculator:**  
+  `PlanningData` enthält die periodenspezifischen Eingaben, z.B. einen Forecast für EndProducts und
+  den aktuellen Lagerbestand. Der `PrimaryDemandCalculator` nutzt diese Daten, um den primären
+  Bedarf zu ermitteln.
+
+- **BOMCalculator:**  
+  Hier werden die rekursiven Berechnungen des Materialbedarfs durchgeführt. Es kommen die folgenden
+  Funktionen zum Einsatz:
+    - `compute_requirements`: Berechnet den Bedarf für einen einzelnen Item-Knoten (rekursiv entlang
+      der BOM).
+    - `compute_total_requirements`: Aggregiert den Bedarf für alle EndProducts eines
+      Produktionsplans.
+    - `compute_production_needs`: Vergleicht den Gesamtbedarf mit dem Lagerbestand und ermittelt den
+      zusätzlichen Produktions- bzw. Einkaufsbedarf.
+
+### Aktualisiertes PlantUML-Diagramm
+
+Siehe class_diagram.puml

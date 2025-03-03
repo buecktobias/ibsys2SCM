@@ -1,12 +1,12 @@
 @startuml
-' Abstract base class for items
+' Abstrakte Basisklasse für Items inklusive BOM-Struktur
 abstract class Item {
   + id : int
   + value : float
+  + children : List<(Item, int)>
 }
 
-class EndProduct extends Item{
-}
+class EndProduct extends Item
 class InHouseProduct extends Item
 class PurchasePart extends Item {
   + discountQuantity : int
@@ -14,32 +14,39 @@ class PurchasePart extends Item {
   + orderTimeDeviation : float
 }
 
-' A container for an item and its quantity in the inventory
+' InventoryEntry: Verknüpft ein Item mit dem Lagerbestand
 class InventoryEntry {
   + item : Item
   + quantity : int
 }
 
-' The inventory holds a mapping from an item's id to its inventory entry
+' Inventory verwaltet eine Zuordnung von Item-ID zu InventoryEntry
 class Inventory {
   - entries : Map<int, InventoryEntry>
   + getQuantity(itemId: int) : int
   + calculateTotalValue() : float
 }
 
-' Contains period-specific planning inputs
+' PlanningData fasst periodenspezifische Daten zusammen
 class PlanningData {
   + forecast : Map<EndProduct, int>
   + currentInventory : Inventory
 }
 
-' Calculates the primary demand based on forecast, open orders and current inventory
+' PrimaryDemandCalculator berechnet den primären Bedarf basierend auf Forecast und Lagerbestand
 class PrimaryDemandCalculator {
   - data : PlanningData
   + calculate() : Map<int, int>
 }
 
-' Loads planning data from an XML file
+' BOMCalculator berechnet den Materialbedarf anhand der BOM-Struktur
+class BOMCalculator {
+  + compute_requirements(item:, multiplier) : ResRequirements
+  + compute_total_requirements(p_plan) : ResRequirements
+  + compute_production_needs(p_plan, inventory) : ResRequirements
+}
+
+' XMLDataLoader lädt Planungsdaten aus einer XML-Datei
 class XMLDataLoader {
   - filename : String
   + loadData() : PlanningData
@@ -48,5 +55,4 @@ class XMLDataLoader {
 PlanningData --> Inventory : "currentInventory"
 PrimaryDemandCalculator --> PlanningData : "uses"
 XMLDataLoader --> PlanningData : "creates"
-
 @enduml
