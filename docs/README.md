@@ -197,11 +197,11 @@ graph TD
     E12 -->|8x| K2
     E13 -->|1x| K3
 %% Klassen-Definition für Gekaufte Materialien (Dark Theme)
-    classDef bought fill: #222222, stroke: #f39c12, stroke-width: 2px, color: #ffffff;
+    classDef bought stroke: yellow, stroke-width: 2px;
     class K1 bought;
     class K2 bought;
     class K3 bought;
-    classDef product fill: #222222, stroke: #66dd33, stroke-width: 2px, color: #ffffff;
+    classDef product stroke: green, stroke-width: 2px;
     class P1 product;
     class P2 product;
     class P3 product;
@@ -365,6 +365,137 @@ Komponenten berechnet werden. Zudem kann durch den Abgleich mit dem Lagerbestand
 
 Dieser Algorithmus ist essenziell für die **Produktionsplanung**,
 **Materialdisposition** und **Lageroptimierung** in Fertigungsunternehmen. 🚀
+
+### Workstation-Kapazitäten
+
+#### 1. Definition der Variablen
+
+Ein Produkt **$p$** wird nicht an einer einzigen Workstation gefertigt, sondern kann mehrere **Bearbeitungsschritte** durchlaufen. Jeder dieser Schritte wird an einer bestimmten **Workstation (ws)** durchgeführt.
+
+Jede Workstation **$ws$** ist dabei mit einer spezifischen **Rüstzeit ($rt$) und Bearbeitungszeit ($pt$) pro Einheit** verbunden.
+
+Für ein Produkt $p$ gibt es eine **Sequenz von Arbeitsschritten**, wobei jeder Arbeitsschritt an einer bestimmten Workstation $ws$ durchgeführt wird:
+
+$$
+S(p) = \{(ws_1, rt_1, pt_1), (ws_2, rt_2, pt_2), \dots, (ws_n, rt_n, pt_n) \}
+$$
+
+wobei:
+- $S(p)$ die Menge aller Bearbeitungsschritte für Produkt $p$ ist.
+- Jeder Schritt ein Tupel $(ws, rt, pt)$ ist:
+    - $ws$: Die Workstation, die den Schritt ausführt.
+    - $rt$: Die für diesen Schritt benötigte Rüstzeit (fix, unabhängig von der Produktionsmenge).
+    - $pt$: Die Bearbeitungszeit pro Einheit des Produkts an dieser Workstation.
+
+Die benötigte **Kapazität einer einzelnen Workstation $ws$** für ein Produkt $p$ ergibt sich aus:
+
+$$
+T(ws, p) = rt(ws, p) + q_p \cdot pt(ws, p)
+$$
+
+wobei:
+- $q_p$ die Produktionsmenge des Produkts $p$ ist.
+- $T(ws, p)$ die gesamte benötigte Kapazität für dieses Produkt an dieser Workstation ist.
+
+---
+
+#### 2. Berechnung der Gesamtbelastung einer Workstation
+
+Da eine Workstation mehrere Produkte bearbeitet, summieren wir die Kapazität über alle Produkte, die an dieser Workstation gefertigt werden müssen:
+
+$$
+\text{Kapazität}(ws) = \sum_{p \in P} \sum_{(ws', rt, pt) \in S(p)} \mathbb{1}_{ws' = ws} \cdot \left( rt + q_p \cdot pt \right)
+$$
+
+wobei:
+- $\mathbb{1}_{ws' = ws}$ eine Indikatorfunktion ist, die 1 ist, wenn der Bearbeitungsschritt an Workstation $ws$ durchgeführt wird, sonst 0.
+- $P$ die Menge aller zu produzierenden Produkte ist.
+- $\text{Kapazität}(ws)$ die gesamte benötigte Kapazität der Workstation $ws$ ist.
+
+Dies stellt sicher, dass jede Workstation **die Belastung aus allen Bearbeitungsschritten aller Produkte** korrekt summiert.
+
+---
+
+#### 3. Berücksichtigung von Lieferverzögerungen bei Kaufteilen
+
+Falls für ein Produkt $p$ Kaufteile benötigt werden, kann deren verspätete Lieferung zu einer Kapazitätsminderung führen. Jede Kaufteil-Lieferung besitzt:
+- Eine **erwartete Lieferzeit** $\ell_k$
+- Eine **Lieferzeitabweichung** $\sigma_k$
+
+Falls ein Kaufteil $k$ an einer Workstation $ws$ benötigt wird, reduziert sich die verfügbare Kapazität:
+
+$$
+\text{Effektive Kapazität}(ws) = \text{Kapazität}(ws) - \sum_{k \in K(ws)} \sigma_k
+$$
+
+wobei:
+- $K(ws)$ die Menge aller Kaufteile ist, die an Workstation $ws$ benötigt werden.
+- $\sigma_k$ die Abweichung der Lieferzeit für das Kaufteil $k$ ist.
+
+---
+
+#### 4. Optimierung der Kapazitätsplanung durch Schichten & Überstunden
+
+Da wir keine Bearbeitungsreihenfolge festlegen, steuern wir die Kapazitäten durch:
+- **Anzahl der Schichten**: $s_{max}$
+- **Maximale Überstunden pro Schicht**: $o_{max}$
+
+Die maximale verfügbare Kapazität einer Workstation beträgt:
+
+$$
+\text{Maximale Kapazität}(ws) = 24h
+$$
+
+Anpassung der effektiven Kapazität an die maximal mögliche Kapazität:
+
+$$
+\text{Finale Kapazität}(ws) = \min(\text{Effektive Kapazität}(ws), \text{Maximale Kapazität}(ws))
+$$
+
+> Die Finale Kapazität ist nicht unbedingt die optimale Kapazität
+
+---
+
+#### 5. Gesamtmodell
+
+Die Berechnung der Workstation-Kapazitäten erfolgt in folgenden Schritten:
+
+1. **Bestimmung der Belastung jeder Workstation durch die Produktion**  
+   $$
+   \text{Kapazität}(ws) = \sum_{p \in P} \sum_{(ws', rt, pt) \in S(p)} \mathbb{1}_{ws' = ws} \cdot \left( rt + q_p \cdot pt \right)
+   $$
+
+2. **Abzug von Lieferverzögerungen der Kaufteile**  
+   $$
+   \text{Effektive Kapazität}(ws) = \text{Kapazität}(ws) - \sum_{k \in K(ws)} \sigma_k
+   $$
+
+3. **Kapazitätsbegrenzung durch verfügbare Schichten und Überstunden**  
+   $$
+   \text{Begrenzte Kapazität}(ws) = \min(\text{Effektive Kapazität}(ws), s_{max} \cdot 8h + o_{max})
+   $$
+
+4. Kapazitätsminimum:
+    Es muss mindestens eine Schicht je Workstation geben, also:
+    $$
+    \text{Finale Kapazität}(ws) = \max(\text{Begrenzte Kapazität}(ws), 8h)
+    $$
+---
+
+#### 6. Fazit
+
+##### Vorteile dieses Modells:
+✅ Berücksichtigt **mehrstufige Produktionsprozesse**, in denen ein Produkt mehrere Workstations durchläuft.  
+✅ Aggregiert **alle Produkte**, die an einer Workstation gefertigt werden, um die Gesamtauslastung zu berechnen.  
+✅ Bezieht **Lieferverzögerungen von Kaufteilen** mit ein, um realistische Kapazitätsplanungen zu ermöglichen.  
+✅ Ermöglicht **Anpassung der Kapazitäten** durch Schichtmodelle und Überstunden.
+
+Dieses Modell stellt eine **robuste Grundlage für die Kapazitätsplanung und Kostenoptimierung** in einem Produktionssystem dar. 🚀
+Damit haben wir die Kapazität , welche für das gegebenen Material und Produktionsplans benötigt wird und möglich ist( Begrenzung durch maximale Kapazität)
+
+
+### Personal und Maschinenkosten
+
 
 ## Schritt-für-Schritt-Planungsablauf
 
