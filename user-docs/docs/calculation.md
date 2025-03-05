@@ -10,9 +10,8 @@
 Wir können die Stücklisten in einem Directed Acyclic Graph (DAG) darstellen, um die Abhängigkeiten
 der Produkte darzustellen.
 
-````mermaid
+```mermaid
 graph TD
-%% Ebene 1: Endprodukte
     subgraph Level1[Endprodukte]
         direction LR
         P1
@@ -68,7 +67,7 @@ graph TD
     class P1 product;
     class P2 product;
     class P3 product;
-````
+```
 
 #### Einleitung
 

@@ -11,12 +11,14 @@ theme:
     text: Roboto
     code: Roboto Mono
   features:
+    - mermaid
     - navigation.tabs
     - navigation.path
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.top
     - content.code.copy
+    - content.code.mermaid
 nav:
   - Start: index.md
   - Einführung: simulation-information.md
@@ -25,26 +27,20 @@ nav:
   - Python: python-implementation.md
   - PDF: pdf.md
 markdown_extensions:
-  - admonition
-  - markdown_include.include:
-      base_path: docs
-  - pymdownx.snippets
-  - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.tasklist
-  - attr_list
-  - pymdownx.extra
-  - pymdownx.details
-
-  - pymdownx.arithmatex:
-      generic: true
-  - toc:
-      permalink: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - markdown_include.include:
+      base_path: docs
+  - attr_list
+
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      permalink: true
 
 
 extra_javascript:
