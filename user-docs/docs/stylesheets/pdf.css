@@ -1,0 +1,42 @@
+@media print {
+    /* Hide sidebar */
+    .md-sidebar--primary, .md-sidebar--secondary {
+        display: none !important;
+    }
+
+    /* Expand main content to full width */
+    .md-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Minimize navbar */
+    .md-header {
+        height: 40px !important;
+        overflow: hidden !important;
+    }
+
+    /* Hide navigation buttons */
+    .md-tabs, .md-header-nav {
+        display: none !important;
+    }
+
+    /* Adjust font size for better readability */
+    body {
+        font-size: 12pt !important;
+    }
+
+    /* Ensure tables fit within the page */
+    table {
+        width: 100% !important;
+        font-size: 10pt !important;
+    }
+
+    /* Reduce image sizes */
+    img {
+        max-width: 80% !important;
+        height: auto !important;
+    }
+}

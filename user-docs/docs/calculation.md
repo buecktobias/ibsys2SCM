@@ -11,7 +11,6 @@ Wir können die Stücklisten in einem Directed Acyclic Graph (DAG) darstellen, u
 der Produkte darzustellen.
 
 ````mermaid
-%%{init: {"themeVariables": {"fontSize": 16, "lineHeight": 1.1}}}%%
 graph TD
 %% Ebene 1: Endprodukte
     subgraph Level1[Endprodukte]

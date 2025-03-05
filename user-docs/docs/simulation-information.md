@@ -1,24 +1,18 @@
 # Allgemeine Informationen
 
-## Wichtige Informationen:
+## Wichtige Informationen
 
-1 Periode = 5 Tage = 40 Stunden = 2400 Minuten
-
-Statischer Wert des Inventars, daraus ergeben sich die Lagerkosten, welche Sprung fix sind.
-
-Die benötigten Ressourcen, Kaufteile und Eigen Erzeugnisse.
-Daraus ergibt sich ein Produktionsgraph, ein Gozinto Graph
-
-## Wichtige Eingabe Daten je Periode:
+!!! info "Perioden Dauer"
+    1 Periode = 5 Tage = 120 Stunden = 7200 Minuten
 
 Aktuelles Inventar und Aufträge, Vorhersage der Aufträge (bzw. ich weiß die genaue Zahl der
 zukünftigen Nachfrage)
 
 ## Zwischen Berechnungen:
 
-Aus Inventar und aufträge ergebende benötigte Produkte für nächste Periode ? Risiko
-
-Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
+!!! question
+    Aus Inventar und aufträge ergebende benötigte Produkte für nächste Periode ? Risiko
+    Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
 
 ## Ausgangsdaten
 
@@ -34,7 +28,7 @@ Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
     - Werden sowohl als eigenfertigte Produkte (E) als auch als Baugruppen in den Stücklisten
       aufgeführt.
 - **Eigenfertigungsprodukte (E):**
-    - 27 intern hergestellte Teile, die direkt in die Fertigung der Endprodukte eingehen.
+    - 27 intern hergestellte Teile
 - **Kaufteile (K):**
     - 29 von externen Lieferanten bezogene Teile.
 
@@ -56,15 +50,16 @@ Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
 - **Verfügbare Zeit pro Periode:**  
   (z. B. 2400 Minuten pro Periode, je nachdem wie viele Schichten und Überstunden man anordnet.
 
-> Überstunden sind viel teurer als Schichten. Jede weiter Schicht ist teurer als bisher!
-> Außerdem sind die Variablen machinenkosten fast immer billiger als Lohnkosten und die
-> Fixenmaschinenkosten noch
-> billiger.
-> Kaufteile welche eine längere Bestellzeit haben sollte ich natürlich deutlich mehr einlagern.
-> (Obwohl ich ja weiß wie viel in den nächsten Perioden benötigt wird; eigentlich sollte ich diese
-> Info nicht haben; Bug
-> im Programm)
-> Lagerkosten sind sprungfix, also muss ich aufpassen nicht über disen Betrag zu kommen.
+!!! note "Maschinen und Arbeitskosten Optimierung"
+    Überstunden sind viel teurer als Schichten. Jede weiter Schicht ist teurer als bisher!
+    Außerdem sind die Variablen machinenkosten fast immer billiger als Lohnkosten und die
+    Fixenmaschinenkosten noch billiger.
+
+
+!!! note "Lageroptimierung"
+    Kaufteile welche eine längere Bestellzeit haben sollte ich natürlich deutlich mehr einlagern.
+    Obwohl ich ja weiß wie viel in den nächsten Perioden benötigt wird; eigentlich sollte ich diese
+    Info nicht haben; Bug im Programm
 
 - **Rüstzeiten:**
     - Für jeden Arbeitsplatz sind feste Rüstzeiten vor Produktionswechseln definiert.
@@ -77,7 +72,7 @@ Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
 
 ## Periodenspezifische Daten
 
-### Nachfrage / Primärbedarf
+### Primärbedarf
 
 - **Verbindliche Verkaufsaufträge und Prognosen:**
     - Beispielwerte (Periode 1):
@@ -87,7 +82,7 @@ Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
 - **Abgleich mit Sicherheitsbeständen:**
     - Geplanter Lagerbestand am Periodenende (Sicherheitsbestand).
 
-### Lagerbestand und Bestandsveränderungen
+### Bestandsveränderungen
 
 - **Lagerbestand Vorperiode:**
     - Aktuelle Bestände an Endprodukten, Zwischenprodukten und Kaufteilen.
@@ -109,7 +104,7 @@ Was muss ich eingeben? Bzw. welche Dinge muss ich planen?
       Herstellkostenkalkulation
       einfließen.
 
-### Tertiärbedarf – Kaufteile
+### Kaufteile
 
 - **Ableitung aus den Stücklisten der Eigenfertigungsprodukte:**
     - Ermittelt, welche und in welcher Menge Kaufteile (K) benötigt werden.
