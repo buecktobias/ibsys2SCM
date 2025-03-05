@@ -1,0 +1,44 @@
+site_name: Bike Supply Chain
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: blue
+    accent: pink
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.path
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.top
+    - content.code.copy
+nav:
+  - Start: index.md
+  - Einleitung: simulation-information.md
+  - Berechnung: calculation.md
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
