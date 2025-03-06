@@ -3,6 +3,8 @@ site_name: Bike Supply Chain
 theme:
   name: material
   language: de
+  logo: images/favicon.ico
+  favicon: images/favicon.ico
   palette:
     scheme: slate
     primary: blue
@@ -22,7 +24,10 @@ theme:
 nav:
   - Start: index.md
   - Einführung: simulation-information.md
-  - Berechnung: calculation.md
+  - Berechnung:
+    - Material Planung: calculations/material-planning.md
+    - Arbeitsstationen: calculations/workplaces.md
+    - Arbeitskosten: calculations/labour-costs.md
   - Optimierung: optimization.md
   - Python: python-implementation.md
   - PDF: pdf.md
@@ -33,6 +38,7 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
   - admonition
+  - pymdownx.details
   - markdown_include.include:
       base_path: docs
   - attr_list
@@ -41,7 +47,7 @@ markdown_extensions:
       generic: true
   - toc:
       permalink: true
-
+  - def_list
 
 extra_javascript:
   - javascripts/mathjax.js
