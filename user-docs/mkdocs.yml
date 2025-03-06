@@ -28,6 +28,7 @@ nav:
     - Material Planung: calculations/material-planning.md
     - Arbeitsstationen: calculations/workplaces.md
     - Arbeitskosten: calculations/labour-costs.md
+    - Produktions Planung: calculations/workstation_plan.md
   - Optimierung: optimization.md
   - Python: python-implementation.md
   - PDF: pdf.md

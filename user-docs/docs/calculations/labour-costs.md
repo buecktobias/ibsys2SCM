@@ -1,19 +1,18 @@
-# Berechnungen
+# Personal und Maschinenkosten
 
-
-### Personal und Maschinenkosten
+## Personalkosten
 
 Bei festgelegten Workstation Kapazitäten können die Personalkosten einfach berechnet werden.
 Funktionsweise der Schichten und Personalkosten.
 Sei
 
 - $B = 480$ Minuten, die Basisarbeitszeit pro Schicht, und
-- $Cap_d(ws)$ die geplante Kapazität pro Tag in Minuten für eine Workstation $ws$.
+- $PCap_d(ws) \in [0,1440]$ die geplante Kapazität pro Tag in Minuten für eine Workstation $ws$
 
-Dann gilt:
+### Anzahl Schichten
 
 $$
-s(ws) = \max\Big(\min\Big(round(\frac{Cap_d(ws)}{B}),\, 3\Big),\, 1\Big)
+s(ws) = \max\Big(\min\Big(round(\frac{PCap_d(ws)}{B}),\, 3\Big),\, 1\Big)
 $$
 
 Dabei gilt:
@@ -22,86 +21,73 @@ Dabei gilt:
 - Durch $\min(\cdot,\, 3)$ wird sichergestellt, dass maximal 3 Schichten verwendet werden.
 - Durch $\max(\cdot,\, 1)$ wird garantiert, dass mindestens 1 Schicht vorliegt.
 
+$$
+s(ws) \in \{1, 2, 3\}
+$$
+### Anzahl Überstunden
+
 Die Anzahl der Überstunden pro Tag $O_d$ berechnet sich dann als Differenz zwischen der geplanten
 Kapazität und der Basiskapazität der ermittelten Schichten:
 
 $$
-O_d(ws) = \max\Big(Cap_d(ws) - s(ws) \cdot B,\, 0\Big)
+O_d(ws) = \max\Big(PCap_d(ws) - s(ws) \cdot B,\, 0\Big)
 $$
 
 Diese mathematische Darstellung erlaubt es, aus einer vorgegebenen Tageskapazität $Cap_d$ die nötige
-Anzahl an Schichten ($s$) sowie den Umfang der Überstunden ($O_d$) zu berechnen.
+Anzahl an Schichten $s$ sowie den Umfang der Überstunden $O_d$ zu berechnen.
 
-Es gibt für jede Workstation unterschiedliche Kosten
+!!! important
+    Es gibt für jede Workstation unterschiedliche Kosten
 
-#### Berechnung der Personalkosten für jede Workstation
+---
+
+### Lohnsätze
 
 Um die Personalkosten für jede Workstation zu berechnen, benötigen wir folgende Informationen:
 
-- **Geplante Kapazität pro Tag** $PCap_d(ws)$ für jede Workstation $ws$
-- **Anzahl der Schichten** $s(ws)$ für jede Workstation $ws$
-- **Überstunden pro Tag** $O_d(ws)$ für jede Workstation $ws$
-- **Lohnkosten je Schicht und Überstunden** aus der Tabelle
-- **Maschinenkosten (fix und variabel) pro Minute** aus der Tabelle
 
----
+- $L_1(ws) \equiv \text{Lohnsatz der 1. Schicht der Workstation ws}$
+- $L_2(ws) \equiv \text{2. Schicht}$
+- $L_3(ws) \equiv \text{3. Schicht}$
+- $L_O=(ws) \equiv \text{Lohnsatz für Überstunden an ws}$
 
-##### 1. Berechnung der aufgewendeten Minuten je Schichttyp
+$$
+L_1(ws),\, L_2(ws),\, L_3(ws),\, L_o(ws) \in \mathbb{Q}^{+}
+$$
 
-Da jede reguläre Schicht genau **480 Minuten** dauert, ergibt sich der Minutenaufwand je Workstation
-folgendermaßen:
-Wie oben $B = 480min$, die Basisarbeitszeit pro Schicht. Ebenso wie bereits definiert $Cap_d$ die
-geplante Kapazität pro Tag in Minuten.
-
-- **Gesamte produktive Minuten**  
-  $$
-  Cap_d(ws)
-  $$
-
----
-
-##### 2. Berechnung der Lohnkosten je Workstation
+### Formel für Lohnkosten
 
 Die Lohnkosten hängen von der Anzahl der eingesetzten Schichten ab, da jede Schicht einen
 unterschiedlichen Lohnsatz hat:
 
-**Gesamtkosten für die regulären Schichten**  
-Die Lohnkosten pro Minute variieren je nach Schicht:
+Je nach Anzahl der Schichten ergibt sich der reguläre Lohnkostenblock: 
+(**L**abour cost per **d**ay)
 
-- **Schicht 1:** Lohnsatz $L_1(ws)$
-- **Schicht 2:** Lohnsatz $L_2(ws)$
-- **Schicht 3:** Lohnsatz $L_3(ws)$
-- **Überstunden:** Lohnsatz $L_{o}(ws)$
-
-Je nach Anzahl der Schichten ergibt sich der reguläre Lohnkostenblock: (**L**abour cost per **d**
-ay)
 $$
-L_{\text{d}}(ws) = L_o(ws) \cdot O_d(ws) +
+C_{L}(ws) = L_o(ws) \cdot O_d(ws) +
 \begin{cases}
-L_1(ws) \cdot B.& s(ws) = 1 \\
+L_1(ws) \cdot B& s(ws) = 1 \\
 L_1(ws) \cdot B + L_2(ws) \cdot B, & s(ws) = 2 \\
 L_1(ws) \cdot B + L_2(ws) \cdot B + L_3(ws) \cdot B, & s(ws) = 3
 \end{cases}
 $$
 
-Die **Kapazitätsauslastung** einer Workstation $ws$ beschreibt den Anteil der tatsächlich genutzten
-Kapazität im Vergleich zur geplanten Kapazität:
+### Diagramm der relativen Personalkosten
+![Personalkosten](../images/simple_relative_labour_cost.png)
 
-$$
-util(ws) = \frac{M_{used}(ws)}{M_{total}(ws)}
-$$
+## Maschinenkosten
 
-wobei:
+### Kapazitätsauslastung
+- $M_{used}(ws) \equiv \text{produktiv genutzten Minuten(Bearbeitungszeit)}$
+- $M_{total}(ws) \equiv \text{eingeplante Kapazität (Schichten + Überstunden)}$
+- $M_{total}(ws) = s(ws) \cdot B + O_d(ws)$
 
-- $M_{used}(ws)$ die tatsächlich produktiv genutzten Minuten sind (Bearbeitungszeit).
-- $M_{total}(ws)$ die gesamte eingeplante Kapazität (Schichten + Überstunden).
+!!! note Auslastung
+    Wenn eine Workstation vollständig genutzt wird, beträgt die Auslastung **100 %** $(= 1)$. Liegt sie
+    darunter, entstehen **Leerkosten**.
 
-Wenn eine Workstation vollständig genutzt wird, beträgt die Auslastung **100 %** $(= 1)$. Liegt sie
-darunter, entstehen **Leerkosten**.
+### Variable Maschinenkosten
 
----
-
-Die Maschinenkosten setzen sich aus **fixen** und **variablen** Kosten zusammen:
 Die **variablen Maschinenkosten** fallen nur für produktiv genutzte Minuten an:
 
 $$
@@ -113,12 +99,14 @@ wobei:
 - $c_{Mvar}(ws)$ die variablen Maschinenkosten pro Minute sind.
 - $M_{used}(ws)$ die Minuten, in denen tatsächlich produziert wird.
 
-Variable Maschinenkosten entstehen **nur dann**, wenn produziert wird. Falls eine Workstation eine
-Schicht eingeplant hat, aber keine Produktion stattfindet, sind die variablen Maschinenkosten **0**.
+!!! note
+    Variable Maschinenkosten entstehen **nur dann**, wenn produziert wird. Falls eine Workstation eine
+    Schicht eingeplant hat, aber keine Produktion stattfindet, sind die variablen Maschinenkosten **0**.
 
----
 
-Die **fixen Maschinenkosten** fallen an für Leerzeiten innerhalb der Schichten
+### Fixe Maschinenkosten
+
+Die **fixen Maschinenkosten** fallen an für Leerzeiten innerhalb der .
 
 $$
 C_{Mfix}(ws) = M_{total}(ws) - M_{used}(ws) \cdot c_{Mfix}(ws)
@@ -129,31 +117,85 @@ wobei:
 - $M_{total}(ws) = s(ws) \cdot B + O_d(ws)$ die gesamte geplante Kapazität ist.
 - $c_{Mfix}(ws)$ die fixen Maschinenkosten pro Minute sind.
 
-Fixe Maschinenkosten entstehen auch dann, wenn eine Workstation nicht voll ausgelastet ist. Falls
-eine Schicht eingeplant wurde, aber die tatsächliche Produktion geringer ist als die geplante
-Kapazität, entstehen **Leerkosten**.
 
-#### 4. Gesamtformel für Maschinenkosten
-
-Die gesamten Maschinenkosten einer Workstation setzen sich aus fixen und variablen Kosten zusammen:
-
-$$
-C_{M}(ws) = C_{Mfix}(ws) + C_{Mvar}(ws)
-$$
-
----
-
-### 4. Gesamtkosten pro Workstation
+### Gesamt Masschinenkosten
 
 Die Gesamtkosten für jede Workstation $ws$ setzen sich zusammen aus:
+
+$$
+C_M(ws) = C_{Mvar}(ws) + C_{Mfix}(ws)
+$$
+
+
+## Gesamtkosten pro Workstation
+
+Die Gesamtkosten für eine Arbeitsstation berechnen sich aus der Summe der Lohn- und Maschinenkosten:
 
 $$
 C_{total}(ws) = C_L(ws) + C_M(ws)
 $$
 
-Falls eine Workstation **nicht ausgelastet** ist (Leerlaufzeiten), entstehen Leerkosten. Diese
-müssten separat berechnet werden.
+!!! note
+    Wenn wir eine Zeit PCap_d(ws) für eine Workstation ws planen, heißt dass nicht das die Workstation
+    auch wirklich diese Zeit genutzt wird. Die tatsächliche Nutzung kann von der geplanten Zeit abweichen.
+    Aus dem Grund das benötigte Materialien fehlen
 
+### Vereinfachte Berechnung
+Die Gesamte Maschinenzeit für eine Workstation ist, die gesamt angeordnete Arbeitszeit.
+
+$$
+M_{total}(ws) = s(ws) \cdot B + O_d(ws)
+$$
+
+
+Wir können davon ausgehen, dass die geplante Kapazität $PCap_d(ws)$ auch produktiv verwendet wird.
+Also:
+
+$$
+M_{used}(ws) = PCap_d(ws)
+$$
+
+Damit können wir die gesamten Kosten für eine workstation aus den statischen Lohnsatz Daten und der
+geplante / benötigten Kapazität berechnen.
+
+### Diagramm vereinfachte Kosten
+
+!!! note
+    In unserem Modell sind die Lohnkosten bei allen Arbeitsstationen gleich. Die Maschinenkosten
+    variieren jedoch je nach Workstation.
+
+#### Für Workstation mit durchschnittlichen Lohnsätzen
+
+![Vereinfachte Kosten](../images/total_relative_cost_avg.png)
+
+!!! important
+    Die Grafik startet erst bei 4 Stunden aus Skalierungszwecken. Bei weniger als 4 Stunden
+    steigen die Kosten exponentiell bei Näherung zu 0.
+
+#### Für Workstation mit höchsten Maschinensätzen
+![Vereinfachte Kosten](../images/total_relative_cost_expensive.png)
+
+### Arbeitstationen Kostenvergleich
+Alle Arbeitsstationen haben bei uns die selben Lohnsätze, jedoch unterschiedliche Maschinenkosten.
+Die Machinenkosten machen aber insgesamt ziemlich wenig aus, da die Lohnkosten den größten Anteil
+ausmachen.
+
+!!! note
+    Die Lohnkosten machen viel mehr aus als die Maschinenkosten. Die Maschinenkosten sind nur ein
+    kleiner Teil der Gesamtkosten. 
+    **Ungefähr 15% sind Maschinenkosten der Rest sind Arbeitskosten**
+
+#### Box Plot Maschinenkosten Verteilung
+
+![Box Plot Maschinenkosten](../images/machine_cost_distribution.png)
+
+**Erkentnisse:**
+- Die Maschinenkosten sind bei allen Workstations relativ gleich.
+  IQR der variablen ist 0.25, die IQR der fixen ist 0.09. Bei einem Median von: 0.3 und 0.1
+- Die fixen Kosten sind immer deutlich geringer als die variablen Kosten.
+  (var / fix ~ 4, sd ~ 1) => die variablen Kosten sind 3 - 5 mal so hoch wie die fixen Kosten.
+
+![Cost Share](../images/most_expensive_median_cost_share.png)
 ---
 
 ## Fazit
@@ -165,5 +207,7 @@ Mit dieser Berechnungsmethode können wir für jede Workstation:
 ✅ Die Gesamtkosten einer Workstation bestimmen
 
 Dies ermöglicht eine detaillierte Kostenanalyse pro Arbeitsplatz!
+!!! warning Materialverzögerungen
+    Es wurde noch nicht die Verzögerung durch Materialverzögerungen beachtet
 
 ---
