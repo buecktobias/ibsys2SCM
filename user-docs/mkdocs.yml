@@ -3,8 +3,8 @@ site_name: Bike Supply Chain
 theme:
   name: material
   language: de
-  logo: images/favicon.ico
-  favicon: images/favicon.ico
+  logo: images/icon_512.png
+  favicon: images/favicon_32_new.png
   palette:
     scheme: slate
     primary: blue
@@ -21,6 +21,9 @@ theme:
     - navigation.top
     - content.code.copy
     - content.code.mermaid
+    - content.footnote.tooltips
+    - content.tooltips
+
 nav:
   - Start: index.md
   - Einführung: simulation-information.md
@@ -33,6 +36,7 @@ nav:
   - Python: python-implementation.md
   - PDF: pdf.md
 markdown_extensions:
+  - footnotes
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -43,7 +47,10 @@ markdown_extensions:
   - markdown_include.include:
       base_path: docs
   - attr_list
-
+  - abbr
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
   - pymdownx.arithmatex:
       generic: true
   - toc:
@@ -53,6 +60,9 @@ markdown_extensions:
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+watch:
+  - includes
 
 extra_css:
   - stylesheets/extra.css
