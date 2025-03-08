@@ -7,7 +7,7 @@ theme:
   favicon: images/favicon_32_new.png
   palette:
     scheme: slate
-    primary: blue
+    primary: deep purple
     accent: pink
   font:
     text: Roboto
@@ -29,6 +29,8 @@ nav:
   - Einführung: simulation-information.md
   - Berechnung:
     - Material Planung: calculations/material-planning.md
+    - Materialkosten: calculations/material-costs.md
+    - Lagerkosten: calculations/storage_cost_analysis.md
     - Arbeitsstationen: calculations/workplaces.md
     - Arbeitskosten: calculations/labour-costs.md
     - Produktions Planung: calculations/workstation_plan.md
@@ -56,6 +58,8 @@ markdown_extensions:
   - toc:
       permalink: true
   - def_list
+  - pymdownx.tabbed:
+      alternate_style: true
 
 extra_javascript:
   - javascripts/mathjax.js

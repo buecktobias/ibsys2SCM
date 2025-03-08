@@ -1,9 +1,17 @@
-## Materialbedarf
+# Materialbedarf
 
-- **Endprodukte:**
+## Einleitung
+
+Eine Stückliste (Bill of Materials, **BOM**) kann als gerichteter azyklischer Graph (DAG) dargestellt
+werden. Dabei repräsentieren die Knoten die einzelnen **Produkte**, **Eigenfabrikate**
+und **Kaufteile** (zusammenfassend als **Komponenten** bezeichnet).
+
+Jeder Kante ist eine **Menge** $q$ zugeordnet, die angibt, wie viele Einheiten der
+untergeordneten Komponente benötigt werden.
+
+- **Endprodukte**
     - Jedes Endprodukt ($I_{P1}, I_{P2}, I_{P3}$) besteht aus einer Kombination von
-      Zwischenprodukten und
-      Eigenfertigungsprodukten.
+      Zwischenprodukten und Eigenfertigungsprodukten.
     - Die Stücklisten enthalten auch die benötigten Kaufteile.
 
 Wir können die Stücklisten in einem Directed Acyclic Graph (DAG) darstellen, um die Abhängigkeiten
@@ -68,16 +76,7 @@ graph TD
     class P3 product;
 ```
 
-#### Einleitung
-
-Eine Stückliste (Bill of Materials, **BOM**) kann als gerichteter azyklischer Graph (DAG) dargestellt
-werden. Dabei repräsentieren die Knoten die einzelnen **Produkte**, **Eigenfabrikate**
-und **Kaufteile** (zusammenfassend als **Komponenten** bezeichnet).
-
-Jeder Kante ist eine **Menge** $q$ zugeordnet, die angibt, wie viele Einheiten der
-untergeordneten Komponente benötigt werden.
-
-#### Mathematische Herleitung
+## Mathematische Herleitung
 
 Sei:
 
@@ -91,12 +90,12 @@ Jeder einzelne Pfad $p$ von $I_P$ nach $I_n$ trägt
 dabei mit folgender Berechnung zur Gesamtmenge bei:
 
 !!! info "Materialbedarf bestimmen"
-Das bedeutet: Für jede einzelne **Komponente** summieren wir über alle möglichen Produktionspfade
-hinweg das Produkt der aufeinanderfolgenden Mengen entlang der Kanten.
+        Das bedeutet: Für jede einzelne **Komponente** summieren wir über alle möglichen Produktionspfade
+        hinweg das Produkt der aufeinanderfolgenden Mengen entlang der Kanten.
 
 ---
 
-#### Produkt Materialanforderungen
+## Produkt Materialanforderungen
 
 Wir verwenden eine rekursive Methode zur Berechnung des gesamten Materialbedarfs einer Komponente,
 indem wir den Graphen von oben nach unten durchlaufen. Jeder Knoten multipliziert seinen aktuellen
@@ -133,13 +132,13 @@ Bedarfsfaktor mit der benötigten Menge seiner untergeordneten Komponenten.
 
 ---
 
-#### Gesamtbedarfs für Produktionsplan
+## Gesamtbedarfs für Produktionsplan
 
 Ein **Produktionsplan** gibt an, wie viele Einheiten jedes Endprodukts produziert werden sollen. Um
 den gesamten Materialbedarf für die geplante Produktion zu berechnen, iterieren wir über alle
 Endprodukte und summieren die berechneten Anforderungen.
 
-##### Python-Implementierung
+### Python-Implementierung
 
 ??? details "Python Implementierung"
     ```python
@@ -166,14 +165,14 @@ Endprodukte und summieren die berechneten Anforderungen.
 
 ---
 
-#### Materialbedarf bei vorhandenem Lagerbestand
+## Materialbedarf bei vorhandenem Lagerbestand
 
 Neben den berechneten Anforderungen aus dem Produktionsplan gibt es auch einen **Lagerbestand**, der
 angibt, wie viele Einheiten jeder Komponente bereits verfügbar sind. Um zu bestimmen, wie viel
 zusätzlich produziert oder eingekauft werden muss, vergleichen wir die berechneten *
 *Gesamtanforderungen** mit dem vorhandenen Bestand.
 
-##### Vorgehensweise
+### Vorgehensweise
 
 1. Berechne mit `compute_total_requirements` den gesamten Materialbedarf für den Produktionsplan.
 2. Vergleiche den berechneten Bedarf mit dem vorhandenen Lagerbestand.
@@ -182,7 +181,7 @@ zusätzlich produziert oder eingekauft werden muss, vergleichen wir die berechne
 4. Falls der Lagerbestand nicht ausreicht, wird die Differenz als **tatsächlicher Produktions- oder
    Beschaffungsbedarf** gespeichert.
 
-##### Python-Implementierung
+### Python-Implementierung
 
 ??? details "Python Implementierung"
     ```python
@@ -209,7 +208,7 @@ zusätzlich produziert oder eingekauft werden muss, vergleichen wir die berechne
 
 ---
 
-#### Fazit
+## Fazit
 
 Mit diesem Ansatz kann für einen gegebenen Produktionsplan der **exakte Materialbedarf** für alle
 Komponenten berechnet werden. Zudem kann durch den Abgleich mit dem Lagerbestand bestimmt werden,

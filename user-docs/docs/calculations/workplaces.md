@@ -1,45 +1,13 @@
 # Workstation-Kapazitäten
-
 ## Variablen
 ### Basis
 - **Eigenfabrikat $I_E$**
 - **Arbeitsstellen (Workstations)** $ws$
-  Ein **Eigenfabrikat $I_E$** wird nicht an einer einzigen Workstation gefertigt, sondern kann mehrere
-  **Bearbeitungsschritte** durchlaufen. Jeder dieser Schritte wird an einer bestimmten
-  **Workstation (ws)** durchgeführt.
 
-### Workstation
-**Jede Workstation $ws$** hat:
-- Rüstzeit $rt$ ist $rt\in\mathbb{N}_{0}$ gibt die Rüstzeit in Minuten an.
-- Bearbeitungszeit $pt$ $rt\in\mathbb{N}_{0}$ gibt die Bearbeitungszeit je Einheit in Minuten an.
-
-Für ein Eigenfabrikat $E$ gibt es eine **Sequenz von Arbeitsschritten**, wobei jeder Arbeitsschritt
-an einer bestimmten Workstation $ws$ durchgeführt wird:
-
-$$
-S(p) = \{(ws_1, rt_1, pt_1), (ws_2, rt_2, pt_2), \dots, (ws_n, rt_n, pt_n) \}
-$$
-
-wobei:
-
-- $S(p)$ die Menge aller Bearbeitungsschritte für Produkt $E$ ist.
-- Jeder Schritt ein Tupel $(ws, rt, pt)$ ist:
-    - $ws$: Die Workstation, die den Schritt ausführt.
-    - $rt$: Die für diesen Schritt benötigte Rüstzeit (fix, unabhängig von der Produktionsmenge).
-    - $pt$: Die Bearbeitungszeit pro Einheit des Produkts an dieser Workstation.
-
-Die benötigte **Kapazität einer einzelnen Workstation $ws$** für ein Produkt $E$ ergibt sich aus:
-
-$$
-T(ws, p, q_p) = rt(ws, p) + q_p \cdot pt(ws, p)
-$$
-
-wobei:
-
-- $q_p$ die Produktionsmenge des Produkts $p$ ist.
-- $T(ws, p, q_p)$ die gesamte benötigte Kapazität für dieses Produkt an dieser Workstation ist.
-
----
+### Prozess
+**Jeder Prozess $p$** hat:
+- Rüstzeit $p_rt$ ist $rt\in\mathbb{N}_{0}$ gibt die Rüstzeit in Minuten an.
+- Bearbeitungszeit $p_pt$ $rt\in\mathbb{N}_{0}$ gibt die Bearbeitungszeit je Einheit in Minuten an.
 
 ## Gesamtbelastung
 
@@ -49,12 +17,6 @@ an dieser Workstation gefertigt werden müssen.
 
 ## Lieferverzögerungen bei Kaufteilen
 
-!!! warning "Beschreibung muss verbessert werden"
-    Hier sind noch einige DInge nicht eindeutig beschrieben, es kommt drauf an wie viel wir
-    im Lager haben, außerdem können auch andere Fertigungsteile verzögert sein
-    und wir können nicht herstellen
-
-
 - Eine **erwartete Lieferzeit** $\ell_k$
 - Eine **Lieferzeitabweichung** $\sigma_k$
 
@@ -62,7 +24,7 @@ Falls ein Kaufteil $k$ an einer Workstation $ws$ benötigt wird, reduziert sich 
 Kapazität:
 
 $$
-\text{EKapa}(ws) = \text{Kapazität}(ws) - \sum_{k \in K(ws)} \sigma_k
+EffKapa(ws) \equiv \text{Kapazität}(ws) - \sum_{k \in K(ws)} \sigma_k
 $$
 
 wobei:

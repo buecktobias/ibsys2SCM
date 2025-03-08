@@ -198,6 +198,12 @@ ausmachen.
 ![Cost Share](../images/most_expensive_median_cost_share.png)
 ---
 
+## Gesamt Fixkosten
+
+!!! important Fixkosten
+    Insgesamt haben wir je Periode 17,664 GE an Fixkosten.
+
+
 ## Fazit
 
 Mit dieser Berechnungsmethode können wir für jede Workstation:
