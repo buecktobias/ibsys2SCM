@@ -1,4 +1,4 @@
-article_id,item_type,quantaty_used_for_child,used_for_women,used_for_men,start_quantity,price_per_part,order_price,order_duration,order_standard_deviation,discount_quantity,discount
+article_id,item_type,quantity_used_for_child,quantity_used_for_women,quantity_used_for_men,start_quantity,price_per_part,order_price,order_duration,order_standard_deviation,discount_quantity,discount
 1,P,1,0,0,100.0,156.13,,,,0.0,0.0
 2,P,0,1,0,100.0,163.33,,,,0.0,0.0
 3,P,0,0,1,100.0,165.08,,,,0.0,0.0

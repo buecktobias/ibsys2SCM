@@ -1,0 +1,93 @@
+graph TD
+    subgraph bought
+        K21((K21))
+        K24((K24))
+        K25((K25))
+        K27((K27))
+        K28((K28))
+        K32((K32))
+        K35((K35))
+        K36((K36))
+        K37((K37))
+        K38((K38))
+        K39((K39))
+        K40((K40))
+        K41((K41))
+        K42((K42))
+        K43((K43))
+        K44((K44))
+        K45((K45))
+        K46((K46))
+        K47((K47))
+        K48((K48))
+        K52((K52))
+        K53((K53))
+        K59((K59))
+    end
+
+
+    subgraph WS6
+        K28 --> PR28_6
+    end
+
+    subgraph WS7
+        PR39_8 --> PR39_7
+
+
+        PR28_8 --> PR28_7
+        K59 --> PR28_7
+    end
+
+    subgraph WS8
+        PR39_12  --> PR39_8
+
+        PR28_6 --> PR28_8
+    end
+
+    subgraph WS9
+        K32 --> PR39_9
+        PR39_7 --> PR39_9 --> E13
+
+        PR2828_7 --> PR28_9 --> E18
+        K32 --> PR28_9
+    end
+
+    subgraph WS10
+        K52 --> PR52_10
+        K53 --> PR52_10
+    end
+
+    subgraph WS11
+        PR52_10 --> PR52_11 --> E7
+        K35 --> PR52_11
+        K37 --> PR52_11
+        K38 --> PR52_11
+
+    end
+
+    subgraph WS12
+        PR39_13 --> PR39_12
+    end
+
+    subgraph WS13
+        K39 --> PR39_13
+    end
+
+
+    %% Define Items
+    P1((P1))
+
+    E4((E4))
+    E7((E7))
+    E10((E10))
+    E13((E13))
+    E16((E16))
+    E17((E17))
+    E18((E18))
+    E26((E26))
+    E49((E49))
+    E50((E50))
+    E51((E51))
+
+
+

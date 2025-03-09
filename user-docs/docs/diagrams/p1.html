@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render Mermaid from File</title>
+</head>
+<body>
+
+    <div id="mermaid-container">
+        <div id="mermaid-diagram" class="mermaid"></div>
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true })
+        async function loadMermaidDiagram(filePath) {
+            const response = await fetch(filePath);
+            if (!response.ok) throw new Error("Failed to load the Mermaid file");
+            document.getElementById("mermaid-diagram").innerText = await response.text();
+        }
+        loadMermaidDiagram("p1.mmd").then()
+
+
+    </script>
+
+</body>
+</html>
