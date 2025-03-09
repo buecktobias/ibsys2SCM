@@ -1,0 +1,13 @@
+digraph {
+	K39 [label=K39 fillcolor=lightblue shape=circle style=filled]
+	PR1 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+      <TR><TD><FONT POINT-SIZE="10"><B>6-20</B></FONT></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">PR1</FONT></TD></TR>
+      <TR><TD><FONT POINT-SIZE="10">1/2</FONT></TD></TR>
+    </TABLE>
+    > shape=none]
+	E13 [label=E13 fillcolor=lightgreen shape=circle style=filled]
+	K39 -> PR1 [label=1]
+	PR1 -> E13 [label=1]
+}

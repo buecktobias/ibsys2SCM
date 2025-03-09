@@ -1,0 +1,58 @@
+@startuml
+' Abstrakte Basisklasse für Items inklusive BOM-Struktur
+abstract class Item {
+  + id : int
+  + value : float
+  + children : List<(Item, int)>
+}
+
+class EndProduct extends Item
+class InHouseProduct extends Item
+class PurchasePart extends Item {
+  + discountQuantity : int
+  + orderTime : float
+  + orderTimeDeviation : float
+}
+
+' InventoryEntry: Verknüpft ein Item mit dem Lagerbestand
+class InventoryEntry {
+  + item : Item
+  + quantity : int
+}
+
+' Inventory verwaltet eine Zuordnung von Item-ID zu InventoryEntry
+class Inventory {
+  - entries : Map<int, InventoryEntry>
+  + getQuantity(itemId: int) : int
+  + calculateTotalValue() : float
+}
+
+' PlanningData fasst periodenspezifische Daten zusammen
+class PlanningData {
+  + forecast : Map<EndProduct, int>
+  + currentInventory : Inventory
+}
+
+' PrimaryDemandCalculator berechnet den primären Bedarf basierend auf Forecast und Lagerbestand
+class PrimaryDemandCalculator {
+  - data : PlanningData
+  + calculate() : Map<int, int>
+}
+
+' BOMCalculator berechnet den Materialbedarf anhand der BOM-Struktur
+class BOMCalculator {
+  + compute_requirements(item:, multiplier) : ResRequirements
+  + compute_total_requirements(p_plan) : ResRequirements
+  + compute_production_needs(p_plan, inventory) : ResRequirements
+}
+
+' XMLDataLoader lädt Planungsdaten aus einer XML-Datei
+class XMLDataLoader {
+  - filename : String
+  + loadData() : PlanningData
+}
+
+PlanningData --> Inventory : "currentInventory"
+PrimaryDemandCalculator --> PlanningData : "uses"
+XMLDataLoader --> PlanningData : "creates"
+@enduml
