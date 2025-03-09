@@ -1,0 +1,1691 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../simulation-information/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
+    
+    
+      
+        <title>Berechnung - Bike Supply Chain</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="pink">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#berechnungen" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Bike Supply Chain" class="md-header__button md-logo" aria-label="Bike Supply Chain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Bike Supply Chain
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Berechnung
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../simulation-information/" class="md-tabs__link">
+        
+  
+    
+  
+  Einleitung
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Berechnung
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Bike Supply Chain" class="md-nav__button md-logo" aria-label="Bike Supply Chain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Bike Supply Chain
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulation-information/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Einleitung
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Berechnung
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Berechnung
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#materialbedarf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Materialbedarf
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Materialbedarf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#einleitung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Einleitung
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mathematische-herleitung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mathematische Herleitung
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#produkt-materialanforderungen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Produkt Materialanforderungen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Produkt Materialanforderungen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gesamtbedarfs-fur-produktionsplan" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gesamtbedarfs für Produktionsplan
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gesamtbedarfs für Produktionsplan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#materialbedarf-bei-vorhandenem-lagerbestand" class="md-nav__link">
+    <span class="md-ellipsis">
+      Materialbedarf bei vorhandenem Lagerbestand
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Materialbedarf bei vorhandenem Lagerbestand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vorgehensweise" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vorgehensweise
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstation-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workstation-Kapazitäten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workstation-Kapazitäten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-definition-der-variablen" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Definition der Variablen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-berechnung-der-gesamtbelastung-einer-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Berechnung der Gesamtbelastung einer Workstation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-berucksichtigung-von-lieferverzogerungen-bei-kaufteilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Berücksichtigung von Lieferverzögerungen bei Kaufteilen
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erlauterung-der-zulassigen-workstation-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erläuterung der zulässigen Workstation-Kapazitäten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Erläuterung der zulässigen Workstation-Kapazitäten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basisarbeitszeit-pro-schicht" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basisarbeitszeit pro Schicht
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uberstunden" class="md-nav__link">
+    <span class="md-ellipsis">
+      Überstunden
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mogliche-schichtmodelle-und-deren-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mögliche Schichtmodelle und deren Kapazitäten
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erforderliche-kapazitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erforderliche Kapazität
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-gesamtmodell" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Gesamtmodell
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Fazit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Fazit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vorteile-dieses-modells" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔹 Vorteile dieses Modells:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#personal-und-maschinenkosten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Personal und Maschinenkosten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Personal und Maschinenkosten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#berechnung-der-personalkosten-fur-jede-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Berechnung der Personalkosten für jede Workstation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Berechnung der Personalkosten für jede Workstation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-berechnung-der-aufgewendeten-minuten-je-schichttyp" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Berechnung der aufgewendeten Minuten je Schichttyp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-berechnung-der-lohnkosten-je-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Berechnung der Lohnkosten je Workstation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-gesamtformel-fur-maschinenkosten" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Gesamtformel für Maschinenkosten
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Fazit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Fazit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-gesamtkosten-pro-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Gesamtkosten pro Workstation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fazit_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazit
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#materialbedarf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Materialbedarf
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Materialbedarf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#einleitung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Einleitung
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mathematische-herleitung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mathematische Herleitung
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#produkt-materialanforderungen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Produkt Materialanforderungen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Produkt Materialanforderungen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gesamtbedarfs-fur-produktionsplan" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gesamtbedarfs für Produktionsplan
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gesamtbedarfs für Produktionsplan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#materialbedarf-bei-vorhandenem-lagerbestand" class="md-nav__link">
+    <span class="md-ellipsis">
+      Materialbedarf bei vorhandenem Lagerbestand
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Materialbedarf bei vorhandenem Lagerbestand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vorgehensweise" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vorgehensweise
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-implementierung_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python-Implementierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstation-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workstation-Kapazitäten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workstation-Kapazitäten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-definition-der-variablen" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Definition der Variablen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-berechnung-der-gesamtbelastung-einer-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Berechnung der Gesamtbelastung einer Workstation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-berucksichtigung-von-lieferverzogerungen-bei-kaufteilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Berücksichtigung von Lieferverzögerungen bei Kaufteilen
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erlauterung-der-zulassigen-workstation-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erläuterung der zulässigen Workstation-Kapazitäten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Erläuterung der zulässigen Workstation-Kapazitäten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basisarbeitszeit-pro-schicht" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basisarbeitszeit pro Schicht
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uberstunden" class="md-nav__link">
+    <span class="md-ellipsis">
+      Überstunden
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mogliche-schichtmodelle-und-deren-kapazitaten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mögliche Schichtmodelle und deren Kapazitäten
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erforderliche-kapazitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erforderliche Kapazität
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-gesamtmodell" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Gesamtmodell
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Fazit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Fazit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vorteile-dieses-modells" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔹 Vorteile dieses Modells:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#personal-und-maschinenkosten" class="md-nav__link">
+    <span class="md-ellipsis">
+      Personal und Maschinenkosten
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Personal und Maschinenkosten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#berechnung-der-personalkosten-fur-jede-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Berechnung der Personalkosten für jede Workstation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Berechnung der Personalkosten für jede Workstation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-berechnung-der-aufgewendeten-minuten-je-schichttyp" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Berechnung der aufgewendeten Minuten je Schichttyp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-berechnung-der-lohnkosten-je-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Berechnung der Lohnkosten je Workstation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-gesamtformel-fur-maschinenkosten" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Gesamtformel für Maschinenkosten
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-fazit" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Fazit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Fazit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-gesamtkosten-pro-workstation" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Gesamtkosten pro Workstation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fazit_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazit
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="berechnungen">Berechnungen<a class="headerlink" href="#berechnungen" title="Permanent link">&para;</a></h1>
+<h2 id="materialbedarf">Materialbedarf<a class="headerlink" href="#materialbedarf" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Endprodukte:</strong><ul>
+<li>Jedes Endprodukt (P1, P2, P3) besteht aus einer Kombination von Zwischenprodukten und
+  Eigenfertigungsprodukten.</li>
+<li>Die Stücklisten enthalten auch die benötigten Kaufteile.</li>
+</ul>
+</li>
+</ul>
+<p>Wir können die Stücklisten in einem Directed Acyclic Graph (DAG) darstellen, um die Abhängigkeiten
+der Produkte darzustellen.</p>
+<pre class="mermaid"><code>%%{init: {"themeVariables": {"fontSize": 16, "lineHeight": 1.1}}}%%
+graph TD
+%% Ebene 1: Endprodukte
+    subgraph Level1[Endprodukte]
+        direction LR
+        P1
+        P2
+        P3
+    end
+
+%% Ebene 2: Herstellte Baugruppen
+    subgraph Level2[Eigen Fabrikate 1]
+        direction LR
+        E1
+        E2
+    end
+
+%% Ebene 3: Unterbaugruppen
+    subgraph Level3[Eigen Fabrikate 2]
+        direction LR
+        E11
+        E12
+        E13
+    end
+
+%% Ebene 4: Gekaufte Materialien
+    subgraph Level4[Gekaufte Materialien]
+        direction LR
+        K1
+        K2
+        K3
+    end
+
+%% Abhängigkeiten der Endprodukte
+    P1 --&gt;|1x| E1
+    P1 --&gt;|3x| E11
+    P2 --&gt;|10x| E2
+    P3 --&gt;|2x| E2
+    P3 --&gt;|2x| K3
+%% Abhängigkeiten der Baugruppen
+    E1 --&gt;|3x| E11
+    E2 --&gt;|2x| E12
+    E2 --&gt;|4x| E13
+    E2 --&gt;|1x| K3
+%% Abhängigkeiten der Unterbaugruppen
+    E11 --&gt;|1x| K1
+    E11 --&gt;|2x| K2
+    E12 --&gt;|8x| K2
+    E13 --&gt;|1x| K3
+%% Klassen-Definition für Gekaufte Materialien (Dark Theme)
+    classDef bought stroke: yellow, stroke-width: 2px;
+    class K1 bought;
+    class K2 bought;
+    class K3 bought;
+    classDef product stroke: green, stroke-width: 2px;
+    class P1 product;
+    class P2 product;
+    class P3 product;</code></pre>
+<h4 id="einleitung">Einleitung<a class="headerlink" href="#einleitung" title="Permanent link">&para;</a></h4>
+<p>Eine Stückliste (Bill of Materials, BOM) kann als gerichteter azyklischer Graph (DAG) dargestellt
+werden. Dabei repräsentieren die Knoten die einzelnen <strong>Produkte</strong>, <strong>Eigenfabrikate</strong>
+und <strong>Kaufteile</strong> (zusammenfassend als <strong>Komponenten</strong> bezeichnet). Die gerichteten Kanten zwischen
+den
+Knoten geben an, welche Komponenten zur Herstellung einer übergeordneten Komponente benötigt werden.
+Jeder Kante ist eine <strong>Menge</strong> <span class="arithmatex">\(q\)</span> zugeordnet, die angibt, wie viele Einheiten der
+untergeordneten Komponente benötigt werden.</p>
+<h4 id="mathematische-herleitung">Mathematische Herleitung<a class="headerlink" href="#mathematische-herleitung" title="Permanent link">&para;</a></h4>
+<p>Sei $ P $ ein Endprodukt und $ X $ eine beliebige Komponente (Eigenfabrikat oder Kaufteil). Die
+gesamte benötigte Menge von $ X $ ergibt sich aus der Summe der Mengen,
+die auf allen möglichen <strong>Pfade</strong> von $ P $ zu $ X $ benötigt werden.
+Jeder einzelne Pfad $ p $ von $ P $ nach $ X $ trägt
+dabei mit folgender Berechnung zur Gesamtmenge bei:</p>
+<div class="arithmatex">\[
+\text{Total}_p(X) = \prod_{(i \rightarrow j) \in p} q_{ij}
+\]</div>
+<p>Die gesamte benötigte Menge von $ X $ ist dann:</p>
+<div class="arithmatex">\[
+\text{Total}(X) = \sum_{p \in \text{Pfade}(P \rightarrow X)} \text{Total}_p(X)
+\]</div>
+<p>Das bedeutet: Für jede einzelne <strong>Komponente</strong> summieren wir über alle möglichen Produktionspfade
+hinweg das Produkt der aufeinanderfolgenden Mengen entlang der Kanten.</p>
+<hr />
+<h4 id="produkt-materialanforderungen">Produkt Materialanforderungen<a class="headerlink" href="#produkt-materialanforderungen" title="Permanent link">&para;</a></h4>
+<p>Wir verwenden eine rekursive Methode zur Berechnung des gesamten Materialbedarfs einer Komponente,
+indem wir den Graphen von oben nach unten durchlaufen. Jeder Knoten multipliziert seinen aktuellen
+Bedarfsfaktor mit der benötigten Menge seiner untergeordneten Komponenten.</p>
+<h5 id="python-implementierung">Python-Implementierung<a class="headerlink" href="#python-implementierung" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_requirements</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Berechnet den gesamten Materialbedarf für eine gegebene Komponente.</span>
+
+<span class="sd">    :param component: Die aktuelle Komponente (Produkt, Eigenfabrikat oder Kaufteil)</span>
+<span class="sd">    :param multiplier: Die Menge, die von dieser Komponente benötigt wird</span>
+<span class="sd">    :return: Ein Dictionary mit der Gesamtmenge jeder benötigten Komponente</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">requirements</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Wenn die Komponente keine weiteren Abhängigkeiten hat (also ein Kaufteil ist)</span>
+    <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">():</span>
+        <span class="n">requirements</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="n">multiplier</span>
+        <span class="k">return</span> <span class="n">requirements</span>
+
+    <span class="c1"># Iteriere über alle abhängigen Komponenten</span>
+    <span class="k">for</span> <span class="n">child</span><span class="p">,</span> <span class="n">amount</span> <span class="ow">in</span> <span class="n">component</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">quantity</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">amount</span>
+        <span class="n">child_requirements</span> <span class="o">=</span> <span class="n">compute_requirements</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">quantity</span><span class="p">)</span>
+
+        <span class="c1"># Aggregiere die Anforderungen</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">child_requirements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">requirements</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">requirements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">count</span>
+
+    <span class="k">return</span> <span class="n">requirements</span>
+</code></pre></div>
+<hr />
+<h4 id="gesamtbedarfs-fur-produktionsplan">Gesamtbedarfs für Produktionsplan<a class="headerlink" href="#gesamtbedarfs-fur-produktionsplan" title="Permanent link">&para;</a></h4>
+<p>Ein <strong>Produktionsplan</strong> gibt an, wie viele Einheiten jedes Endprodukts produziert werden sollen. Um
+den gesamten Materialbedarf für die geplante Produktion zu berechnen, iterieren wir über alle
+Endprodukte und summieren die berechneten Anforderungen.</p>
+<h5 id="python-implementierung_1">Python-Implementierung<a class="headerlink" href="#python-implementierung_1" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_total_requirements</span><span class="p">(</span><span class="n">production_plan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Berechnet den gesamten Materialbedarf für einen Produktionsplan.</span>
+
+<span class="sd">    :param production_plan: Dictionary mit Endprodukten und geplanten Produktionsmengen</span>
+<span class="sd">    :return: Dictionary mit der Gesamtmenge jeder benötigten Komponente</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">total_requirements</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">product</span><span class="p">,</span> <span class="n">planned_quantity</span> <span class="ow">in</span> <span class="n">production_plan</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Berechne Anforderungen für das einzelne Endprodukt</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">requirements</span> <span class="o">=</span> <span class="n">compute_requirements</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="n">planned_quantity</span><span class="p">)</span>
+
+        <span class="c1"># Summiere die Mengen für alle Komponenten auf</span>
+        <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">amount</span> <span class="ow">in</span> <span class="n">requirements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">total_requirements</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_requirements</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">amount</span>
+
+    <span class="k">return</span> <span class="n">total_requirements</span>
+</code></pre></div>
+<hr />
+<h4 id="materialbedarf-bei-vorhandenem-lagerbestand">Materialbedarf bei vorhandenem Lagerbestand<a class="headerlink" href="#materialbedarf-bei-vorhandenem-lagerbestand" title="Permanent link">&para;</a></h4>
+<p>Neben den berechneten Anforderungen aus dem Produktionsplan gibt es auch einen <strong>Lagerbestand</strong>, der
+angibt, wie viele Einheiten jeder Komponente bereits verfügbar sind. Um zu bestimmen, wie viel
+zusätzlich produziert oder eingekauft werden muss, vergleichen wir die berechneten *
+<em>Gesamtanforderungen</em>* mit dem vorhandenen Bestand.</p>
+<h5 id="vorgehensweise">Vorgehensweise<a class="headerlink" href="#vorgehensweise" title="Permanent link">&para;</a></h5>
+<ol>
+<li>Berechne mit <code>compute_total_requirements</code> den gesamten Materialbedarf für den Produktionsplan.</li>
+<li>Vergleiche den berechneten Bedarf mit dem vorhandenen Lagerbestand.</li>
+<li>Falls der Lagerbestand eine Komponente bereits abdeckt, wird diese nicht weiter produziert oder
+   gekauft.</li>
+<li>Falls der Lagerbestand nicht ausreicht, wird die Differenz als <strong>tatsächlicher Produktions- oder
+   Beschaffungsbedarf</strong> gespeichert.</li>
+</ol>
+<h5 id="python-implementierung_2">Python-Implementierung<a class="headerlink" href="#python-implementierung_2" title="Permanent link">&para;</a></h5>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_production_needs</span><span class="p">(</span><span class="n">production_plan</span><span class="p">,</span> <span class="n">inventory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Berechnet den Produktions-, Bestellbedarfs basierend auf dem Produktionsplan und Lager.</span>
+
+<span class="sd">    :param production_plan: Dictionary mit geplanten Produktionsmengen für Endprodukte</span>
+<span class="sd">    :param inventory: Dictionary mit der vorhandenen Menge jeder Komponente im Lager</span>
+<span class="sd">    :return: Dictionary mit der zusätzlichen Menge, die produziert oder eingekauft werden muss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># noinspection PyUnresolvedReferences</span>
+    <span class="n">total_requirements</span> <span class="o">=</span> <span class="n">compute_total_requirements</span><span class="p">(</span><span class="n">production_plan</span><span class="p">)</span>
+    <span class="n">production_needs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">required_amount</span> <span class="ow">in</span> <span class="n">total_requirements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">stock</span> <span class="o">=</span> <span class="n">inventory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Falls Lagerbestand reicht, Bedarf = 0</span>
+        <span class="n">production_needs</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">required_amount</span> <span class="o">-</span> <span class="n">stock</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">production_needs</span>
+</code></pre></div>
+<hr />
+<h4 id="fazit">Fazit<a class="headerlink" href="#fazit" title="Permanent link">&para;</a></h4>
+<p>Mit diesem Ansatz kann für einen gegebenen Produktionsplan der <strong>exakte Materialbedarf</strong> für alle
+Komponenten berechnet werden. Zudem kann durch den Abgleich mit dem Lagerbestand bestimmt werden,
+<strong>wie viel tatsächlich hergestellt oder beschafft</strong> werden muss.</p>
+<p><strong>Vorteile dieser Methode:</strong></p>
+<ul>
+<li>Berücksichtigt verschachtelte Stücklisten (mehrstufige BOMs)</li>
+<li>Aggregiert Materialanforderungen über verschiedene Endprodukte hinweg</li>
+<li>Verhindert Überproduktion durch Einbezug des Lagerbestands</li>
+<li>Nutzt eine rekursive Implementierung zur einfachen Verarbeitung des BOM-Graphs</li>
+</ul>
+<p>Dieser Algorithmus ist essenziell für die <strong>Produktionsplanung</strong>,
+<strong>Materialdisposition</strong> und <strong>Lageroptimierung</strong> in Fertigungsunternehmen. 🚀</p>
+<h3 id="workstation-kapazitaten">Workstation-Kapazitäten<a class="headerlink" href="#workstation-kapazitaten" title="Permanent link">&para;</a></h3>
+<h4 id="1-definition-der-variablen">1. Definition der Variablen<a class="headerlink" href="#1-definition-der-variablen" title="Permanent link">&para;</a></h4>
+<p>Ein Produkt <strong><span class="arithmatex">\(p\)</span></strong> wird nicht an einer einzigen Workstation gefertigt, sondern kann mehrere *
+<em>Bearbeitungsschritte</em><em> durchlaufen. Jeder dieser Schritte wird an einer bestimmten </em><em>Workstation (
+ws)</em>* durchgeführt.</p>
+<p>Jede Workstation <strong><span class="arithmatex">\(ws\)</span></strong> ist dabei mit einer spezifischen <strong>Rüstzeit (<span class="arithmatex">\(rt\)</span>) und
+Bearbeitungszeit (<span class="arithmatex">\(pt\)</span>) pro Einheit</strong> verbunden.</p>
+<p>Für ein Produkt <span class="arithmatex">\(p\)</span> gibt es eine <strong>Sequenz von Arbeitsschritten</strong>, wobei jeder Arbeitsschritt an
+einer bestimmten Workstation <span class="arithmatex">\(ws\)</span> durchgeführt wird:</p>
+<div class="arithmatex">\[
+S(p) = \{(ws_1, rt_1, pt_1), (ws_2, rt_2, pt_2), \dots, (ws_n, rt_n, pt_n) \}
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(S(p)\)</span> die Menge aller Bearbeitungsschritte für Produkt <span class="arithmatex">\(p\)</span> ist.</li>
+<li>Jeder Schritt ein Tupel <span class="arithmatex">\((ws, rt, pt)\)</span> ist:<ul>
+<li><span class="arithmatex">\(ws\)</span>: Die Workstation, die den Schritt ausführt.</li>
+<li><span class="arithmatex">\(rt\)</span>: Die für diesen Schritt benötigte Rüstzeit (fix, unabhängig von der Produktionsmenge).</li>
+<li><span class="arithmatex">\(pt\)</span>: Die Bearbeitungszeit pro Einheit des Produkts an dieser Workstation.</li>
+</ul>
+</li>
+</ul>
+<p>Die benötigte <strong>Kapazität einer einzelnen Workstation <span class="arithmatex">\(ws\)</span></strong> für ein Produkt <span class="arithmatex">\(p\)</span> ergibt sich aus:</p>
+<div class="arithmatex">\[
+T(ws, p, q_p) = rt(ws, p) + q_p \cdot pt(ws, p)
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(q_p\)</span> die Produktionsmenge des Produkts <span class="arithmatex">\(p\)</span> ist.</li>
+<li><span class="arithmatex">\(T(ws, p)\)</span> die gesamte benötigte Kapazität für dieses Produkt an dieser Workstation ist.</li>
+</ul>
+<hr />
+<h4 id="2-berechnung-der-gesamtbelastung-einer-workstation">2. Berechnung der Gesamtbelastung einer Workstation<a class="headerlink" href="#2-berechnung-der-gesamtbelastung-einer-workstation" title="Permanent link">&para;</a></h4>
+<p>Da eine Workstation mehrere Produkte bearbeitet, summieren wir die Kapazität über alle Produkte, die
+an dieser Workstation gefertigt werden müssen:</p>
+<p>Wir können die Formel klarer und kompakter formulieren, indem wir die Bedingung, dass der
+Bearbeitungsschritt an der Workstation <span class="arithmatex">\(ws\)</span> durchgeführt wird, direkt in die Summationsnotation
+einfließen lassen. Eine verbesserte Darstellung lautet:</p>
+<div class="arithmatex">\[
+\text{Cap}(ws) = \sum_{p \in P} \; \sum_{\substack{(ws',\, rt,\, pt) \in S(p) \\ ws' = ws}} \Bigl( rt + q_p \cdot pt \Bigr)
+\]</div>
+<p>Hierbei gilt:</p>
+<ul>
+<li><span class="arithmatex">\(P\)</span> ist die Menge aller zu produzierenden Produkte.</li>
+<li><span class="arithmatex">\(S(p)\)</span> ist die Menge aller Bearbeitungsschritte für Produkt <span class="arithmatex">\(p\)</span>, wobei jeder Schritt als
+  Tupel <span class="arithmatex">\((ws', rt, pt)\)</span> gegeben ist.</li>
+<li><span class="arithmatex">\(rt\)</span> und <span class="arithmatex">\(pt\)</span> stehen für Rüstzeit und Bearbeitungszeit pro Einheit.</li>
+<li><span class="arithmatex">\(q_p\)</span> ist die Produktionsmenge des Produkts <span class="arithmatex">\(p\)</span>.</li>
+<li><span class="arithmatex">\(rt + q_p \cdot pt\)</span> entspricht der benötigten Kapazität (in Minuten) für den jeweiligen Schritt.</li>
+</ul>
+<p>Diese Formel summiert somit für jede Workstation <span class="arithmatex">\(ws\)</span> über alle Produkte <span class="arithmatex">\(p\)</span> und über alle ihrer
+Bearbeitungsschritte, die an <span class="arithmatex">\(ws\)</span> durchgeführt werden, die erforderliche Kapazität.</p>
+<hr />
+<h4 id="3-berucksichtigung-von-lieferverzogerungen-bei-kaufteilen">3. Berücksichtigung von Lieferverzögerungen bei Kaufteilen<a class="headerlink" href="#3-berucksichtigung-von-lieferverzogerungen-bei-kaufteilen" title="Permanent link">&para;</a></h4>
+<p>Falls für ein Produkt <span class="arithmatex">\(p\)</span> Kaufteile benötigt werden, kann deren verspätete Lieferung zu einer
+Kapazitätsminderung führen. Jede Kaufteil-Lieferung besitzt:</p>
+<ul>
+<li>Eine <strong>erwartete Lieferzeit</strong> <span class="arithmatex">\(\ell_k\)</span></li>
+<li>Eine <strong>Lieferzeitabweichung</strong> <span class="arithmatex">\(\sigma_k\)</span></li>
+</ul>
+<p>Falls ein Kaufteil <span class="arithmatex">\(k\)</span> an einer Workstation <span class="arithmatex">\(ws\)</span> benötigt wird, reduziert sich die verfügbare
+Kapazität:</p>
+<div class="arithmatex">\[
+\text{EKapa}(ws) = \text{Kapazität}(ws) - \sum_{k \in K(ws)} \sigma_k
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(K(ws)\)</span> die Menge aller Kaufteile ist, die an Workstation <span class="arithmatex">\(ws\)</span> benötigt werden.</li>
+<li><span class="arithmatex">\(\sigma_k\)</span> die Abweichung der Lieferzeit für das Kaufteil <span class="arithmatex">\(k\)</span> ist.</li>
+</ul>
+<blockquote>
+<p>Gilt die Verspätung auch für Eigenfertigungen? Diese werden ja wiederum auch verspätet sein, weil
+diese auf andere
+Kaufteile warten. Sowie auch wieder auf Eigenfertigungen.</p>
+</blockquote>
+<hr />
+<h3 id="erlauterung-der-zulassigen-workstation-kapazitaten">Erläuterung der zulässigen Workstation-Kapazitäten<a class="headerlink" href="#erlauterung-der-zulassigen-workstation-kapazitaten" title="Permanent link">&para;</a></h3>
+<p>Die täglichen Kapazitäten einer Workstation ergeben sich aus dem eingesetzten Schichtmodell und den
+möglichen Überstunden. Dabei gelten folgende Grundlagen:</p>
+<h4 id="basisarbeitszeit-pro-schicht">Basisarbeitszeit pro Schicht<a class="headerlink" href="#basisarbeitszeit-pro-schicht" title="Permanent link">&para;</a></h4>
+<p>Eine reguläre Schicht dauert 8 Stunden, was $ B = 8\text{h}= 480\text{min}$
+pro Tag ergibt.</p>
+<h4 id="uberstunden">Überstunden<a class="headerlink" href="#uberstunden" title="Permanent link">&para;</a></h4>
+<p>Es können zusätzlich Überstunden geleistet werden, die bis zu 50 % der Basisarbeitszeit betragen.
+Das bedeutet, dass pro Schicht maximal<br />
+$$
+O_{max} = 0.5 \times B = 0.5 \times 480\text{min} = 240\text{min}
+$$
+an Überstunden möglich sind.</p>
+<h4 id="mogliche-schichtmodelle-und-deren-kapazitaten">Mögliche Schichtmodelle und deren Kapazitäten<a class="headerlink" href="#mogliche-schichtmodelle-und-deren-kapazitaten" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Schichten</th>
+<th>Basisarbeitszeit (min/d)</th>
+<th>Überstunden (min/d)</th>
+<th>Zulässiger Bereich (min/d)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>480</td>
+<td>0 - 240</td>
+<td>480 - 720</td>
+</tr>
+<tr>
+<td>2</td>
+<td>960</td>
+<td>0 - 240</td>
+<td>960 - 1200</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1440</td>
+<td>0</td>
+<td>1440</td>
+</tr>
+</tbody>
+</table>
+<h4 id="erforderliche-kapazitat">Erforderliche Kapazität<a class="headerlink" href="#erforderliche-kapazitat" title="Permanent link">&para;</a></h4>
+<p>Die finale geplante Tageskapazität einer Workstation wird auf den nächstgrößeren zulässigen Wert
+angepasst. Dabei gelten folgende Beispiele:</p>
+<ul>
+<li>Beispiel 1:<br />
+  Effektive Kapazität pro Tag <span class="arithmatex">\(ECap_d = 500min\)</span></li>
+</ul>
+<p>→ 500 liegt im zulässigen Bereich einer Schicht (480–720 Min).<br />
+<strong><span class="arithmatex">\(PCap_d = 500 min\)</span></strong></p>
+<ul>
+<li>Beispiel 2:<br />
+<span class="arithmatex">\(ECap_d = 800 min\)</span>
+-</li>
+</ul>
+<p>→ 800 Min überschreiten den 1-Schicht-Bereich, aber liegen unter 960 Min (Minimum 2-Schicht).<br />
+<strong>PCap_d = 960 Min</strong></p>
+<ul>
+<li>Beispiel 3:<br />
+<span class="arithmatex">\(ECap_d = 1300min\)</span></li>
+</ul>
+<p>→ 1300 Min liegen oberhalb des 2-Schicht-Bereichs (960–1200 Min).<br />
+<strong>PCap_d = 1440 Min</strong></p>
+<p>Mathematisch formuliert ergibt sich die geplante Tageskapazität <span class="arithmatex">\(\text{PCap}_d\)</span> aus der effektiven
+Tageskapazität <span class="arithmatex">\(\text{ECap}_d\)</span>:</p>
+<div class="arithmatex">\[
+\text{PCap}_d =
+\begin{cases}
+480, &amp; \text{ECap}_d \leq 480 \\
+\text{ECap}_d, &amp; 480 &lt; \text{ECap}_d \leq 720 \\
+960, &amp; 720 &lt; \text{ECap}_d \leq 960 \\
+\text{ECap}_d, &amp; 960 &lt; \text{ECap}_d \leq 1200 \\
+1440, &amp; \text{ECap}_d &gt; 1200
+\end{cases}
+\]</div>
+<p>Diese Regelung sorgt dafür, dass die Kapazitätsplanung immer auf einem der realistisch möglichen
+Schichtmodelle (1-, 2- oder 3-Schicht) basiert.</p>
+<h4 id="5-gesamtmodell">5. Gesamtmodell<a class="headerlink" href="#5-gesamtmodell" title="Permanent link">&para;</a></h4>
+<p>Die Berechnung der Workstation-Kapazitäten erfolgt in folgenden Schritten:</p>
+<ol>
+<li>
+<p><strong>Bestimmung der Belastung jeder Workstation durch die Produktion</strong><br />
+   $$<br />
+   \text{Cap}<em>{p}(ws) = \sum</em>{p \in P} \sum_{(ws', rt, pt) \in S(p)~\land~{ws' = ws}} \cdot \left( rt + q_p \cdot pt \right)<br />
+   $$</p>
+</li>
+<li>
+<p><strong>Umrechnung auf Tageskapazität</strong><br />
+   $$<br />
+   \text{Cap}_d(ws) = \frac{\text{Cap}_P(ws)}{5}
+   $$</p>
+</li>
+<li>
+<p><strong>Abzug von Lieferverzögerungen der Kaufteile</strong><br />
+   $$<br />
+   \text{ECap}<em>d(ws) = \text{Cap}_d(ws) - \sum</em>{k \in K(ws)} \sigma_k<br />
+   $$</p>
+</li>
+<li>
+<p><strong>Zulässigen Kapazitätswert bestimmen</strong><br />
+   $$
+   \text{PCap}_d =
+   \begin{cases}
+   480, &amp; \text{ECap}_d \leq 480 \
+   \text{ECap}_d, &amp; 480 &lt; \text{ECap}_d \leq 720 \
+   960, &amp; 720 &lt; \text{ECap}_d \leq 960 \
+   \text{ECap}_d, &amp; 960 &lt; \text{ECap}_d \leq 1200 \
+   1440, &amp; \text{ECap}_d &gt; 1200
+   \end{cases}
+   $$</p>
+</li>
+</ol>
+<hr />
+<h4 id="6-fazit">6. Fazit<a class="headerlink" href="#6-fazit" title="Permanent link">&para;</a></h4>
+<h5 id="vorteile-dieses-modells">🔹 Vorteile dieses Modells:<a class="headerlink" href="#vorteile-dieses-modells" title="Permanent link">&para;</a></h5>
+<p>✅ Berücksichtigt <strong>mehrstufige Produktionsprozesse</strong>, in denen ein Produkt mehrere Workstations
+durchläuft.<br />
+✅ Aggregiert <strong>alle Produkte</strong>, die an einer Workstation gefertigt werden, um die Gesamtauslastung
+zu berechnen.<br />
+✅ Bezieht <strong>Lieferverzögerungen von Kaufteilen</strong> mit ein, um realistische Kapazitätsplanungen zu
+ermöglichen.<br />
+✅ <strong>Kapazitätsplanung erfolgt in Minuten pro Tag</strong>, um eine detaillierte Produktionsplanung zu
+ermöglichen.<br />
+✅ <strong>Kapazitätswerte werden an realistisch verfügbare Werte angepasst</strong>, um praktikable Schichtpläne
+zu ermöglichen.</p>
+<p>Dieses Modell stellt eine <strong>präzise Grundlage für die Kapazitätsplanung und Kostenoptimierung</strong> in
+einem Produktionssystem dar. 🚀</p>
+<h3 id="personal-und-maschinenkosten">Personal und Maschinenkosten<a class="headerlink" href="#personal-und-maschinenkosten" title="Permanent link">&para;</a></h3>
+<p>Bei festgelegten Workstation Kapazitäten können die Personalkosten einfach berechnet werden.
+Funktionsweise der Schichten und Personalkosten.
+Sei</p>
+<ul>
+<li><span class="arithmatex">\(B = 480\)</span> Minuten, die Basisarbeitszeit pro Schicht, und</li>
+<li><span class="arithmatex">\(Cap_d(ws)\)</span> die geplante Kapazität pro Tag in Minuten für eine Workstation <span class="arithmatex">\(ws\)</span>.</li>
+</ul>
+<p>Dann gilt:</p>
+<div class="arithmatex">\[
+s(ws) = \max\Big(\min\Big(round(\frac{Cap_d(ws)}{B}),\, 3\Big),\, 1\Big)
+\]</div>
+<p>Dabei gilt:</p>
+<ul>
+<li><span class="arithmatex">\(round(X)\)</span> rundet den Quotienten nach round to nearest, ties to zero.</li>
+<li>Durch <span class="arithmatex">\(\min(\cdot,\, 3)\)</span> wird sichergestellt, dass maximal 3 Schichten verwendet werden.</li>
+<li>Durch <span class="arithmatex">\(\max(\cdot,\, 1)\)</span> wird garantiert, dass mindestens 1 Schicht vorliegt.</li>
+</ul>
+<p>Die Anzahl der Überstunden pro Tag <span class="arithmatex">\(O_d\)</span> berechnet sich dann als Differenz zwischen der geplanten
+Kapazität und der Basiskapazität der ermittelten Schichten:</p>
+<div class="arithmatex">\[
+O_d(ws) = \max\Big(Cap_d(ws) - s(ws) \cdot B,\, 0\Big)
+\]</div>
+<p>Diese mathematische Darstellung erlaubt es, aus einer vorgegebenen Tageskapazität <span class="arithmatex">\(Cap_d\)</span> die nötige
+Anzahl an Schichten (<span class="arithmatex">\(s\)</span>) sowie den Umfang der Überstunden (<span class="arithmatex">\(O_d\)</span>) zu berechnen.</p>
+<p>Es gibt für jede Workstation unterschiedliche Kosten</p>
+<h4 id="berechnung-der-personalkosten-fur-jede-workstation">Berechnung der Personalkosten für jede Workstation<a class="headerlink" href="#berechnung-der-personalkosten-fur-jede-workstation" title="Permanent link">&para;</a></h4>
+<p>Um die Personalkosten für jede Workstation zu berechnen, benötigen wir folgende Informationen:</p>
+<ul>
+<li><strong>Geplante Kapazität pro Tag</strong> <span class="arithmatex">\(PCap_d(ws)\)</span> für jede Workstation <span class="arithmatex">\(ws\)</span></li>
+<li><strong>Anzahl der Schichten</strong> <span class="arithmatex">\(s(ws)\)</span> für jede Workstation <span class="arithmatex">\(ws\)</span></li>
+<li><strong>Überstunden pro Tag</strong> <span class="arithmatex">\(O_d(ws)\)</span> für jede Workstation <span class="arithmatex">\(ws\)</span></li>
+<li><strong>Lohnkosten je Schicht und Überstunden</strong> aus der Tabelle</li>
+<li><strong>Maschinenkosten (fix und variabel) pro Minute</strong> aus der Tabelle</li>
+</ul>
+<hr />
+<h5 id="1-berechnung-der-aufgewendeten-minuten-je-schichttyp">1. Berechnung der aufgewendeten Minuten je Schichttyp<a class="headerlink" href="#1-berechnung-der-aufgewendeten-minuten-je-schichttyp" title="Permanent link">&para;</a></h5>
+<p>Da jede reguläre Schicht genau <strong>480 Minuten</strong> dauert, ergibt sich der Minutenaufwand je Workstation
+folgendermaßen:
+Wie oben <span class="arithmatex">\(B = 480min\)</span>, die Basisarbeitszeit pro Schicht. Ebenso wie bereits definiert <span class="arithmatex">\(Cap_d\)</span> die
+geplante Kapazität pro Tag in Minuten.</p>
+<ul>
+<li><strong>Gesamte produktive Minuten</strong><br />
+  $$
+  Cap_d(ws)
+  $$</li>
+</ul>
+<hr />
+<h5 id="2-berechnung-der-lohnkosten-je-workstation">2. Berechnung der Lohnkosten je Workstation<a class="headerlink" href="#2-berechnung-der-lohnkosten-je-workstation" title="Permanent link">&para;</a></h5>
+<p>Die Lohnkosten hängen von der Anzahl der eingesetzten Schichten ab, da jede Schicht einen
+unterschiedlichen Lohnsatz hat:</p>
+<p><strong>Gesamtkosten für die regulären Schichten</strong><br />
+Die Lohnkosten pro Minute variieren je nach Schicht:
+- <strong>Schicht 1:</strong> Lohnsatz <span class="arithmatex">\(L_1(ws)\)</span>
+- <strong>Schicht 2:</strong> Lohnsatz <span class="arithmatex">\(L_2(ws)\)</span>
+- <strong>Schicht 3:</strong> Lohnsatz <span class="arithmatex">\(L_3(ws)\)</span>
+- <strong>Überstunden:</strong> Lohnsatz <span class="arithmatex">\(L_{o}(ws)\)</span></p>
+<p>Je nach Anzahl der Schichten ergibt sich der reguläre Lohnkostenblock: (<strong>L</strong>abour cost per <strong>d</strong>
+ay)
+$$
+L_{\text{d}}(ws) = L_o(ws) \cdot O_d(ws) +
+\begin{cases}
+L_1(ws) \cdot B.&amp; s(ws) = 1 \
+L_1(ws) \cdot B + L_2(ws) \cdot B, &amp; s(ws) = 2 \
+L_1(ws) \cdot B + L_2(ws) \cdot B + L_3(ws) \cdot B, &amp; s(ws) = 3
+\end{cases}
+$$</p>
+<p>Die <strong>Kapazitätsauslastung</strong> einer Workstation <span class="arithmatex">\(ws\)</span> beschreibt den Anteil der tatsächlich genutzten
+Kapazität im Vergleich zur geplanten Kapazität:</p>
+<div class="arithmatex">\[
+util(ws) = \frac{M_{used}(ws)}{M_{total}(ws)}
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(M_{used}(ws)\)</span> die tatsächlich produktiv genutzten Minuten sind (Bearbeitungszeit).</li>
+<li><span class="arithmatex">\(M_{total}(ws)\)</span> die gesamte eingeplante Kapazität (Schichten + Überstunden).</li>
+</ul>
+<p>Wenn eine Workstation vollständig genutzt wird, beträgt die Auslastung <strong>100 %</strong> <span class="arithmatex">\((= 1)\)</span>. Liegt sie
+darunter, entstehen <strong>Leerkosten</strong>.</p>
+<hr />
+<p>Die Maschinenkosten setzen sich aus <strong>fixen</strong> und <strong>variablen</strong> Kosten zusammen:
+Die <strong>variablen Maschinenkosten</strong> fallen nur für produktiv genutzte Minuten an:</p>
+<div class="arithmatex">\[
+C_{Mvar}(ws) = M_{used}(ws) \cdot c_{Mvar}(ws)
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(c_{Mvar}(ws)\)</span> die variablen Maschinenkosten pro Minute sind.</li>
+<li><span class="arithmatex">\(M_{used}(ws)\)</span> die Minuten, in denen tatsächlich produziert wird.</li>
+</ul>
+<p>Variable Maschinenkosten entstehen <strong>nur dann</strong>, wenn produziert wird. Falls eine Workstation eine
+Schicht eingeplant hat, aber keine Produktion stattfindet, sind die variablen Maschinenkosten <strong>0</strong>.</p>
+<hr />
+<p>Die <strong>fixen Maschinenkosten</strong> fallen an für Leerzeiten innerhalb der Schichten</p>
+<div class="arithmatex">\[
+C_{Mfix}(ws) = M_{total}(ws) - M_{used}(ws) \cdot c_{Mfix}(ws)
+\]</div>
+<p>wobei:</p>
+<ul>
+<li><span class="arithmatex">\(M_{total}(ws) = s(ws) \cdot B + O_d(ws)\)</span> die gesamte geplante Kapazität ist.</li>
+<li><span class="arithmatex">\(c_{Mfix}(ws)\)</span> die fixen Maschinenkosten pro Minute sind.</li>
+</ul>
+<p>Fixe Maschinenkosten entstehen auch dann, wenn eine Workstation nicht voll ausgelastet ist. Falls
+eine Schicht eingeplant wurde, aber die tatsächliche Produktion geringer ist als die geplante
+Kapazität, entstehen <strong>Leerkosten</strong>.</p>
+<h4 id="4-gesamtformel-fur-maschinenkosten">4. Gesamtformel für Maschinenkosten<a class="headerlink" href="#4-gesamtformel-fur-maschinenkosten" title="Permanent link">&para;</a></h4>
+<p>Die gesamten Maschinenkosten einer Workstation setzen sich aus fixen und variablen Kosten zusammen:</p>
+<div class="arithmatex">\[
+C_{M}(ws) = C_{Mfix}(ws) + C_{mach,var}(ws)
+\]</div>
+<p>bzw.</p>
+<div class="arithmatex">\[
+C_{M}(ws) = (M_{total}(ws)- M_used(ws)) \cdot c_{Mfix}(ws)) + (M_{used}(ws) \cdot c_{mach,var}(ws))
+\]</div>
+<hr />
+<h2 id="5-fazit">5. Fazit<a class="headerlink" href="#5-fazit" title="Permanent link">&para;</a></h2>
+<p>🔹 <strong>Fixe Maschinenkosten</strong> fallen immer an, wenn eine Schicht eingeplant wurde – unabhängig von der
+tatsächlichen Nutzung.<br />
+🔹 <strong>Variable Maschinenkosten</strong> entstehen nur, wenn tatsächlich produziert wird.<br />
+🔹 <strong>Leerkosten</strong> entstehen, wenn die eingeplante Schicht nicht vollständig ausgelastet wird.<br />
+🔹 <strong>Kapazitätsauslastung</strong> gibt an, wie effizient eine Workstation genutzt wird – je höher die
+Auslastung, desto geringer die Leerkosten.</p>
+<p>Diese Berechnungen helfen dabei, <strong>Produktionskosten zu minimieren</strong>, indem ineffiziente Nutzung (z.
+B. überflüssige Schichten oder hohe Leerkosten) erkannt wird. 🚀</p>
+<hr />
+<h3 id="4-gesamtkosten-pro-workstation">4. Gesamtkosten pro Workstation<a class="headerlink" href="#4-gesamtkosten-pro-workstation" title="Permanent link">&para;</a></h3>
+<p>Die Gesamtkosten für jede Workstation <span class="arithmatex">\(ws\)</span> setzen sich zusammen aus:</p>
+<div class="arithmatex">\[
+K_{\text{Gesamt}}(ws) = K_{\text{Personal}}(ws) + K_{\text{Maschine}}(ws)
+\]</div>
+<p>Falls eine Workstation <strong>nicht ausgelastet</strong> ist (Leerlaufzeiten), entstehen Leerkosten. Diese
+müssten separat berechnet werden.</p>
+<hr />
+<h2 id="fazit_1">Fazit<a class="headerlink" href="#fazit_1" title="Permanent link">&para;</a></h2>
+<p>Mit dieser Berechnungsmethode können wir für jede Workstation:
+✅ Die Lohnkosten basierend auf den eingesetzten Schichten und Überstunden berechnen<br />
+✅ Die Maschinenkosten aus variablen und fixen Anteilen ermitteln<br />
+✅ Die Gesamtkosten einer Workstation bestimmen<br />
+Dies ermöglicht eine detaillierte Kostenanalyse pro Arbeitsplatz!</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.path", "navigation.instant", "navigation.instant.prefetch", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,123 @@
+%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%
+flowchart LR
+    subgraph C
+        7.C["<div style='font-size:16px'><b>7.C</b></div><small>2 - 20</small>"]
+        8.C["<div style='font-size:16px'><b>8.C</b></div><small>1 - 15</small>"]
+        9.C["<div style='font-size:16px'><b>9.C</b></div><small>3 - 15</small>"]
+        11.C["<div style='font-size:16px'><b>11.C</b></div><small>3 - 10</small>"]
+        12.C["<div style='font-size:16px'><b>12.C</b></div><small>3 - 0</small>"]
+        13.C["<div style='font-size:16px'><b>13.C</b></div><small>2 - 0</small>"]
+    end
+
+    subgraph D
+        6.D["<div style='font-size:16px'><b>6.D</b></div><small>3 - 15</small>"]
+        7.D["<div style='font-size:16px'><b>7.D</b></div><small>2 - 20</small>"]
+        8.D["<div style='font-size:16px'><b>8.D</b></div><small>1 - 15</small>"]
+        9.D["<div style='font-size:16px'><b>9.D</b></div><small>3 - 15</small>"]
+    end
+
+    subgraph H
+        7.H["<div style='font-size:16px'><b>7.H</b></div><small>2 - 30</small>"]
+        15.H["<div style='font-size:16px'><b>15.H</b></div><small>3 - 15</small>"]
+    end
+
+    subgraph graph
+        12.graph["<div style='font-size:16px'><b>12.graph</b></div><small>3 - 0</small>"]
+        13.graph["<div style='font-size:16px'><b>13.graph</b></div><small>2 - 0</small>"]
+    end
+
+    subgraph w
+        1.w["<div style='font-size:16px'><b>1.w</b></div><small>6 - 20</small>"]
+    end
+
+    subgraph x
+        2.x["<div style='font-size:16px'><b>2.x</b></div><small>5 - 30</small>"]
+    end
+
+    subgraph y
+        3.y["<div style='font-size:16px'><b>3.y</b></div><small>5 - 20</small>"]
+    end
+
+    subgraph z
+        4.z["<div style='font-size:16px'><b>4.z</b></div><small>6 - 30</small>"]
+    end
+
+    E4 -->|1| 2.x
+    E7 -->|1| 1.w
+    E10 -->|1| 2.x
+    E13 -->|1| 1.w
+    E18 -->|1| 1.w
+    E49 -->|1| 2.x
+    E50 -->|1| 3.y
+    K21 -->|1| 15.H
+    K25 -->|2| 1.w
+    K25 -->|2| 2.x
+    K26 -->|2| 1.w
+    K27 -->|1| 15.H
+    K27 -->|1| 3.y
+    K28 -->|3| 6.D
+    K32 -->|1| 7.C
+    K32 -->|2| 7.D
+    K35 -->|1| 11.E
+    K35 -->|2| 11.F
+    K36 -->|1| 11.F
+    K37 -->|2| 11.E
+    K38 -->|1| 11.E
+    K39 -->|1| 13.C
+    K39 -->|1| 13.graph
+    K52 -->|1| 10.E
+    K52 -->|1| 10.F
+    K53 -->|36| 10.E
+    K53 -->|36| 10.F
+    K59 -->|3| 8.D
+    6.D -->|1| 8.D
+    7.D -->|1| 9.D
+    8.D -->|1| 7.D
+    9.D -->|1| E18
+    12.graph -->|1| 8.graph
+    13.graph -->|1| 12.graph
+    7.C -->|1| 9.C
+    8.C -->|1| 7.C
+    9.C -->|1| E13
+    12.C -->|1| 8.C
+    13.C -->|1| 12.C
+    1.w -->|1| E49
+    2.x -->|1| E50
+    7.H -->|1| 15.H
+    15.H -->|1| E26
+    3.y -->|1| E51
+    10.E -->|1| 11.E
+    11.E -->|1| E7
+    10.F -->|1| 11.F
+    11.F -->|1| E4
+    8.graph -->|1| 7.graph
+    7.graph -->|1| 9.graph
+    9.graph -->|1| E10
+    K24 -->|1| 15.H
+    K24 -->|2| 1.w
+    K24 -->|2| 2.x
+    K24 -->|1| 3.y
+    E17 -->|1| 3.y
+    E16 -->|1| 3.y
+    %% Style definitions
+    classDef bought fill:#455A64,stroke:#CFD8DC,stroke-width:2px,color:#CFD8DC;
+    classDef produced fill:#263238,stroke:#ECEFF1,stroke-width:2px,color:#ECEFF1;
+    classDef process fill:#1C313A,stroke:#B0BEC5,stroke-width:2px,color:#B0BEC5;
+    7.C:::process
+    8.C:::process
+    9.C:::process
+    11.C:::process
+    12.C:::process
+    13.C:::process
+    6.D:::process
+    7.D:::process
+    8.D:::process
+    9.D:::process
+    7.H:::process
+    15.H:::process
+    12.graph:::process
+    13.graph:::process
+    1.w:::process
+    2.x:::process
+    3.y:::process
+    4.z:::process
