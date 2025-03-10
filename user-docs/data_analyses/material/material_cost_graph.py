@@ -7,27 +7,27 @@ from graph_setup import create_graph
 import networkx as nx
 from process_util import Node, Process, get_graphs_nodes
 
+SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
 
 
 def nx_to_mermaid(graph):
-    lines = ["%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%", "flowchart LR"]
+    lines: list[str] = [SETTINGS, "flowchart LR"]
     indent = " " * 4
     class_assignments = []
 
 
     nodes = get_graphs_nodes(graph)
 
-    unique_subgraphs = set([node.group for node in nodes])
-    subgraphs = {
-        group: [] for group in unique_subgraphs
-    }
+    subgraphs = {}
 
 
-    for node in filter(lambda n: n is Process, nodes):
+    for node in filter(lambda n: isinstance(n, Process), nodes):
+        if node.group not in subgraphs:
+            subgraphs[node.group] = []
         subgraphs[node.group].append(node)
 
-    for node in filter(lambda n: n is not Process, nodes):
-        class_assignments.append(indent + f'{node.id}:::{node.type}')
+    for node in filter(lambda n: not isinstance(n, Process), nodes):
+        class_assignments.append(indent + f'{node.id}:::{node.node_type}')
         lines.append(indent + f'{node.id}([{node.id}])')
 
 
@@ -41,7 +41,7 @@ def nx_to_mermaid(graph):
                      f"<small>{node.process_duration} - {node.setup_duration}</small>"
                      )
             lines.append(indent * 2 + f'{node.id}["{label}"]')
-            class_assignments.append(indent + f'{node.id}:::{node.type}')
+            class_assignments.append(indent + f'{node.id}:::{node.node_type}')
         lines.append(indent + "end")
         lines.append("")
 
