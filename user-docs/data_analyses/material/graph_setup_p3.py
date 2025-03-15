@@ -9,6 +9,8 @@ def create_graph_p3():
     def _add_edge(source_id, target_id, weight=1):
         flow.add_edge(source_id, target_id, weight)
 
+    flow.add_produced("E3")
+
     # region A
     _add_process("15.A", 3, 15)
 
@@ -101,6 +103,7 @@ def create_graph_p3():
     # F
     _add_edge("K33", "10.F")
     _add_edge("K34", "10.F", 36)
+    _add_edge("10.F", "11.F")
     _add_edge("K35", "11.F", 2)
     _add_edge("K36", "11.F")
     _add_edge("11.F", "E6")
@@ -115,8 +118,8 @@ def create_graph_p3():
     _add_edge("9.G", "E12")
 
     # H
-    _add_edge("K44", "7.H")
-    _add_edge("K48", "7.H")
+    _add_edge("K44", "7.H", 2)
+    _add_edge("K48", "7.H", 2)
     _add_edge("7.H", "15.H")
     _add_edge("K47", "15.H")
     _add_edge("15.H", "E26")
@@ -151,6 +154,6 @@ def create_graph_p3():
     _add_edge("K23", "4.z")
     _add_edge("K24", "4.z")
     _add_edge("K27", "4.z")
-    _add_edge("4.z", "P3")
+    _add_edge("4.z", "E3")
 
     return flow

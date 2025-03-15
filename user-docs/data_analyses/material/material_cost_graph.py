@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 
-from graph_setup import create_graph_p1
+from graph_setup_p1 import create_graph_p1
 from graph_setup_p2 import create_graph_p2
 from graph_setup_p3 import create_graph_p3
 from production_graph import MaterialProductionFlowGraph, Process
