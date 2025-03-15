@@ -49,6 +49,8 @@ class MaterialProductionFlowGraph:
             self.add_bought(item_id)
         elif "E" in item_id:
             self.add_produced(item_id)
+        elif 'P' in item_id:
+            self.add_produced(item_id)
         else:
             raise ValueError(f"Only bought K and produced E is allowed!: {item_id}")
 

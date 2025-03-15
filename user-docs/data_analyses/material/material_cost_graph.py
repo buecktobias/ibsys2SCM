@@ -1,7 +1,9 @@
 import re
 from dataclasses import dataclass
 
-from graph_setup import create_graph
+from graph_setup import create_graph_p1
+from graph_setup_p2 import create_graph_p2
+from graph_setup_p3 import create_graph_p3
 from production_graph import MaterialProductionFlowGraph, Process
 
 SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
@@ -141,22 +143,25 @@ class NxToMermaid:
         self.add_class_definitions()
         return "\n".join(self.lines)
 
-    def save_html(self, mermaid_code):
-        with open("template.html", encoding="utf-8") as f:
+    def save_html(self, mermaid_code, graph_name):
+        with open(f"template.html", encoding="utf-8") as f:
             html = f.read()
         result = re.sub(r"{{\s*mermaidContent\s*}}", mermaid_code, html)
-        with open("diagram.html", "w", encoding="utf-8") as f:
+        result = re.sub(r"{{\s*diagram_title\s*}}", graph_name, result)
+        with open(f"diagram_{graph_name}.html", "w", encoding="utf-8") as f:
             f.write(result)
 
-    def save_mmd(self, diagram_code):
-        with open("diagram.mmd", "w", encoding="utf-8") as f:
+    def save_mmd(self, diagram_code, graph_name):
+        with open(f"diagram_{graph_name}.mmd", "w", encoding="utf-8") as f:
             f.write(diagram_code)
 
-    def nx_to_mermaid(self):
+    def nx_to_mermaid(self, name: str):
         content = self.convert()
-        self.save_mmd(content)
-        self.save_html(content)
+        self.save_mmd(content, name)
+        self.save_html(content, name)
 
 
 if __name__ == '__main__':
-    NxToMermaid(create_graph()).nx_to_mermaid()
+    NxToMermaid(create_graph_p1()).nx_to_mermaid("p1")
+    NxToMermaid(create_graph_p2()).nx_to_mermaid("p2")
+    NxToMermaid(create_graph_p3()).nx_to_mermaid("p3")
