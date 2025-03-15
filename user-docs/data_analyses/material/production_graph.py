@@ -13,10 +13,10 @@ class Type(Enum):
 @dataclass
 class Node:
     node_uid: str
+    node_type: Type
 
 @dataclass
 class Item(Node):
-    node_type: Type
     node_id : int
     def __init__(self, node_id, node_type):
         self.node_id = node_id
@@ -37,6 +37,7 @@ class Process(Node):
         self.process_group = process_group
         self.process_duration = process_duration
         self.setup_duration = setup_duration
+        self.node_type = Type.PROCESS
 
     @property
     def node_uid(self):
@@ -77,9 +78,9 @@ class MaterialProductionFlowGraph:
         nodes = []
         for node, attr in self.graph.nodes(data=True):
             node_type = attr.get("type")
-            if node_type == Type.PROCESS.value:
+            if node_type == Type.PROCESS:
                 workstation_id, process_group = node.split(".")
                 nodes.append(Process(workstation_id, process_group, attr.get("process_duration"), attr.get("setup_duration")))
             else:
-                nodes.append(Item(node, node_type))
+                nodes.append(Item(node[1:], node_type))
         return nodes

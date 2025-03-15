@@ -27,18 +27,69 @@ flowchart LR
     2.x["<div style='font-size:18px'><b>2</b></div>5<br/>30"]
     4.z["<div style='font-size:18px'><b>4</b></div>6<br/>30"]
     3.y["<div style='font-size:18px'><b>3</b></div>5<br/>20"]
+    E1([<div style='font-size:10px'>E1</div>])
+    15.A([<div style='font-size:10px'>15.A</div>])
+    6.B([<div style='font-size:10px'>6.B</div>])
+    14.B([<div style='font-size:10px'>14.B</div>])
+    13.C([<div style='font-size:10px'>13.C</div>])
+    12.C([<div style='font-size:10px'>12.C</div>])
+    8.C([<div style='font-size:10px'>8.C</div>])
+    7.C([<div style='font-size:10px'>7.C</div>])
+    9.C([<div style='font-size:10px'>9.C</div>])
+    6.D([<div style='font-size:10px'>6.D</div>])
+    7.D([<div style='font-size:10px'>7.D</div>])
+    8.D([<div style='font-size:10px'>8.D</div>])
+    9.D([<div style='font-size:10px'>9.D</div>])
+    10.E([<div style='font-size:10px'>10.E</div>])
+    11.E([<div style='font-size:10px'>11.E</div>])
+    10.F([<div style='font-size:10px'>10.F</div>])
+    11.F([<div style='font-size:10px'>11.F</div>])
+    13.G([<div style='font-size:10px'>13.G</div>])
+    12.G([<div style='font-size:10px'>12.G</div>])
+    8.G([<div style='font-size:10px'>8.G</div>])
+    7.G([<div style='font-size:10px'>7.G</div>])
+    9.G([<div style='font-size:10px'>9.G</div>])
+    7.H([<div style='font-size:10px'>7.H</div>])
+    15.H([<div style='font-size:10px'>15.H</div>])
+    1.w([<div style='font-size:10px'>1.w</div>])
+    2.x([<div style='font-size:10px'>2.x</div>])
+    4.z([<div style='font-size:10px'>4.z</div>])
+    3.y([<div style='font-size:10px'>3.y</div>])
+    K43([<div style='font-size:10px'>K43</div>])
+    K44([<div style='font-size:10px'>K44</div>])
+    K45([<div style='font-size:10px'>K45</div>])
+    K46([<div style='font-size:10px'>K46</div>])
     E17([<div style='font-size:10px'>E17</div>])
+    K28([<div style='font-size:10px'>K28</div>])
+    K24([<div style='font-size:10px'>K24</div>])
+    K40([<div style='font-size:10px'>K40</div>])
+    K41([<div style='font-size:10px'>K41</div>])
+    K42([<div style='font-size:10px'>K42</div>])
     E16([<div style='font-size:10px'>E16</div>])
+    K39([<div style='font-size:10px'>K39</div>])
+    K32([<div style='font-size:10px'>K32</div>])
     E13([<div style='font-size:10px'>E13</div>])
+    K59([<div style='font-size:10px'>K59</div>])
     E18([<div style='font-size:10px'>E18</div>])
+    K52([<div style='font-size:10px'>K52</div>])
+    K53([<div style='font-size:10px'>K53</div>])
+    K35([<div style='font-size:10px'>K35</div>])
+    K37([<div style='font-size:10px'>K37</div>])
+    K38([<div style='font-size:10px'>K38</div>])
     E7([<div style='font-size:10px'>E7</div>])
+    K36([<div style='font-size:10px'>K36</div>])
     E4([<div style='font-size:10px'>E4</div>])
     E10([<div style='font-size:10px'>E10</div>])
+    K48([<div style='font-size:10px'>K48</div>])
+    K47([<div style='font-size:10px'>K47</div>])
     E26([<div style='font-size:10px'>E26</div>])
+    K25([<div style='font-size:10px'>K25</div>])
+    K26([<div style='font-size:10px'>K26</div>])
     E49([<div style='font-size:10px'>E49</div>])
     E50([<div style='font-size:10px'>E50</div>])
+    K27([<div style='font-size:10px'>K27</div>])
     E51([<div style='font-size:10px'>E51</div>])
-    P1([<div style='font-size:10px'>P1</div>])
+    K21([<div style='font-size:10px'>K21</div>])
     subgraph A[<div style='font-size:21px'><b>A</b><br/></div>]
     15.A["<div style='font-size:18px'><b>15</b></div>3<br/>15"]
     end
@@ -127,14 +178,14 @@ flowchart LR
     15.H --> E26
     1.w --> E49
     2.x --> E50
-    4.z --> P1
+    4.z --> E1
     3.y --> E51
     K43_1([<div style='font-size:10px'>K43</div>])
     K43_1 --- 15.A
     K44_1([<div style='font-size:10px'>K44</div>])
     K44_1 --- 15.A
     K44_2([<div style='font-size:10px'>K44</div>])
-    K44_2 --- 7.H
+    K44_2 --- |2| 7.H
     K45_1([<div style='font-size:10px'>K45</div>])
     K45_1 --- 15.A
     K46_1([<div style='font-size:10px'>K46</div>])
@@ -159,7 +210,7 @@ flowchart LR
     K41_1([<div style='font-size:10px'>K41</div>])
     K41_1 --- 14.B
     K42_1([<div style='font-size:10px'>K42</div>])
-    K42_1 --- 14.B
+    K42_1 --- |2| 14.B
     E16 --> 3.y
     K39_1([<div style='font-size:10px'>K39</div>])
     K39_1 --- 13.C
@@ -171,7 +222,7 @@ flowchart LR
     K32_2 --- |2| 7.D
     E13 --> 1.w
     K59_1([<div style='font-size:10px'>K59</div>])
-    K59_1 --- |3| 8.D
+    K59_1 --- |2| 8.D
     E18 --> 1.w
     K52_1([<div style='font-size:10px'>K52</div>])
     K52_1 --- 10.E
@@ -182,7 +233,7 @@ flowchart LR
     K53_2([<div style='font-size:10px'>K53</div>])
     K53_2 --- |36| 10.F
     K35_1([<div style='font-size:10px'>K35</div>])
-    K35_1 --- 11.E
+    K35_1 --- |2| 11.E
     K35_2([<div style='font-size:10px'>K35</div>])
     K35_2 --- |2| 11.F
     K37_1([<div style='font-size:10px'>K37</div>])
@@ -195,7 +246,7 @@ flowchart LR
     E4 --> 2.x
     E10 --> 2.x
     K48_1([<div style='font-size:10px'>K48</div>])
-    K48_1 --- 7.H
+    K48_1 --- |2| 7.H
     K47_1([<div style='font-size:10px'>K47</div>])
     K47_1 --- 15.H
     E26 --> 4.z
@@ -214,110 +265,3 @@ flowchart LR
     E51 --> 4.z
     K21_1([<div style='font-size:10px'>K21</div>])
     K21_1 --- 4.z
-    %% Style definitions
-    classDef bought fill:#455A64,stroke:#CFD8DC,stroke-width:1px,color:#CFD8DC;
-    classDef produced fill:#263238,stroke:#ECEFF1,stroke-width:1px,color:#ECEFF1;
-    classDef process fill:#1C313A,stroke:#B0BEC5,stroke-width:2px,color:#B0BEC5;
-    15.A:::process
-    6.B:::process
-    14.B:::process
-    13.C:::process
-    12.C:::process
-    8.C:::process
-    7.C:::process
-    9.C:::process
-    6.D:::process
-    7.D:::process
-    8.D:::process
-    9.D:::process
-    10.E:::process
-    11.E:::process
-    10.F:::process
-    11.F:::process
-    13.G:::process
-    12.G:::process
-    8.G:::process
-    7.G:::process
-    9.G:::process
-    7.H:::process
-    15.H:::process
-    1.w:::process
-    2.x:::process
-    4.z:::process
-    3.y:::process
-    E17:::produced
-    E16:::produced
-    E13:::produced
-    E18:::produced
-    E7:::produced
-    E4:::produced
-    E10:::produced
-    E26:::produced
-    E49:::produced
-    E50:::produced
-    E51:::produced
-    P1:::produced
-    15.A:::process
-    6.B:::process
-    14.B:::process
-    13.C:::process
-    12.C:::process
-    8.C:::process
-    7.C:::process
-    9.C:::process
-    6.D:::process
-    7.D:::process
-    8.D:::process
-    9.D:::process
-    10.E:::process
-    11.E:::process
-    10.F:::process
-    11.F:::process
-    13.G:::process
-    12.G:::process
-    8.G:::process
-    7.G:::process
-    9.G:::process
-    7.H:::process
-    15.H:::process
-    1.w:::process
-    2.x:::process
-    3.y:::process
-    4.z:::process
-    K43_1:::bought
-    K44_1:::bought
-    K44_2:::bought
-    K45_1:::bought
-    K46_1:::bought
-    K28_1:::bought
-    K28_2:::bought
-    K24_1:::bought
-    K24_2:::bought
-    K24_3:::bought
-    K24_4:::bought
-    K24_5:::bought
-    K40_1:::bought
-    K41_1:::bought
-    K42_1:::bought
-    K39_1:::bought
-    K39_2:::bought
-    K32_1:::bought
-    K32_2:::bought
-    K59_1:::bought
-    K52_1:::bought
-    K52_2:::bought
-    K53_1:::bought
-    K53_2:::bought
-    K35_1:::bought
-    K35_2:::bought
-    K37_1:::bought
-    K38_1:::bought
-    K36_1:::bought
-    K48_1:::bought
-    K47_1:::bought
-    K25_1:::bought
-    K25_2:::bought
-    K26_1:::bought
-    K27_1:::bought
-    K27_2:::bought
-    K21_1:::bought

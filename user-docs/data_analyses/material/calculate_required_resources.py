@@ -7,8 +7,8 @@ from graph_setup_p3 import create_graph_p3
 
 def calculate_required_resources(graph: MaterialProductionFlowGraph, product_id: str):
     required_resources = Counter()
+    required_resources[product_id] = 1
     def traverse(node, multiplier=1):
-
         for pred in graph.graph.predecessors(node):
             edge_weight = graph.graph[pred][node].get('weight', 1)
             total_weight = edge_weight * multiplier
@@ -24,7 +24,6 @@ def calculate_required_resources(graph: MaterialProductionFlowGraph, product_id:
 
 
 if __name__ == '__main__':
-
     graph_p1 = create_graph_p1()
     graph_p2 = create_graph_p2()
     graph_p3 = create_graph_p3()
@@ -35,12 +34,9 @@ if __name__ == '__main__':
 
 
     def get_number_from_uid(uid: str):
-        print(uid)
         if "." in uid:
-            print(uid.split(".")[0])
             return int(uid.split(".")[0])
         else:
-            print(uid[1:])
             return int(uid[1:])
 
     def print_sorted_resources(resources_dict: dict[str, int]):
