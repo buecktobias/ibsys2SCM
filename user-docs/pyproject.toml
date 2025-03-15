@@ -8,6 +8,7 @@ dependencies = [
     "matplotlib>=3.10.1",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.7",
+    "networkx>=3.4.2",
     "numpy>=2.2.3",
     "pandas>=2.2.3",
     "scipy>=1.15.2",

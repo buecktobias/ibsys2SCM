@@ -2,14 +2,13 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/new-venv/Scripts" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/scientific-venv" />
       <excludeFolder url="file://$MODULE_DIR$/new-venv" />
       <excludeFolder url="file://$MODULE_DIR$/user-docs/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/user-docs/site" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.13 (ibsys2SCM) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="uv (ibsys2SCM)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="d3" level="application" />
   </component>

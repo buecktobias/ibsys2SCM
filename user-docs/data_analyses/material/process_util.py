@@ -15,6 +15,10 @@ class Node:
     id: str
     node_type: str
 
+    @property
+    def is_produced(self):
+        return self.node_type == Type.PRODUCED.value
+
 @dataclass
 class Process(Node):
     process_duration: int
