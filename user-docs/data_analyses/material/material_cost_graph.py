@@ -63,7 +63,7 @@ class NxToMermaid:
 
     def add_node(self, node):
         self.class_assignments.append(self.indent + f'{node.id}:::{node.node_type}')
-        label = (f"<div style='font-size:16px'><b>{node.workstation}</b></div>"
+        label = (f"<div style='font-size:18px'><b>{node.workstation}</b></div>"
                  f"{node.process_duration}<br/>{node.setup_duration}")
         self.lines.append(self.indent + f'{node.id}["{label}"]')
 
@@ -103,7 +103,7 @@ class NxToMermaid:
     def add_class_definitions(self):
         self.lines.append(self.indent + "%% Style definitions")
         self.lines.append(self.indent + "classDef bought fill:#455A64,stroke:#CFD8DC,stroke-width:1px,color:#CFD8DC;")
-        self.lines.append(self.indent + "classDef produced fill:#263238,stroke:#ECEFF1,stroke-width:2px,color:#ECEFF1;")
+        self.lines.append(self.indent + "classDef produced fill:#263238,stroke:#ECEFF1,stroke-width:1px,color:#ECEFF1;")
         self.lines.append(self.indent + "classDef process fill:#1C313A,stroke:#B0BEC5,stroke-width:2px,color:#B0BEC5;")
         self.lines.extend(self.class_assignments)
 
