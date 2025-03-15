@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 
 from graph_setup import create_graph
-from process_util import Process, get_graphs_nodes
+from production_graph import MaterialProductionFlowGraph, Process
 
 SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
 
@@ -42,14 +42,18 @@ class MermaidStyle:
 
 class NxToMermaid:
     def __init__(self, graph):
-        self.graph = graph
+        self.graph: MaterialProductionFlowGraph = graph
         self.lines = [SETTINGS, "flowchart LR"]
         self.indent = " " * 4
         self.class_assignments = []
         self.subgraphs = {}
-        self.nodes = list(get_graphs_nodes(graph))
         self.node_dict = {node.id: node for node in self.nodes}
         self.dup_counter = {}
+
+    @property
+    def nodes(self):
+        return self.graph.get_graphs_nodes()
+
 
     def get_process_nodes(self):
         return [n for n in self.nodes if isinstance(n, Process)]
@@ -59,12 +63,12 @@ class NxToMermaid:
 
     def add_node(self, node):
         self.class_assignments.append(self.indent + f'{node.id}:::{node.node_type}')
-        label = (f"<div style='font-size:16px'><b>{node.id}</b></div>"
-                 f"<small>{node.process_duration} - {node.setup_duration}</small>")
+        label = (f"<div style='font-size:16px'><b>{node.workstation}</b></div>"
+                 f"{node.process_duration}<br/>{node.setup_duration}")
         self.lines.append(self.indent + f'{node.id}["{label}"]')
 
     def add_subgraph(self, group, nodes):
-        self.lines.append(self.indent + f"subgraph {group}")
+        self.lines.append(self.indent + f"subgraph {group}[<div style='font-size:21px'><b>{group}</b><br/></div>]")
         for node in nodes:
             self.add_node(node)
         self.lines.append(self.indent + "end")
@@ -82,15 +86,19 @@ class NxToMermaid:
         self.lines.append(self.indent + f'{new_id}([<div style=\'font-size:10px\'>{original_node.id}</div>])')
         return new_id
 
+    def _add_edge(self, from_node, to_node, weight, is_directed=True):
+        arrow = "-->" if is_directed else "---"
+        if weight == 1:
+            self.lines.append(self.indent + f'{from_node} {arrow} {to_node}')
+        else:
+            self.lines.append(self.indent + f'{from_node} {arrow} |{weight}| {to_node}')
+
     def add_edge(self, from_node, to_node, attr):
-        new_from = from_node
-        new_to = to_node
-        if self.node_dict[from_node].node_type == "bought":
-            new_from = self.duplicate_bought_node(from_node)
-        if self.node_dict[to_node].node_type == "bought":
-            new_to = self.duplicate_bought_node(to_node)
-        w = attr.get("weight", "")
-        self.lines.append(self.indent + f'{new_from} -->|{w}| {new_to}')
+        is_bought_edge = self.node_dict[from_node].node_type == "bought"
+        if is_bought_edge:
+            from_node = self.duplicate_bought_node(from_node)
+        weight = attr.get("weight", "")
+        self._add_edge(from_node, to_node, weight, is_directed=not is_bought_edge)
 
     def add_class_definitions(self):
         self.lines.append(self.indent + "%% Style definitions")
@@ -128,7 +136,7 @@ class NxToMermaid:
             self.add_node(node)
         for group, nodes in grouped:
             self.add_subgraph(group, nodes)
-        for from_node, to_node, attr in self.graph.edges(data=True):
+        for from_node, to_node, attr in self.graph.graph.edges(data=True):
             self.add_edge(from_node, to_node, attr)
         self.add_class_definitions()
         return "\n".join(self.lines)
