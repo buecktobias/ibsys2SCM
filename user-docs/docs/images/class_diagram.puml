@@ -20,7 +20,7 @@ class InventoryEntry {
   + quantity : int
 }
 
-' Inventory verwaltet eine Zuordnung von Item-ID zu InventoryEntry
+' ResourceCounter verwaltet eine Zuordnung von Item-ID zu InventoryEntry
 class Inventory {
   - entries : Map<int, InventoryEntry>
   + getQuantity(itemId: int) : int
