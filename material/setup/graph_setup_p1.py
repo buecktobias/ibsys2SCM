@@ -1,137 +1,235 @@
-from material.graph.production_graph import GraphBuilder
+from material.graph.production_graph import MaterialProductFlowGraph, SubGraph
 
 
+# noinspection PyPep8Naming
 def create_graph_p1():
-    flow = GraphBuilder()
+    graph = MaterialProductFlowGraph()
 
-    def _add_process(id, pd, sd):
-        flow.add_process(id, pd, sd)
+    def create_sub_graph(label):
+        return SubGraph(label, graph)
 
-    def _add_edge(source_id, target_id, weight=1):
-        flow.add_edge(source_id, target_id, weight)
+    # Create subgraph builders for each group.
+    subgraph_A = create_sub_graph("A")
+    subgraph_B = create_sub_graph("B")
+    subgraph_C = create_sub_graph("C")
+    subgraph_D = create_sub_graph("D")
+    subgraph_E = create_sub_graph("E")
+    subgraph_F = create_sub_graph("F")
+    subgraph_G = create_sub_graph("G")
+    subgraph_H = create_sub_graph("H")
+    subgraph_w = create_sub_graph("w")
+    subgraph_x = create_sub_graph("x")
+    subgraph_y = create_sub_graph("y")
+    subgraph_z = create_sub_graph("z")
 
-    _add_process("15.A", 3, 15)
+    # For each process, provide inputs (map of item uid to weight) and output uid.
+    subgraph_A.add_process(
+        workstation_id=15,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"K43": 1, "K44": 1, "K45": 1, "K46": 1},
+        output_uid="E17"
+    )
 
-    _add_process("6.B", 2, 15)
-    _add_process("14.B", 3, 0)
+    subgraph_B.add_process(
+        workstation_id=6,
+        process_duration=2,
+        setup_duration=15,
+        inputs={"K28": 1},
+        output_uid="E14"
+    )
+    subgraph_B.add_process(
+        workstation_id=14,
+        process_duration=3,
+        setup_duration=0,
+        inputs={"E14": 1, "K24": 1, "K40": 1, "K41": 1, "K42": 2},
+        output_uid="E16"
+    )
 
-    _add_process("13.C", 2, 0)
-    _add_process("12.C", 3, 0)
-    _add_process("8.C", 1, 15)
-    _add_process("7.C", 2, 20)
-    _add_process("9.C", 3, 15)
+    subgraph_C.add_process(
+        workstation_id=13,
+        process_duration=2,
+        setup_duration=0,
+        inputs={"K39": 1},
+        output_uid="E12"
+    )
+    subgraph_C.add_process(
+        workstation_id=12,
+        process_duration=3,
+        setup_duration=0,
+        inputs={"E12": 1},
+        output_uid="E8"
+    )
+    subgraph_C.add_process(
+        workstation_id=8,
+        process_duration=1,
+        setup_duration=15,
+        inputs={"E8": 1},
+        output_uid="E7"
+    )
+    subgraph_C.add_process(
+        workstation_id=7,
+        process_duration=2,
+        setup_duration=20,
+        inputs={"E7": 1, "K32": 1},
+        output_uid="E9"
+    )
+    subgraph_C.add_process(
+        workstation_id=9,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"E9": 1},
+        output_uid="E13"
+    )
 
-    _add_process("6.D", 3, 15)
-    _add_process("7.D", 2, 20)
-    _add_process("8.D", 1, 15)
-    _add_process("9.D", 3, 15)
+    subgraph_D.add_process(
+        workstation_id=6,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"K28": 3},
+        output_uid="E8D"
+    )
+    subgraph_D.add_process(
+        workstation_id=8,
+        process_duration=1,
+        setup_duration=15,
+        inputs={"E8D": 1, "K59": 2},
+        output_uid="E7D"
+    )
+    subgraph_D.add_process(
+        workstation_id=7,
+        process_duration=2,
+        setup_duration=20,
+        inputs={"E7D": 1, "K32": 2},
+        output_uid="E9D"
+    )
+    subgraph_D.add_process(
+        workstation_id=9,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"E9D": 1},
+        output_uid="E18"
+    )
 
-    _add_process("10.E", 4, 20)
-    _add_process("11.E", 3, 20)
+    subgraph_E.add_process(
+        workstation_id=10,
+        process_duration=4,
+        setup_duration=20,
+        inputs={"K52": 1, "K53": 36},
+        output_uid="E11"
+    )
+    subgraph_E.add_process(
+        workstation_id=11,
+        process_duration=3,
+        setup_duration=20,
+        inputs={"E11": 1, "K35": 2, "K37": 2, "K38": 1},
+        output_uid="E7"
+    )
 
-    _add_process("10.F", 4, 20)
-    _add_process("11.F", 3, 10)
+    subgraph_F.add_process(
+        workstation_id=10,
+        process_duration=4,
+        setup_duration=20,
+        inputs={"K52": 1, "K53": 36},
+        output_uid="E11F"
+    )
+    subgraph_F.add_process(
+        workstation_id=11,
+        process_duration=3,
+        setup_duration=10,
+        inputs={"E11F": 1, "K35": 2, "K36": 1},
+        output_uid="E4"
+    )
 
-    _add_process("13.G", 2, 0)
-    _add_process("12.G", 3, 0)
-    _add_process("8.G", 1, 15)
-    _add_process("7.G", 2, 20)
-    _add_process("9.G", 3, 15)
+    subgraph_G.add_process(
+        workstation_id=13,
+        process_duration=2,
+        setup_duration=0,
+        inputs={"K39": 1},
+        output_uid="E12G"
+    )
+    subgraph_G.add_process(
+        workstation_id=12,
+        process_duration=3,
+        setup_duration=0,
+        inputs={"E12G": 1},
+        output_uid="E8G"
+    )
+    subgraph_G.add_process(
+        workstation_id=8,
+        process_duration=1,
+        setup_duration=15,
+        inputs={"E8G": 1},
+        output_uid="E7G"
+    )
+    subgraph_G.add_process(
+        workstation_id=7,
+        process_duration=2,
+        setup_duration=20,
+        inputs={"E7G": 1},
+        output_uid="E9G"
+    )
+    subgraph_G.add_process(
+        workstation_id=9,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"E9G": 1},
+        output_uid="E10"
+    )
 
-    _add_process("7.H", 2, 30)
-    _add_process("15.H", 3, 15)
+    subgraph_H.add_process(
+        workstation_id=7,
+        process_duration=2,
+        setup_duration=30,
+        inputs={"K44": 2, "K48": 2},
+        output_uid="E15H"
+    )
+    subgraph_H.add_process(
+        workstation_id=15,
+        process_duration=3,
+        setup_duration=15,
+        inputs={"E15H": 1, "K47": 1},
+        output_uid="E26"
+    )
 
-    _add_process("1.w", 6, 20)
-    _add_process("2.x", 5, 30)
-    _add_process("4.z", 6, 30)
-    _add_process("3.y", 5, 20)
+    subgraph_w.add_process(
+        workstation_id=1,
+        process_duration=6,
+        setup_duration=20,
+        inputs={"K24": 2, "K25": 2, "K26": 2, "E13": 1, "E18": 1, "E7": 1},
+        output_uid="E49"
+    )
 
-    _add_edge("K43", "15.A")
-    _add_edge("K44", "15.A")
-    _add_edge("K45", "15.A")
-    _add_edge("K46", "15.A")
-    _add_edge("15.A", "E17")
+    subgraph_x.add_process(
+        workstation_id=2,
+        process_duration=5,
+        setup_duration=30,
+        inputs={"E49": 1, "E4": 1, "E10": 1, "K24": 2, "K25": 2},
+        output_uid="E50"
+    )
 
-    _add_edge("K28", "6.B")
-    _add_edge("6.B", "14.B")
-    _add_edge("K24", "14.B")
-    _add_edge("K40", "14.B")
-    _add_edge("K41", "14.B")
-    _add_edge("K42", "14.B", 2)
-    _add_edge("14.B", "E16")
+    subgraph_y.add_process(
+        workstation_id=3,
+        process_duration=5,
+        setup_duration=20,
+        inputs={"E17": 1, "E16": 1, "E50": 1, "K24": 1, "K27": 1},
+        output_uid="E51"
+    )
 
-    _add_edge("K39", "13.C")
-    _add_edge("13.C", "12.C")
-    _add_edge("12.C", "8.C")
-    _add_edge("8.C", "7.C")
-    _add_edge("K32", "7.C")
-    _add_edge("7.C", "9.C")
-    _add_edge("9.C", "E13")
+    subgraph_z.add_process(
+        workstation_id=4,
+        process_duration=6,
+        setup_duration=30,
+        inputs={"E26": 1, "E51": 1, "K21": 1, "K24": 1, "K27": 1},
+        output_uid="E1"
+    )
 
-    _add_edge("K28", "6.D", 3)
-    _add_edge("6.D", "8.D")
-    _add_edge("K59", "8.D", 2)
-    _add_edge("8.D", "7.D")
-    _add_edge("K32", "7.D", 2)
-    _add_edge("7.D", "9.D")
-    _add_edge("9.D", "E18")
+    graph.child_node_aggregates.extend(
+        [
+            subgraph_A, subgraph_B, subgraph_C, subgraph_D, subgraph_E,
+            subgraph_F, subgraph_G, subgraph_H, subgraph_w, subgraph_x,
+            subgraph_y, subgraph_z
+        ]
+    )
 
-    _add_edge("K52", "10.E")
-    _add_edge("K53", "10.E", 36)
-    _add_edge("10.E", "11.E")
-    _add_edge("K35", "11.E", 2)
-    _add_edge("K37", "11.E", 2)
-    _add_edge("K38", "11.E")
-    _add_edge("11.E", "E7")
-
-    _add_edge("K52", "10.F")
-    _add_edge("K53", "10.F", 36)
-    _add_edge("10.F", "11.F")
-    _add_edge("K35", "11.F", 2)
-    _add_edge("K36", "11.F")
-    _add_edge("11.F", "E4")
-
-    _add_edge("K39", "13.G")
-    _add_edge("13.G", "12.G")
-    _add_edge("12.G", "8.G")
-    _add_edge("8.G", "7.G")
-    _add_edge("7.G", "9.G")
-    _add_edge("9.G", "E10")
-
-    _add_edge("7.H", "15.H")
-    _add_edge("K44", "7.H", 2)
-    _add_edge("K48", "7.H", 2)
-    _add_edge("K47", "15.H")
-    _add_edge("15.H", "E26")
-
-    _add_edge("K24", "1.w", 2)
-    _add_edge("K24", "1.w", 2)
-    _add_edge("K25", "1.w", 2)
-    _add_edge("K26", "1.w", 2)
-    _add_edge("E13", "1.w")
-    _add_edge("E18", "1.w")
-    _add_edge("E7", "1.w")
-    _add_edge("1.w", "E49")
-
-    _add_edge("E49", "2.x")
-    _add_edge("E4", "2.x")
-    _add_edge("E10", "2.x")
-    _add_edge("K24", "2.x", 2)
-    _add_edge("K25", "2.x", 2)
-    _add_edge("2.x", "E50")
-
-    _add_edge("E17", "3.y")
-    _add_edge("E16", "3.y")
-    _add_edge("E50", "3.y")
-    _add_edge("K24", "3.y")
-    _add_edge("K27", "3.y")
-    _add_edge("3.y", "E51")
-
-    _add_edge("4.z", "E1")
-    _add_edge("E26", "4.z")
-    _add_edge("E51", "4.z")
-    _add_edge("K21", "4.z")
-    _add_edge("K24", "4.z")
-    _add_edge("K27", "4.z")
-
-    return flow.build()
+    return graph

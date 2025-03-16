@@ -1,10 +1,9 @@
 import re
 from dataclasses import dataclass
 
-from graph_setup_p1 import create_graph_p1
-from graph_setup_p2 import create_graph_p2
-from graph_setup_p3 import create_graph_p3
-from production_graph import MaterialProductFlowGraph, Process, NodeType, Node
+from material.graph.graph_nodes import GraphNode, Process, NodeAggregate
+from material.graph.production_graph import MaterialProductFlowGraph
+from material.graph.production_node_type import ProductionNodeType
 
 SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
 
@@ -45,25 +44,57 @@ class MermaidStyle:
         return "\n".join([self.get_class_defs(), self.get_class_assignments()])
 
 
+class MermaidStringBuilder:
+    def __init__(self):
+        self.lines = []
+        self.indent_level = 0
+        self.indent_str = " " * 4  # 4 spaces per indent level
+
+    def add_line(self, line: str):
+        """Adds a line with the current indentation level."""
+        self.lines.append(f"{self.indent_str * self.indent_level}{line}")
+
+    def increase_indent(self):
+        """Increases the indentation level."""
+        self.indent_level += 1
+
+    def decrease_indent(self):
+        """Decreases the indentation level, ensuring it does not go below zero."""
+        if self.indent_level > 0:
+            self.indent_level -= 1
+
+    def get_content(self) -> str:
+        """Returns the full Mermaid diagram content."""
+        return "\n".join(self.lines)
+
+    def save_to_file(self, filename: str):
+        """Saves the Mermaid content to a file."""
+        with open(filename, "w") as f:
+            f.write(self.get_content())
+
+
 class NxToMermaid:
     def __init__(self, graph):
         self.graph: MaterialProductFlowGraph = graph
-        self.lines = [SETTINGS, "flowchart LR"]
+        self.mermaid_string_builder = MermaidStringBuilder()
+
+        self.mermaid_string_builder.add_line(SETTINGS)
+        self.mermaid_string_builder.add_line("flowchart LR")
+        self.mermaid_string_builder.increase_indent()
+
         self.mermaid_style = MermaidStyle()
         self.indent = " " * 4
-        self.subgraphs = {}
-        self.node_dict = {node.node_uid: node for node in self.nodes}
         self.duplicate_bought_nodes = {}
 
     @property
-    def nodes(self):
-        return self.graph.get_graphs_nodes()
+    def nodes(self) -> list[NodeAggregate]:
+        return self.graph.child_node_aggregates
 
-    def get_process_nodes(self) -> list[Process]:
-        return [n for n in self.nodes if isinstance(n, Process)]
+    def get_process_nodes(self, nodes) -> list[Process]:
+        return [n for n in nodes if isinstance(n, Process)]
 
-    def get_produced_nodes(self):
-        return [n for n in self.nodes if getattr(n, "node_type", False)]
+    def get_produced_nodes(self, nodes):
+        return [n for n in nodes if n.node_type == ProductionNodeType.PRODUCED]
 
     def add_process_node(self, node: Process):
         self.mermaid_style.add_class_assignment(node)

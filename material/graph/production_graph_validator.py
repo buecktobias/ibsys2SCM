@@ -36,7 +36,7 @@ class GraphValidator:
 
     def validate_cycle(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
-            raise ValueError("Graph is not a directed acyclic graph (DAG).")
+            raise ValueError("Graph is not a directed acyclic nx_graph (DAG).")
 
     def validate_connectedness(self) -> None:
         # Every node must be connected (i.e. have degree >= 1)

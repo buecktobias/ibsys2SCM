@@ -7,9 +7,9 @@ from material.graph.graph_nodes import Item
 
 @pytest.fixture
 def items():
-    a = DummyItem("A")
-    b = DummyItem("B")
-    c = DummyItem("C")
+    a = Item.from_node_id("K1")
+    b = Item.from_node_id("K2")
+    c = Item.from_node_id("K3")
     return a, b, c
 
 
@@ -71,12 +71,3 @@ def test_copy_and_update(items):
     rc_updated = rc1.update(rc2)
     assert rc_updated.items[a] == 2
     assert rc_updated.items[b] == 3
-
-
-def test_repr(items):
-    a, b, _ = items
-    rc = ResourceCounter(Counter({a: 2, b: 3}))
-    rep = repr(rc)
-    assert "ResourceCounter" in rep
-    assert "DummyItem(A)" in rep
-    assert "2" in rep

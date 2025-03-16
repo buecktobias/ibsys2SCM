@@ -8,7 +8,7 @@ from material.graph.production_node_type import ProductionNodeType
 @dataclass(frozen=True)
 class Node(abc.ABC):
     """
-    Abstract base class representing a graph node.
+    Abstract base class representing a nx_graph node.
 
     Each node must provide its type and a unique identifier (uid).
     """
@@ -88,7 +88,7 @@ class GraphNode(Node, NodeAggregate):
 @dataclass(frozen=True)
 class Item(GraphNode):
     """
-    Represents an item node in the graph.
+    Represents an item node in the nx_graph.
 
     Attributes:
         node_id (int): The numerical identifier of the item.
@@ -137,7 +137,7 @@ class Item(GraphNode):
 @dataclass(frozen=True)
 class StepItem(Item):
     """
-    Represents a step item in the graph, extending an Item with a step number.
+    Represents a step item in the nx_graph, extending an Item with a step number.
 
     Attributes:
         step_number (int): The specific step associated with this item.
@@ -153,9 +153,9 @@ class StepItem(Item):
 
 
 @dataclass(frozen=True)
-class Process(Node):
+class Process(GraphNode):
     """
-    Represents a process node in the graph.
+    Represents a process node in the nx_graph.
 
     Attributes:
         workstation_id (int): The identifier for the workstation.
