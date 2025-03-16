@@ -72,7 +72,8 @@ class NxToMermaid:
         self.lines.append(self.indent + f'{node.node_uid}["{label}"]')
 
     def add_subgraph(self, group_name, process_nodes):
-        self.lines.append(self.indent + f"subgraph {group_name}[<div style='font-size:21px'><b>{group_name}</b><br/></div>]")
+        self.lines.append(
+            self.indent + f"subgraph {group_name}[<div style='font-size:21px'><b>{group_name}</b><br/></div>]")
         for node in process_nodes:
             self.add_process_node(node)
         self.lines.append(self.indent + "end" + "\n")
@@ -117,7 +118,7 @@ class NxToMermaid:
         grouped = self.create_subgraphs()
         for group, nodes in grouped:
             self.add_subgraph(group, nodes)
-        for from_node, to_node, attr in self.graph.graph.edges(data=True):
+        for from_node, to_node, attr in self.graph.material_graph.edges(data=True):
             self.add_edge(from_node, to_node, attr)
         return "\n".join(self.lines)
 
