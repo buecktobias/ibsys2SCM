@@ -1,0 +1,178 @@
+%%{
+  init: {
+    'theme': 'dark'
+  },
+  'themeVariables': {
+    'darkMode': true
+  }
+}%%
+flowchart LR
+    subgraph X
+        direction TB
+        subgraph XA
+            direction LR
+            PR15_26[<br/>PR15_26<br/>]
+            PR7_26 --> PR15_26
+        end
+        subgraph XB
+            direction LR
+            PR14_16[PR14_16]
+            PR6_16 --> PR14_16
+        end
+        subgraph XC
+            direction LR
+            PR15_17[PR15_17]
+        end
+
+        XA ~~~ XB ~~~ XC
+    end
+
+    subgraph 1
+        direction LR
+        subgraph 1ABCDE
+            direction TB
+
+            subgraph 1A
+                direction LR
+                PR13_13 --> PR12_13 --> PR8_13 --> PR7_13 --> PR9_13
+            end
+            subgraph 1B
+                direction LR
+                PR6_18 --> PR8_18 --> PR7_18 --> PR9_18
+            end
+            subgraph 1C
+                direction LR
+                PR10_7 --> PR11_7
+            end
+            subgraph 1D
+                direction LR
+                PR10_4 --> PR11_4
+            end
+            subgraph 1E
+                direction LR
+                PR13_10 --> PR12_10 --> PR8_10 --> PR7_10 --> PR9_10
+            end
+
+        end
+
+        subgraph 1w
+            PR9_13 --> PR1_49
+            PR9_18 --> PR1_49
+            PR11_7 --> PR1_49
+        end
+        subgraph 1x
+            PR1_49 --> PR2_50
+            PR11_4 --> PR2_50
+            PR9_10 --> PR2_50
+        end
+        subgraph 1y
+            PR15_17 --> PR3_51
+            PR14_16 --> PR3_51
+            PR2_50 --> PR3_51
+        end
+        subgraph 1z
+            PR3_51 --> PR4_1
+            PR15_26 --> PR4_1
+        end
+        PR4_1 --> E1((1))
+    end
+
+    subgraph 2
+        direction LR
+        subgraph 2ABCDE
+            direction TB
+
+            subgraph 2A
+                direction LR
+                PR13_14 --> PR12_14 --> PR8_14 --> PR7_14 --> PR9_14
+            end
+            subgraph 2B
+                direction LR
+                PR6_19 --> PR8_19 --> PR7_19 --> PR9_19
+            end
+            subgraph 2C
+                direction LR
+                PR10_8 --> PR11_8
+            end
+            subgraph 2D
+                direction LR
+                PR10_5 --> PR11_5
+            end
+            subgraph 2E
+                direction LR
+                PR13_11 --> PR12_11 --> PR8_11 --> PR7_11 --> PR9_11
+            end
+
+        end
+
+        subgraph 2w
+            PR9_14 --> PR1_54
+            PR9_19 --> PR1_54
+            PR11_8 --> PR1_54
+        end
+        subgraph 2x
+            PR1_54 --> PR2_55
+            PR11_5 --> PR2_55
+            PR9_11 --> PR2_55
+        end
+        subgraph 2y
+            PR15_17 --> PR3_56
+            PR14_16 --> PR3_56
+            PR2_55 --> PR3_56
+        end
+        subgraph 2z
+            PR3_56 --> PR4_2
+            PR15_26 --> PR4_2
+        end
+        PR4_2 --> E2((2))
+    end
+
+    subgraph 3
+        direction LR
+        subgraph 3ABCDE
+            direction TB
+
+            subgraph 3A
+                direction LR
+                PR13_15 --> PR12_15 --> PR8_15 --> PR7_15 --> PR9_15
+            end
+            subgraph 3B
+                direction LR
+                PR6_20 --> PR8_20 --> PR7_20 --> PR9_20
+            end
+            subgraph 3C
+                direction LR
+                PR10_9 --> PR11_9
+            end
+            subgraph 3D
+                direction LR
+                PR10_6 --> PR11_6
+            end
+            subgraph 3E
+                direction LR
+                PR13_12 --> PR12_12 --> PR8_12 --> PR7_12 --> PR9_12
+            end
+
+        end
+
+        subgraph 3w
+            PR9_15 --> PR1_29
+            PR9_20 --> PR1_29
+            PR11_9 --> PR1_29
+        end
+        subgraph 3x
+            PR1_29 --> PR2_30
+            PR11_6 --> PR2_30
+            PR9_12 --> PR2_30
+        end
+        subgraph 3y
+            PR15_17 --> PR3_31
+            PR14_16 --> PR3_31
+            PR2_30 --> PR3_31
+        end
+        subgraph 3z
+            PR3_31 --> PR4_3
+            PR15_26 --> PR4_3
+        end
+        PR4_3 --> E3((3))
+    end

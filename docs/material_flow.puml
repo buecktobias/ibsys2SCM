@@ -1,0 +1,50 @@
+@startuml
+entity "Process" as Process {
+  * process_id : int
+  * workstation_id : int
+  * process_duration : int
+  * setup_duration : int
+}
+
+entity "Item" as Item {
+  * item_id : int
+}
+
+entity "BoughtItem" as BoughtItem {
+  * item_id : int
+}
+
+entity "ProducedItem" as ProducedItem {
+  * item_id : int
+}
+
+entity "StepProduced" as StepProduced {
+  * step_id : int
+  * produced_item_id : int
+  * step_number : int
+}
+
+entity "Workstation" as Workstation {
+  * workstation_id : int
+}
+
+entity "ProcessInput" as ProcessInput {
+  * process_id : int
+  * item_id : int
+  * quantity : int
+}
+
+entity "ProcessOutput" as ProcessOutput {
+  * process_id : int
+  * item_id : int
+}
+
+Process ||--o{ ProcessInput : "has inputs"
+Process ||--|| ProcessOutput : "produces"
+ProcessInput }o--|| Item : "consumes"
+ProcessOutput ||--o{ Item : "creates"
+Item ||--|{ BoughtItem : "can be"
+Item ||--|{ ProducedItem : "can be"
+ProducedItem ||--o{ StepProduced : "step-wise production"
+Process ||--|| Workstation : "takes place at"
+@enduml

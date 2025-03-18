@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>production_graph</title>
+    <style>
+        body {
+            background-color: #292931;
+            color: #ffffff;
+            margin: 0;
+        }
+        .mermaid {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            mermaid.initialize({theme: 'dark', startOnLoad: true});
+            setTimeout(() => {
+                const svg = document.querySelector("svg");
+                if (!svg) return;
+                const g = d3.select(svg).select("g");
+                const zoom = d3.zoom()
+                    .scaleExtent([0.5, 2])
+                    .on("zoom", (event) => {
+                        g.attr("transform", event.transform);
+                    });
+                d3.select(svg).call(zoom);
+            }, 500);
+        });
+    </script>
+</head>
+<body>
+    <div id="mermaid" class="mermaid">
+        %%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%
+flowchart LR
+subgraph A
+    E17["E17"]
+    15_15_3_K43_1_K44_1_K45_1_K46_1__17["<div style='font-size:18px'><b>15</b></div>3<br/>15"]
+end
+subgraph B
+    E16_1["E16_1"]
+    6_15_2_K28_1__16["<div style='font-size:18px'><b>6</b></div>2<br/>15"]
+    E14["E14"]
+    E16["E16"]
+    14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16["<div style='font-size:18px'><b>14</b></div>3<br/>0"]
+end
+subgraph C
+    E13_1["E13_1"]
+    13_0_2_K39_1__13["<div style='font-size:18px'><b>13</b></div>2<br/>0"]
+    E13_2["E13_2"]
+    12_0_3_E13_1_1__13["<div style='font-size:18px'><b>12</b></div>3<br/>0"]
+    E13_3["E13_3"]
+    8_15_1_E13_2_1__13["<div style='font-size:18px'><b>8</b></div>1<br/>15"]
+    E13_4["E13_4"]
+    7_20_2_E13_3_1_K32_1__13["<div style='font-size:18px'><b>7</b></div>2<br/>20"]
+    E13["E13"]
+    9_15_3_E13_4_1__13["<div style='font-size:18px'><b>9</b></div>3<br/>15"]
+end
+subgraph D
+    E18_1["E18_1"]
+    6_15_3_K28_3__18["<div style='font-size:18px'><b>6</b></div>3<br/>15"]
+    E18_2["E18_2"]
+    8_15_1_E18_1_1__18["<div style='font-size:18px'><b>8</b></div>1<br/>15"]
+    E18_3["E18_3"]
+    7_20_2_E18_2_1_K59_2__18["<div style='font-size:18px'><b>7</b></div>2<br/>20"]
+    E18["E18"]
+    9_15_3_E18_3_1__18["<div style='font-size:18px'><b>9</b></div>3<br/>15"]
+end
+subgraph E
+    E7_1["E7_1"]
+    10_20_4_K52_1_K53_36__7["<div style='font-size:18px'><b>10</b></div>4<br/>20"]
+    E7["E7"]
+    11_20_3_E7_1_1_K35_2_K37_2_K38_1__7["<div style='font-size:18px'><b>11</b></div>3<br/>20"]
+end
+subgraph F
+    E4_1["E4_1"]
+    10_20_4_K52_1_K53_36__4["<div style='font-size:18px'><b>10</b></div>4<br/>20"]
+    E4["E4"]
+    11_10_3_E4_1_1_K35_2_K36_1__4["<div style='font-size:18px'><b>11</b></div>3<br/>10"]
+end
+subgraph G
+    E10_1["E10_1"]
+    13_0_2_K39_1__10["<div style='font-size:18px'><b>13</b></div>2<br/>0"]
+    E10_2["E10_2"]
+    12_0_3_E10_1_1__10["<div style='font-size:18px'><b>12</b></div>3<br/>0"]
+    E10_3["E10_3"]
+    8_15_1_E10_2_1__10["<div style='font-size:18px'><b>8</b></div>1<br/>15"]
+    E10_4["E10_4"]
+    7_20_2_E10_3_1__10["<div style='font-size:18px'><b>7</b></div>2<br/>20"]
+    E10["E10"]
+    9_15_3_E10_4_1__10["<div style='font-size:18px'><b>9</b></div>3<br/>15"]
+end
+subgraph H
+    E26_1["E26_1"]
+    7_30_2_K44_2_K48_2__26["<div style='font-size:18px'><b>7</b></div>2<br/>30"]
+    E26["E26"]
+    15_15_3_E26_1_1_K47_1__26["<div style='font-size:18px'><b>15</b></div>3<br/>15"]
+end
+subgraph w
+    E49["E49"]
+    1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49["<div style='font-size:18px'><b>1</b></div>6<br/>20"]
+end
+subgraph x
+    E50["E50"]
+    2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50["<div style='font-size:18px'><b>2</b></div>5<br/>30"]
+end
+subgraph y
+    E51["E51"]
+    3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51["<div style='font-size:18px'><b>3</b></div>5<br/>20"]
+end
+subgraph z
+    E1["E1"]
+    4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1["<div style='font-size:18px'><b>4</b></div>6<br/>30"]
+end
+K43_1["K43_1"]
+K43_1 --1--> 15_15_3_K43_1_K44_1_K45_1_K46_1__17
+K44_1["K44_1"]
+K44_1 --1--> 15_15_3_K43_1_K44_1_K45_1_K46_1__17
+K44_2["K44_2"]
+K44_2 --2--> 7_30_2_K44_2_K48_2__26
+K45_1["K45_1"]
+K45_1 --1--> 15_15_3_K43_1_K44_1_K45_1_K46_1__17
+K46_1["K46_1"]
+K46_1 --1--> 15_15_3_K43_1_K44_1_K45_1_K46_1__17
+E17 --1--> 3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51
+15_15_3_K43_1_K44_1_K45_1_K46_1__17 --1--> E17
+K28_1["K28_1"]
+K28_1 --1--> 6_15_2_K28_1__16
+K28_2["K28_2"]
+K28_2 --3--> 6_15_3_K28_3__18
+6_15_2_K28_1__16 --1--> E16_1
+E14 --1--> 14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16
+K24_1["K24_1"]
+K24_1 --1--> 14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16
+K24_2["K24_2"]
+K24_2 --2--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+K24_3["K24_3"]
+K24_3 --2--> 2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50
+K24_4["K24_4"]
+K24_4 --1--> 3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51
+K24_5["K24_5"]
+K24_5 --1--> 4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1
+K40_1["K40_1"]
+K40_1 --1--> 14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16
+K41_1["K41_1"]
+K41_1 --1--> 14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16
+K42_1["K42_1"]
+K42_1 --2--> 14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16
+E16 --1--> 3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51
+14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16 --1--> E16
+K39_1["K39_1"]
+K39_1 --1--> 13_0_2_K39_1__13
+K39_2["K39_2"]
+K39_2 --1--> 13_0_2_K39_1__10
+E13_1 --1--> 12_0_3_E13_1_1__13
+13_0_2_K39_1__13 --1--> E13_1
+E13_2 --1--> 8_15_1_E13_2_1__13
+12_0_3_E13_1_1__13 --1--> E13_2
+E13_3 --1--> 7_20_2_E13_3_1_K32_1__13
+8_15_1_E13_2_1__13 --1--> E13_3
+K32_1["K32_1"]
+K32_1 --1--> 7_20_2_E13_3_1_K32_1__13
+E13_4 --1--> 9_15_3_E13_4_1__13
+7_20_2_E13_3_1_K32_1__13 --1--> E13_4
+E13 --1--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+9_15_3_E13_4_1__13 --1--> E13
+E18_1 --1--> 8_15_1_E18_1_1__18
+6_15_3_K28_3__18 --1--> E18_1
+E18_2 --1--> 7_20_2_E18_2_1_K59_2__18
+8_15_1_E18_1_1__18 --1--> E18_2
+K59_1["K59_1"]
+K59_1 --2--> 7_20_2_E18_2_1_K59_2__18
+E18_3 --1--> 9_15_3_E18_3_1__18
+7_20_2_E18_2_1_K59_2__18 --1--> E18_3
+E18 --1--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+9_15_3_E18_3_1__18 --1--> E18
+K52_1["K52_1"]
+K52_1 --1--> 10_20_4_K52_1_K53_36__7
+K52_2["K52_2"]
+K52_2 --1--> 10_20_4_K52_1_K53_36__4
+K53_1["K53_1"]
+K53_1 --36--> 10_20_4_K52_1_K53_36__7
+K53_2["K53_2"]
+K53_2 --36--> 10_20_4_K52_1_K53_36__4
+E7_1 --1--> 11_20_3_E7_1_1_K35_2_K37_2_K38_1__7
+10_20_4_K52_1_K53_36__7 --1--> E7_1
+K35_1["K35_1"]
+K35_1 --2--> 11_20_3_E7_1_1_K35_2_K37_2_K38_1__7
+K35_2["K35_2"]
+K35_2 --2--> 11_10_3_E4_1_1_K35_2_K36_1__4
+K37_1["K37_1"]
+K37_1 --2--> 11_20_3_E7_1_1_K35_2_K37_2_K38_1__7
+K38_1["K38_1"]
+K38_1 --1--> 11_20_3_E7_1_1_K35_2_K37_2_K38_1__7
+E7 --1--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+11_20_3_E7_1_1_K35_2_K37_2_K38_1__7 --1--> E7
+E4_1 --1--> 11_10_3_E4_1_1_K35_2_K36_1__4
+10_20_4_K52_1_K53_36__4 --1--> E4_1
+K36_1["K36_1"]
+K36_1 --1--> 11_10_3_E4_1_1_K35_2_K36_1__4
+E4 --1--> 2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50
+11_10_3_E4_1_1_K35_2_K36_1__4 --1--> E4
+E10_1 --1--> 12_0_3_E10_1_1__10
+13_0_2_K39_1__10 --1--> E10_1
+E10_2 --1--> 8_15_1_E10_2_1__10
+12_0_3_E10_1_1__10 --1--> E10_2
+E10_3 --1--> 7_20_2_E10_3_1__10
+8_15_1_E10_2_1__10 --1--> E10_3
+E10_4 --1--> 9_15_3_E10_4_1__10
+7_20_2_E10_3_1__10 --1--> E10_4
+E10 --1--> 2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50
+9_15_3_E10_4_1__10 --1--> E10
+K48_1["K48_1"]
+K48_1 --2--> 7_30_2_K44_2_K48_2__26
+E26_1 --1--> 15_15_3_E26_1_1_K47_1__26
+7_30_2_K44_2_K48_2__26 --1--> E26_1
+K47_1["K47_1"]
+K47_1 --1--> 15_15_3_E26_1_1_K47_1__26
+E26 --1--> 4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1
+15_15_3_E26_1_1_K47_1__26 --1--> E26
+K25_1["K25_1"]
+K25_1 --2--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+K25_2["K25_2"]
+K25_2 --2--> 2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50
+K26_1["K26_1"]
+K26_1 --2--> 1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49
+E49 --1--> 2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50
+1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49 --1--> E49
+E50 --1--> 3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51
+2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50 --1--> E50
+K27_1["K27_1"]
+K27_1 --1--> 3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51
+K27_2["K27_2"]
+K27_2 --1--> 4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1
+E51 --1--> 4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1
+3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51 --1--> E51
+K21_1["K21_1"]
+K21_1 --1--> 4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1
+4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1 --1--> E1
+
+E17:::ProductionNodeType.PRODUCED
+15_15_3_K43_1_K44_1_K45_1_K46_1__17:::ProductionNodeType.PROCESS
+E16_1:::ProductionNodeType.PRODUCED
+6_15_2_K28_1__16:::ProductionNodeType.PROCESS
+E14:::ProductionNodeType.PRODUCED
+E16:::ProductionNodeType.PRODUCED
+14_0_3_E14_1_K24_1_K40_1_K41_1_K42_2__16:::ProductionNodeType.PROCESS
+E13_1:::ProductionNodeType.PRODUCED
+13_0_2_K39_1__13:::ProductionNodeType.PROCESS
+E13_2:::ProductionNodeType.PRODUCED
+12_0_3_E13_1_1__13:::ProductionNodeType.PROCESS
+E13_3:::ProductionNodeType.PRODUCED
+8_15_1_E13_2_1__13:::ProductionNodeType.PROCESS
+E13_4:::ProductionNodeType.PRODUCED
+7_20_2_E13_3_1_K32_1__13:::ProductionNodeType.PROCESS
+E13:::ProductionNodeType.PRODUCED
+9_15_3_E13_4_1__13:::ProductionNodeType.PROCESS
+E18_1:::ProductionNodeType.PRODUCED
+6_15_3_K28_3__18:::ProductionNodeType.PROCESS
+E18_2:::ProductionNodeType.PRODUCED
+8_15_1_E18_1_1__18:::ProductionNodeType.PROCESS
+E18_3:::ProductionNodeType.PRODUCED
+7_20_2_E18_2_1_K59_2__18:::ProductionNodeType.PROCESS
+E18:::ProductionNodeType.PRODUCED
+9_15_3_E18_3_1__18:::ProductionNodeType.PROCESS
+E7_1:::ProductionNodeType.PRODUCED
+10_20_4_K52_1_K53_36__7:::ProductionNodeType.PROCESS
+E7:::ProductionNodeType.PRODUCED
+11_20_3_E7_1_1_K35_2_K37_2_K38_1__7:::ProductionNodeType.PROCESS
+E4_1:::ProductionNodeType.PRODUCED
+10_20_4_K52_1_K53_36__4:::ProductionNodeType.PROCESS
+E4:::ProductionNodeType.PRODUCED
+11_10_3_E4_1_1_K35_2_K36_1__4:::ProductionNodeType.PROCESS
+E10_1:::ProductionNodeType.PRODUCED
+13_0_2_K39_1__10:::ProductionNodeType.PROCESS
+E10_2:::ProductionNodeType.PRODUCED
+12_0_3_E10_1_1__10:::ProductionNodeType.PROCESS
+E10_3:::ProductionNodeType.PRODUCED
+8_15_1_E10_2_1__10:::ProductionNodeType.PROCESS
+E10_4:::ProductionNodeType.PRODUCED
+7_20_2_E10_3_1__10:::ProductionNodeType.PROCESS
+E10:::ProductionNodeType.PRODUCED
+9_15_3_E10_4_1__10:::ProductionNodeType.PROCESS
+E26_1:::ProductionNodeType.PRODUCED
+7_30_2_K44_2_K48_2__26:::ProductionNodeType.PROCESS
+E26:::ProductionNodeType.PRODUCED
+15_15_3_E26_1_1_K47_1__26:::ProductionNodeType.PROCESS
+E49:::ProductionNodeType.PRODUCED
+1_20_6_E7_1_E13_1_E18_1_K24_2_K25_2_K26_2__49:::ProductionNodeType.PROCESS
+E50:::ProductionNodeType.PRODUCED
+2_30_5_E4_1_E10_1_K24_2_K25_2_E49_1__50:::ProductionNodeType.PROCESS
+E51:::ProductionNodeType.PRODUCED
+3_20_5_E16_1_E17_1_K24_1_K27_1_E50_1__51:::ProductionNodeType.PROCESS
+E1:::ProductionNodeType.PRODUCED
+4_30_6_K21_1_K24_1_E26_1_K27_1_E51_1__1:::ProductionNodeType.PROCESS
+K43_1:::ProductionNodeType.BOUGHT
+K44_1:::ProductionNodeType.BOUGHT
+K44_2:::ProductionNodeType.BOUGHT
+K45_1:::ProductionNodeType.BOUGHT
+K46_1:::ProductionNodeType.BOUGHT
+K28_1:::ProductionNodeType.BOUGHT
+K28_2:::ProductionNodeType.BOUGHT
+K24_1:::ProductionNodeType.BOUGHT
+K24_2:::ProductionNodeType.BOUGHT
+K24_3:::ProductionNodeType.BOUGHT
+K24_4:::ProductionNodeType.BOUGHT
+K24_5:::ProductionNodeType.BOUGHT
+K40_1:::ProductionNodeType.BOUGHT
+K41_1:::ProductionNodeType.BOUGHT
+K42_1:::ProductionNodeType.BOUGHT
+K39_1:::ProductionNodeType.BOUGHT
+K39_2:::ProductionNodeType.BOUGHT
+K32_1:::ProductionNodeType.BOUGHT
+K59_1:::ProductionNodeType.BOUGHT
+K52_1:::ProductionNodeType.BOUGHT
+K52_2:::ProductionNodeType.BOUGHT
+K53_1:::ProductionNodeType.BOUGHT
+K53_2:::ProductionNodeType.BOUGHT
+K35_1:::ProductionNodeType.BOUGHT
+K35_2:::ProductionNodeType.BOUGHT
+K37_1:::ProductionNodeType.BOUGHT
+K38_1:::ProductionNodeType.BOUGHT
+K36_1:::ProductionNodeType.BOUGHT
+K48_1:::ProductionNodeType.BOUGHT
+K47_1:::ProductionNodeType.BOUGHT
+K25_1:::ProductionNodeType.BOUGHT
+K25_2:::ProductionNodeType.BOUGHT
+K26_1:::ProductionNodeType.BOUGHT
+K27_1:::ProductionNodeType.BOUGHT
+K27_2:::ProductionNodeType.BOUGHT
+K21_1:::ProductionNodeType.BOUGHT
+    </div>
+</body>
+</html>

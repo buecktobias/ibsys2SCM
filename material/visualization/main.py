@@ -1,4 +1,5 @@
+from material.setup.production_graph_setup import create_full_production_graph
+from material.visualization.mermaid_visualizations import NxToMermaid
+
 if __name__ == '__main__':
-    NxToMermaid(create_graph_p1()).nx_to_mermaid("p1")
-    NxToMermaid(create_graph_p2()).nx_to_mermaid("p2")
-    NxToMermaid(create_graph_p3()).nx_to_mermaid("p3")
+    NxToMermaid(create_full_production_graph()).nx_to_mermaid("p1")

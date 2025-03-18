@@ -1,9 +1,12 @@
 import re
+from contextlib import contextmanager
 from dataclasses import dataclass
 
-from material.graph.graph_nodes import GraphNode, Process, NodeAggregate
-from material.graph.production_graph import MaterialProductFlowGraph
-from material.graph.production_node_type import ProductionNodeType
+from material.graph.nodes.graph_nodes import NodeAggregate, Item, Node, Bought
+from material.graph.nodes.process import Process
+from material.graph.nodes.production_node_type import ProductionNodeType
+from material.graph.production_graph.material_product_graph import MaterialProductGraph
+from material.graph.sub_graph import SubGraph
 
 SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
 
@@ -21,20 +24,16 @@ class ClassDef:
 
 class MermaidStyle:
     def __init__(self):
-        self.class_defs = {
-            "bought": ClassDef("#455A64", "#CFD8DC", "2px", "#CFD8DC"),
-            "produced": ClassDef("#263238", "#ECEFF1", "2px", "#ECEFF1"),
-            "process": ClassDef("#1C313A", "#B0BEC5", "2px", "#B0BEC5")
-        }
+        self.class_defs = {}
         self.class_assignments = []
+
+    def add_class_def(self, name: str, fill: str, stroke: str, stroke_width: str, color: str):
+        self.class_defs[name] = ClassDef(fill, stroke, stroke_width, color)
 
     def get_class_defs(self):
         return "\n".join([f"classDef {k} {v}" for k, v in self.class_defs.items()])
 
-    def add_class_assignment(self, node):
-        self.class_assignments.append(f"{node.node_uid}:::{node.node_type}")
-
-    def add_class_assignment_id(self, node_uid, node_type):
+    def add_class_assignment(self, node_uid, node_type):
         self.class_assignments.append(f"{node_uid}:::{node_type}")
 
     def get_class_assignments(self):
@@ -45,46 +44,58 @@ class MermaidStyle:
 
 
 class MermaidStringBuilder:
-    def __init__(self):
+    def __init__(self, indent_level=0):
         self.lines = []
-        self.indent_level = 0
-        self.indent_str = " " * 4  # 4 spaces per indent level
+        self.indent_level = indent_level
+        self.indent_str = "    "  # 4 spaces per indent level
+        self.style = MermaidStyle()
 
-    def add_line(self, line: str):
-        """Adds a line with the current indentation level."""
-        self.lines.append(f"{self.indent_str * self.indent_level}{line}")
+    def add_line(self, content):
+        self.lines.append(f"{self.indent_str * self.indent_level}{content}")
 
-    def increase_indent(self):
-        """Increases the indentation level."""
+    @contextmanager
+    def create_subgraph(self, subgraph_name: str):
+        """Creates a subgraph context."""
+        self.lines.append(f"{self.indent_str * self.indent_level}subgraph {subgraph_name}")
         self.indent_level += 1
-
-    def decrease_indent(self):
-        """Decreases the indentation level, ensuring it does not go below zero."""
-        if self.indent_level > 0:
+        try:
+            yield self
+        finally:
             self.indent_level -= 1
+            self.lines.append(f"{self.indent_str * self.indent_level}end")
+
+    def add_node(self, node_id: str, label: str):
+        """Adds a node to the diagram."""
+        self.lines.append(f"{self.indent_str * self.indent_level}{node_id}[\"{label}\"]")
+
+    def add_rounded_node(self, node_id: str, label: str):
+        """Adds a rounded node to the diagram."""
+        self.lines.append(f"{self.indent_str * self.indent_level}{node_id}((\"{label}\"))")
+
+    def add_arrow(self, from_node: str, to_node: str, label: str = ""):
+        """Adds an arrow between two nodes, with an optional label."""
+        arrow = f"{from_node} --{label}--> {to_node}" if label else f"{from_node} --> {to_node}"
+        self.lines.append(f"{self.indent_str * self.indent_level}{arrow}")
+
+    def add_class_assignment(self, node_uid, node_type):
+        self.style.add_class_assignment(node_uid, node_type)
+
+    def add_class_definition(self, name: str, fill: str, stroke: str, stroke_width: str, color: str):
+        self.style.add_class_def(name, fill, stroke, stroke_width, color)
 
     def get_content(self) -> str:
-        """Returns the full Mermaid diagram content."""
-        return "\n".join(self.lines)
-
-    def save_to_file(self, filename: str):
-        """Saves the Mermaid content to a file."""
-        with open(filename, "w") as f:
-            f.write(self.get_content())
+        """Returns the full Mermaid diagram content including styles."""
+        return "\n".join(self.lines + [self.style.get_mermaid_code()])
 
 
 class NxToMermaid:
     def __init__(self, graph):
-        self.graph: MaterialProductFlowGraph = graph
-        self.mermaid_string_builder = MermaidStringBuilder()
-
-        self.mermaid_string_builder.add_line(SETTINGS)
-        self.mermaid_string_builder.add_line("flowchart LR")
-        self.mermaid_string_builder.increase_indent()
-
-        self.mermaid_style = MermaidStyle()
-        self.indent = " " * 4
+        self.graph: MaterialProductGraph = graph
+        self.mermaid = MermaidStringBuilder()
         self.duplicate_bought_nodes = {}
+
+        self.mermaid.add_line(SETTINGS)
+        self.mermaid.add_line("flowchart LR")
 
     @property
     def nodes(self) -> list[NodeAggregate]:
@@ -97,72 +108,63 @@ class NxToMermaid:
         return [n for n in nodes if n.node_type == ProductionNodeType.PRODUCED]
 
     def add_process_node(self, node: Process):
-        self.mermaid_style.add_class_assignment(node)
-        label = (f"<div style='font-size:18px'><b>{node.workstation_id}</b></div>"
-                 f"{node.process_duration}<br/>{node.setup_duration}")
-        self.lines.append(self.indent + f'{node.node_uid}["{label}"]')
+        self.mermaid.add_class_assignment(node.node_id, node.node_type.value)
+        label = (f"<div style='font-size:18px'><b>{node.node_id}</b></div>"
+                 f"{node.process_duration}<br/>{node.process_duration}")
+        self.mermaid.add_node(node.node_id, label)
 
-    def add_subgraph(self, group_name, process_nodes):
-        self.lines.append(
-            self.indent + f"subgraph {group_name}[<div style='font-size:21px'><b>{group_name}</b><br/></div>]")
-        for node in process_nodes:
-            self.add_process_node(node)
-        self.lines.append(self.indent + "end" + "\n")
+    def add_item_node(self, node: Item):
+        self.mermaid.add_class_assignment(node.node_id, node.node_type)
+        self.mermaid.add_rounded_node(node.node_id, node.node_id)
 
-    def duplicate_bought_node(self, original_id):
-        self.duplicate_bought_nodes[original_id] = self.duplicate_bought_nodes.get(original_id, 0) + 1
-        new_id = f"{original_id}_{self.duplicate_bought_nodes[original_id]}"
-        original_node = self.node_dict[original_id]
-        self.mermaid_style.add_class_assignment_id(new_id, original_node.node_type)
-        self.lines.append(self.indent + f'{new_id}([<div style=\'font-size:10px\'>{original_node.node_uid}</div>])')
+    def add_subgraph(self, subgraph: SubGraph):
+        with self.mermaid.create_subgraph(subgraph.label):
+            for node in subgraph.child_node_aggregates:
+                self.add_node_aggregate(node)
+            for process in subgraph.processes:
+                self.add_process_node(process)
+                for input_item, _ in process.inputs.items():
+                    input_id = self.add_bought_node(input_item)
+                    self.mermaid.add_arrow(input_id, process.node_id)
+                self.mermaid.add_arrow(process.node_id, process.output.node_id)
+
+    def add_bought_node(self, node: Node):
+        if not isinstance(node, Bought):
+            return node.node_id
+        current_count = self.duplicate_bought_nodes.get(node.node_numerical_id, 0)
+        self.duplicate_bought_nodes[node.node_numerical_id] = current_count + 1
+
+        new_id = node.node_id + f"_{current_count}"
+        self.mermaid.add_rounded_node(new_id, node.node_id)
         return new_id
 
-    def _add_edge(self, from_node, to_node, weight, is_directed=True):
-        arrow = "-->" if is_directed else "---"
-        if weight == 1:
-            self.lines.append(self.indent + f'{from_node} {arrow} {to_node}')
+    def add_node_aggregate(self, node_aggregate: NodeAggregate):
+        if isinstance(node_aggregate, Process):
+            self.add_process_node(node_aggregate)
+        elif isinstance(node_aggregate, Item):
+            if node_aggregate.node_type != ProductionNodeType.BOUGHT:
+                self.add_item_node(node_aggregate)
+        elif isinstance(node_aggregate, SubGraph):
+            self.add_subgraph(node_aggregate)
         else:
-            self.lines.append(self.indent + f'{from_node} {arrow} |{weight}| {to_node}')
-
-    def add_edge(self, from_node, to_node, attr):
-        is_bought_edge = self.node_dict[from_node].node_type == NodeType.BOUGHT
-        if is_bought_edge:
-            from_node = self.duplicate_bought_node(from_node)
-        self._add_edge(from_node, to_node, attr.get("weight"), is_directed=not is_bought_edge)
-
-    def add_process_nodes(self):
-        list(map(self.add_process_node, self.get_process_nodes()))
-
-    def add_item_nodes(self):
-        for node in self.get_produced_nodes():
-            self.mermaid_style.add_class_assignment(node)
-            self.lines.append(self.indent + f'{node.node_uid}([<div style=\'font-size:10px\'>{node.node_uid}</div>])')
-
-    def create_subgraphs(self):
-        for node in self.get_process_nodes():
-            self.subgraphs[node.process_group] = self.subgraphs.get(node.process_group, []) + [node]
-        return sorted(self.subgraphs.items(), key=lambda x: x[0])
+            raise ValueError(f"Node type {type(node_aggregate)} not supported.")
 
     def convert(self):
-        self.add_process_nodes()
-        self.add_item_nodes()
-        grouped = self.create_subgraphs()
-        for group, nodes in grouped:
-            self.add_subgraph(group, nodes)
-        for from_node, to_node, attr in self.graph.material_graph.edges(data=True):
-            self.add_edge(from_node, to_node, attr)
-        return "\n".join(self.lines)
+        for node_aggregate in self.graph.child_node_aggregates:
+            self.add_node_aggregate(node_aggregate)
+
+        return self.mermaid.get_content()
 
     def save_html(self, mermaid_code, graph_name):
-        with open(f"template.html", encoding="utf-8") as f:
+        with open(f"diagrams/template.html", encoding="utf-8") as f:
             html = f.read()
         result = re.sub(r"{{\s*mermaidContent\s*}}", mermaid_code, html)
         result = re.sub(r"{{\s*diagram_title\s*}}", graph_name, result)
-        with open(f"diagram_{graph_name}.html", "w", encoding="utf-8") as f:
+        with open(f"diagrams/diagram_{graph_name}.html", "w", encoding="utf-8") as f:
             f.write(result)
 
     def save_mmd(self, diagram_code, graph_name):
-        with open(f"diagram_{graph_name}.mmd", "w", encoding="utf-8") as f:
+        with open(f"diagrams/diagram_{graph_name}.mmd", "w", encoding="utf-8") as f:
             f.write(diagram_code)
 
     def nx_to_mermaid(self, name: str):

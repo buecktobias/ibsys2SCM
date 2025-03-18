@@ -1,35 +1,59 @@
 from collections import Counter
 
-from graph.production_graph import MaterialProductFlowGraph
-from resource_counter import ResourceCounter
+from material.core.resource_counter import ResourceCounter
+from material.graph.nodes.graph_nodes import Node
+from material.graph.production_graph.material_product_graph import MaterialProductGraph
 
 
 class ResourceCalculator:
-    def __init__(self, productions_graph: MaterialProductFlowGraph):
+    def __init__(self, productions_graph: MaterialProductGraph):
         self.productions_graph = productions_graph
 
+    def traverse_node(
+            self,
+            graph: MaterialProductGraph,
+            required_resources: ResourceCounter,
+            inventory: ResourceCounter,
+            node: Node,
+            multiplier: int = 1,
+    ) -> None:
+        """
+        Recursively traverses the predecessors of 'node' in the graph.
+        For each predecessor, computes the total required amount, subtracts any available
+        inventory, and updates the required_resources counter.
+        """
+        g = graph.nx_graph
+        for pred_key in g.predecessors(node.node_id):
+            pred_node = graph.get_node_by_uid(pred_key)
+            edge_weight = g[pred_key][node.node_id].get("weight", 1)
+            total_weight = edge_weight * multiplier
+            available = inventory[pred_node]
+            needed = total_weight - available
+            required_resources[pred_node] += needed
+            self.traverse_node(graph, required_resources, inventory, pred_node, needed)
+
     def calculate_required_resources_from_inventory(
-            self, graph: MaterialProductFlowGraph, required_resources: ResourceCounter, inventory: ResourceCounter
+            self,
+            graph: MaterialProductGraph,
+            required_resources: ResourceCounter,
+            inventory: ResourceCounter,
     ) -> ResourceCounter:
-        g = graph.material_graph
-
-        def traverse(node: str, multiplier: int = 1) -> None:
-            for pred in g.predecessors(node):
-                edge_weight = g[pred][node].get("weight", 1)
-                total_weight = edge_weight * multiplier
-                available = inventory.items.get(pred, 0)
-                needed = total_weight - available
-                if needed <= 0:
-                    continue
-                required_resources[pred] += needed
-                traverse(pred, needed)
-
-        traverse(product_id, 1)
-        return ResourceCounter(required_resources)
+        """
+        Traverses the graph, updating required_resources based on available inventory.
+        """
+        # Iterate over a copy of the current required_resources entries.
+        for node, quantity in list(required_resources):
+            self.traverse_node(graph, required_resources, inventory, node, quantity)
+        return required_resources
 
     def calculate_required_resources(self, product_id: str) -> ResourceCounter:
-        # Call the inventory-based method with an empty inventory.
-        empty_inventory = ResourceCounter(Counter())
+        """
+        Calculates the total required resources for the product identified by product_id,
+        assuming an empty inventory.
+        """
+        product_node = self.productions_graph.get_node_by_uid(product_id)
+        empty_inventory = ResourceCounter(Counter({product_node: 0}))
+        required = ResourceCounter(Counter({product_node: 1}))
         return self.calculate_required_resources_from_inventory(
-            self.productions_graph, product_id, empty_inventory
+            self.productions_graph, required, empty_inventory
         )
