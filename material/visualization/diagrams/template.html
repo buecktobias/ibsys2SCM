@@ -9,6 +9,7 @@
             color: #ffffff;
             margin: 0;
         }
+
         .mermaid {
             width: 100%;
             height: 100%;
@@ -30,7 +31,7 @@
                 if (!svg) return;
                 const g = d3.select(svg).select("g");
                 const zoom = d3.zoom()
-                    .scaleExtent([0.5, 2])
+                    .scaleExtent([0.1, 4])
                     .on("zoom", (event) => {
                         g.attr("transform", event.transform);
                     });
@@ -40,8 +41,8 @@
     </script>
 </head>
 <body>
-    <div id="mermaid" class="mermaid">
-        {{ mermaidContent }}
-    </div>
+<div id="mermaid" class="mermaid">
+    {{ mermaidContent }}
+</div>
 </body>
 </html>

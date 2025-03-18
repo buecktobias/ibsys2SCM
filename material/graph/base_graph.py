@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import List
+from typing import List, Self
 
 import networkx as nx
 
@@ -36,9 +36,25 @@ class BaseGraph(NodeAggregate, abc.ABC):
         else:
             logging.info(f"Node {node} is not a Node; skipping addition to networkx graph.")
 
-    def add_node(self, node: NodeAggregate) -> None:
+    def add_node(self, node: Node) -> None:
         self.child_node_aggregates.append(node)
         self.add_to_networkx(node)
 
+    @abc.abstractmethod
+    def add_edge(self, source_node: Node, target_node: Node, weight: int = 1) -> None:
+        """
+        Adds an edge between two existing nodes after validating the edge.
+        """
+        pass
+
     def has_node(self, node: Node) -> bool:
         return node.node_id in self.nx_graph.nodes
+
+    @abc.abstractmethod
+    def create_subgraph(self, label: str) -> Self:
+        pass
+
+    def add_subgraph(self, label: str) -> Self:
+        subgraph = self.create_subgraph(label)
+        self.child_node_aggregates.append(subgraph)
+        return subgraph

@@ -1,10 +1,12 @@
 import logging
+from typing import Self
 
 import networkx as nx
 
 from material.graph.base_graph import BaseGraph
 from material.graph.nodes.graph_nodes import Node
 from material.graph.production_graph.production_graph_validator import GraphValidator
+from material.graph.sub_graph import SubGraph
 
 
 class MaterialProductGraph(BaseGraph):
@@ -12,6 +14,9 @@ class MaterialProductGraph(BaseGraph):
     A wrapper around a networkx DiGraph representing a material resource flow.
     This is a DAG
     """
+
+    def create_subgraph(self, label: str) -> Self:
+        return SubGraph(label, self)
 
     def __init__(self, graph: nx.DiGraph = None):
         super().__init__()

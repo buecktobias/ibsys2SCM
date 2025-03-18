@@ -1,12 +1,14 @@
 import re
+from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
 
-from material.graph.nodes.graph_nodes import NodeAggregate, Item, Node, Bought
+from material.graph.nodes.graph_nodes import Item, Node, Bought, Produced, StepProduced, NodeAggregate
 from material.graph.nodes.process import Process
 from material.graph.nodes.production_node_type import ProductionNodeType
 from material.graph.production_graph.material_product_graph import MaterialProductGraph
 from material.graph.sub_graph import SubGraph
+from material.graph.util.process_util import get_process_outgoing_to
 
 SETTINGS = r"%%{init: {'theme': 'dark'}, 'themeVariables': {'darkMode': true}}%%"
 
@@ -92,20 +94,10 @@ class NxToMermaid:
     def __init__(self, graph):
         self.graph: MaterialProductGraph = graph
         self.mermaid = MermaidStringBuilder()
-        self.duplicate_bought_nodes = {}
+        self.duplicate_bought_nodes: Counter[Bought] = Counter()
 
         self.mermaid.add_line(SETTINGS)
         self.mermaid.add_line("flowchart LR")
-
-    @property
-    def nodes(self) -> list[NodeAggregate]:
-        return self.graph.child_node_aggregates
-
-    def get_process_nodes(self, nodes) -> list[Process]:
-        return [n for n in nodes if isinstance(n, Process)]
-
-    def get_produced_nodes(self, nodes):
-        return [n for n in nodes if n.node_type == ProductionNodeType.PRODUCED]
 
     def add_process_node(self, node: Process):
         self.mermaid.add_class_assignment(node.node_id, node.node_type.value)
@@ -117,6 +109,46 @@ class NxToMermaid:
         self.mermaid.add_class_assignment(node.node_id, node.node_type)
         self.mermaid.add_rounded_node(node.node_id, node.node_id)
 
+    def get_unique_bought_node_id(self, node: Bought):
+        current_count = self.duplicate_bought_nodes.get(node, 0)
+        self.duplicate_bought_nodes[node] = current_count + 1
+        return node.node_id + f"_{current_count}"
+
+    def add_bought_node(self, node: Node):
+        if not isinstance(node, Bought):
+            return node.node_id
+        current_count = self.duplicate_bought_nodes.get(node, 0)
+        self.duplicate_bought_nodes[node] = current_count + 1
+
+        new_id = node.node_id + f"_{current_count}"
+
+        return new_id
+
+    def get_process_input(self, processes: list[Process], input_item: Node):
+        if isinstance(input_item, Bought):
+            input_id = self.get_unique_bought_node_id(input_item)
+            self.mermaid.add_rounded_node(input_id, input_item.node_id)
+        elif isinstance(input_item, Produced):
+            input_id = input_item.node_id
+            self.add_item_node(input_item)
+
+        elif isinstance(input_item, StepProduced):
+            outgoing_to_list: list[Process] = get_process_outgoing_to(processes, input_item)
+            input_id = outgoing_to_list[0].node_id if len(outgoing_to_list) == 1 else input_item.node_id
+
+        else:
+            raise ValueError(f"Node type {type(input_item)} not supported.")
+
+        return input_id
+
+    def add_processes(self, processes: list[Process]):
+        for process in processes:
+            self.add_process_node(process)
+            for input_item, _ in process.inputs.items():
+                input_id = self.get_process_input(processes, input_item)
+                self.mermaid.add_arrow(input_id, process.node_id)
+            self.mermaid.add_arrow(process.node_id, process.output.node_id)
+
     def add_subgraph(self, subgraph: SubGraph):
         with self.mermaid.create_subgraph(subgraph.label):
             for node in subgraph.child_node_aggregates:
@@ -127,16 +159,6 @@ class NxToMermaid:
                     input_id = self.add_bought_node(input_item)
                     self.mermaid.add_arrow(input_id, process.node_id)
                 self.mermaid.add_arrow(process.node_id, process.output.node_id)
-
-    def add_bought_node(self, node: Node):
-        if not isinstance(node, Bought):
-            return node.node_id
-        current_count = self.duplicate_bought_nodes.get(node.node_numerical_id, 0)
-        self.duplicate_bought_nodes[node.node_numerical_id] = current_count + 1
-
-        new_id = node.node_id + f"_{current_count}"
-        self.mermaid.add_rounded_node(new_id, node.node_id)
-        return new_id
 
     def add_node_aggregate(self, node_aggregate: NodeAggregate):
         if isinstance(node_aggregate, Process):

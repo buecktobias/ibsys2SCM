@@ -5,46 +5,50 @@ from material.graph.production_graph.material_product_graph import MaterialProdu
 from material.graph.sub_graph import SubGraph
 
 
+# noinspection PyPep8Naming
 def create_full_production_graph():
     graph = MaterialProductGraph()
 
-    def create_sub_graph(label):
-        return SubGraph(label, graph)
+    graph = MaterialProductGraph()
 
-    # Create subgraph builders for each group.
-    subgraph_XA = create_sub_graph("XA")
-    subgraph_XB = create_sub_graph("XB")
-    subgraph_XC = create_sub_graph("XC")
+    subX = graph.add_subgraph("X")
+    sub1 = graph.add_subgraph("1")
+    sub2 = graph.add_subgraph("2")
+    sub3 = graph.add_subgraph("3")
 
-    subgraph_1A = create_sub_graph("1A")
-    subgraph_1B = create_sub_graph("1B")
-    subgraph_1C = create_sub_graph("1C")
-    subgraph_1D = create_sub_graph("1D")
-    subgraph_1E = create_sub_graph("1E")
-    subgraph_1w = create_sub_graph("1w")
-    subgraph_1x = create_sub_graph("1x")
-    subgraph_1y = create_sub_graph("1y")
-    subgraph_1z = create_sub_graph("1z")
+    subgraph_XA = subX.add_subgraph("XA")
+    subgraph_XB = subX.add_subgraph("XB")
+    subgraph_XC = subX.add_subgraph("XC")
 
-    subgraph_2A = create_sub_graph("2A")
-    subgraph_2B = create_sub_graph("2B")
-    subgraph_2C = create_sub_graph("2C")
-    subgraph_2D = create_sub_graph("2D")
-    subgraph_2E = create_sub_graph("2E")
-    subgraph_2w = create_sub_graph("2w")
-    subgraph_2x = create_sub_graph("2x")
-    subgraph_2y = create_sub_graph("2y")
-    subgraph_2z = create_sub_graph("2z")
+    subgraph_1A = sub1.add_subgraph("1A")
+    subgraph_1B = sub1.add_subgraph("1B")
+    subgraph_1C = sub1.add_subgraph("1C")
+    subgraph_1D = sub1.add_subgraph("1D")
+    subgraph_1E = sub1.add_subgraph("1E")
+    subgraph_1w = sub1.add_subgraph("1w")
+    subgraph_1x = sub1.add_subgraph("1x")
+    subgraph_1y = sub1.add_subgraph("1y")
+    subgraph_1z = sub1.add_subgraph("1z")
 
-    subgraph_3A = create_sub_graph("3A")
-    subgraph_3B = create_sub_graph("3B")
-    subgraph_3C = create_sub_graph("3C")
-    subgraph_3D = create_sub_graph("3D")
-    subgraph_3E = create_sub_graph("3E")
-    subgraph_3w = create_sub_graph("3w")
-    subgraph_3x = create_sub_graph("3x")
-    subgraph_3y = create_sub_graph("3y")
-    subgraph_3z = create_sub_graph("3z")
+    subgraph_2A = sub2.add_subgraph("2A")
+    subgraph_2B = sub2.add_subgraph("2B")
+    subgraph_2C = sub2.add_subgraph("2C")
+    subgraph_2D = sub2.add_subgraph("2D")
+    subgraph_2E = sub2.add_subgraph("2E")
+    subgraph_2w = sub2.add_subgraph("2w")
+    subgraph_2x = sub2.add_subgraph("2x")
+    subgraph_2y = sub2.add_subgraph("2y")
+    subgraph_2z = sub2.add_subgraph("2z")
+
+    subgraph_3A = sub3.add_subgraph("3A")
+    subgraph_3B = sub3.add_subgraph("3B")
+    subgraph_3C = sub3.add_subgraph("3C")
+    subgraph_3D = sub3.add_subgraph("3D")
+    subgraph_3E = sub3.add_subgraph("3E")
+    subgraph_3w = sub3.add_subgraph("3w")
+    subgraph_3x = sub3.add_subgraph("3x")
+    subgraph_3y = sub3.add_subgraph("3y")
+    subgraph_3z = sub3.add_subgraph("3z")
 
     subgraph_XA.add_process(
         Process(
@@ -60,6 +64,7 @@ def create_full_production_graph():
     )
 
     p_16 = Produced(16)
+    p16_1 = StepProduced(p_16, 1)
 
     subgraph_XB.add_process(
         Process(
@@ -67,7 +72,7 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=15,
             inputs=ResourceCounterBuilder().add_items([Bought(28)]).build(),
-            output=StepProduced(p_16, 1)
+            output=p16_1
         )
     )
     subgraph_XB.add_process(
@@ -76,8 +81,7 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(14)])
-            .add_items([Bought(24)])
+            .add_items([Bought(24), p16_1])
             .add_items([Bought(40)])
             .add_items([Bought(41)])
             .add(Bought(42), 2)
@@ -109,12 +113,6 @@ def create_full_production_graph():
             .build(),
             output=Produced(26)
         )
-    )
-
-    graph.child_node_aggregates.extend(
-        [
-            subgraph_XA, subgraph_XB, subgraph_XC
-        ]
     )
 
     subgraph_1A.add_process(
@@ -391,13 +389,6 @@ def create_full_production_graph():
             .build(),
             output=Produced(1)
         )
-    )
-
-    graph.child_node_aggregates.extend(
-        [
-            subgraph_1A, subgraph_1B, subgraph_1C, subgraph_1D, subgraph_1E,
-            subgraph_1w, subgraph_1x, subgraph_1y, subgraph_1z
-        ]
     )
 
     subgraph_2A.add_process(
@@ -684,13 +675,6 @@ def create_full_production_graph():
         )
     )
 
-    graph.child_node_aggregates.extend(
-        [
-            subgraph_2A, subgraph_2B, subgraph_2C, subgraph_2D, subgraph_2E,
-            subgraph_2w, subgraph_2x, subgraph_2y, subgraph_2z
-        ]
-    )
-
     # Mapping for group 3:
     # A -> XA, B -> XB, C -> 3A, D -> 3B, E -> 3C, F -> 3D, G -> 3E, H -> XC,
     # w -> 3w, x -> 3x, y -> 3y, z -> 3z
@@ -912,32 +896,6 @@ def create_full_production_graph():
         )
     )
 
-    # Group XC (old group H -> XC):
-    subgraph_XC.add_process(
-        Process(
-            workstation_id=7,
-            process_duration=2,
-            setup_duration=30,
-            inputs=ResourceCounterBuilder()
-            .add(Bought(44), 2)
-            .add(Bought(48), 2)
-            .build(),
-            output=StepProduced(Produced(26), 1)
-        )
-    )
-    subgraph_XC.add_process(
-        Process(
-            workstation_id=15,
-            process_duration=3,
-            setup_duration=15,
-            inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(26), 1)])
-            .add_items([Bought(47)])
-            .build(),
-            output=Produced(26)
-        )
-    )
-
     # Group 3w (old group w -> 3w):
     subgraph_3w.add_process(
         Process(
@@ -1004,14 +962,6 @@ def create_full_production_graph():
             .build(),
             output=Produced(3)
         )
-    )
-
-    graph.child_node_aggregates.extend(
-        [
-            subgraph_3A, subgraph_3B, subgraph_3C,
-            subgraph_3D, subgraph_3E, subgraph_3w, subgraph_3x,
-            subgraph_3y, subgraph_3z
-        ]
     )
 
     return graph

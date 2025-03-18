@@ -1,12 +1,12 @@
 import logging
+from typing import Self
 
 import networkx as nx
 
 from material.core.resource_counter import ResourceCounter
 from material.graph.base_graph import BaseGraph
-from material.graph.nodes.graph_nodes import NodeAggregate, Node
+from material.graph.nodes.graph_nodes import Node
 from material.graph.nodes.process import Process
-from material.graph.production_graph.material_product_graph import MaterialProductGraph
 
 
 class SubGraph(BaseGraph):
@@ -14,7 +14,7 @@ class SubGraph(BaseGraph):
     A subgraph that delegates node addition to a parent nx_graph while maintaining its own aggregate.
     """
 
-    def __init__(self, label: str, parent_graph: MaterialProductGraph):
+    def __init__(self, label: str, parent_graph: BaseGraph):
         super().__init__()
         self.label = label
         self.parent_graph = parent_graph
@@ -25,10 +25,9 @@ class SubGraph(BaseGraph):
     def nx_graph(self) -> nx.DiGraph:
         return self.parent_graph.nx_graph
 
-    def add_node(self, node: NodeAggregate) -> None:
+    def add_node(self, node: Node) -> None:
         self._child_node_aggregates.append(node)
-        if isinstance(node, Node):
-            logging.info(f"Adding node {node.node_id} to child aggregates.")
+        logging.info(f"Adding node {node.node_id} to child aggregates.")
         self.add_to_networkx(node)
 
     def _add_edges(self, from_resources: ResourceCounter, process: Process) -> None:
@@ -61,3 +60,9 @@ class SubGraph(BaseGraph):
         logging.debug(f"Added edge from {new_process} to {new_process.output} with weight 1.")
 
         return new_process
+
+    def add_edge(self, source_node: Node, target_node: Node, weight: int = 1) -> None:
+        self.parent_graph.add_edge(source_node, target_node, weight)
+
+    def create_subgraph(self, label: str) -> Self:
+        return SubGraph(label, self)
