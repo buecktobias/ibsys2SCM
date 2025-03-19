@@ -7,19 +7,13 @@ from material.graph.nodes.production_node_type import ProductionNodeType
 class Process(LabeledGraphNode):
     """
     Represents a process node in the nx_graph.
-
-    Attributes:
-        _workstation_id (int): The identifier for the workstation.
-        _process_duration (int): The duration of the process.
-        _setup_duration (int): The setup duration before the process.
-        _inputs (dict[Item, int], optional): A dictionary mapping input Items to their required quantities.
-        _output (Item, optional): The output Item of the process.
     """
     _output: Item
     _inputs: ResourceCounter[Item]
     _setup_duration: int
     _process_duration: int
     _workstation_id: int
+    graph_id: str = ""
 
     def __init__(self, workstation_id: int, process_duration: int, setup_duration: int,
                  inputs: ResourceCounter[Item], output: Item):

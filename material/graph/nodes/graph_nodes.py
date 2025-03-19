@@ -38,12 +38,12 @@ class Bought(Item):
     """
         base_price=item.base_price, discount_amount=item.discount_amount,
         discount_percentage=item.discount_percentage,
-        mean_order_duration_in_periodes=item.mean_order_duration,
-        mean_order_standard_deviation_in_periodes=item.mean_order_std_dev
+        mean_order_duration_in_periods=item.mean_order_duration,
+        order_standard_deviation_in_periods=item.mean_order_std_dev
     """
     base_price: float = 0
     discount_amount: int = 0
-    discount_percentage: float = 0
+    discount: float = 0
     mean_order_duration: float = 0
     mean_order_std_dev: float = 0
 

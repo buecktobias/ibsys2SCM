@@ -38,6 +38,7 @@ class BaseGraph(abc.ABC):
 
     def add_process(self, process: Process):
         self._processes.add(process)
+        process.graph_id = self.label
         step_inputs = filter(lambda x: isinstance(x, StepProduced), process.inputs.keys())
         for step_produced in step_inputs:
             previous_process = self.get_process_by_output(step_produced)
