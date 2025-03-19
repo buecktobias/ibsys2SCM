@@ -1,13 +1,15 @@
+import logging
 import re
 import typing
 from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
+
 import yaml
-from material.graph.nodes.graph_nodes import Item, Node, Bought, Produced, StepProduced, NodeAggregate
+
+from material.graph.nodes.graph_nodes import Item, Bought, StepProduced, FullProduced
 from material.graph.nodes.process import Process
-from material.graph.production_graph.material_product_graph import MaterialProductGraph
-from material.graph.sub_graph import SubGraph
+from material.graph.production_graph.base_graph import MaterialProductGraph, BaseGraph
 from material.graph.util.process_util import get_process_outgoing_to
 
 
@@ -120,30 +122,35 @@ class NxToMermaid:
         self.mermaid.init_mermaid(settings, "flowchart LR")
 
     def add_process_node(self, node: Process):
-        self.mermaid.add_class_assignment(node.node_id, node.node_type.value)
-        label = f"<b>{node.node_id}</b>"
-        self.mermaid.add_node(node.node_id, label)
+        self.mermaid.add_class_assignment(node.label, node.node_type.value)
+        label = f"<b>{node.label}</b>"
+        self.mermaid.add_node(node.label, label)
 
     def add_item_node(self, node: Item):
-        self.mermaid.add_class_assignment(node.node_id, node.node_type.value)
-        self.mermaid.add_rounded_node(node.node_id, node.node_id)
+        self.mermaid.add_class_assignment(node.label, node.node_type.value)
+        self.mermaid.add_rounded_node(node.label, node.label)
+
+    def add_rounded_styled_node(self, node_id, label, style_class: str):
+        self.mermaid.add_class_assignment(node_id, style_class)
+        self.mermaid.add_rounded_node(node_id, label)
 
     def get_unique_bought_node_id(self, node: Bought):
         current_count = self.duplicate_bought_nodes.get(node, 0)
         self.duplicate_bought_nodes[node] = current_count + 1
-        return node.node_id + f"_{current_count}"
+        return node.label + f"_{current_count}"
 
-    def get_process_input(self, processes: typing.Collection[Process], input_item: Node):
+    def get_process_input(self, processes: typing.Collection[Process], input_item: Item):
         if isinstance(input_item, Bought):
             input_id = self.get_unique_bought_node_id(input_item)
-            self.mermaid.add_rounded_node(input_id, input_item.node_id)
-            self.mermaid.add_class_assignment(input_id, input_item.node_type.value)
-        elif isinstance(input_item, Produced):
-            input_id = input_item.node_id
+            self.add_rounded_styled_node(input_id, input_item.label, input_item.node_type.value)
+        elif isinstance(input_item, FullProduced):
+            input_id = input_item.label
             self.add_item_node(input_item)
         elif isinstance(input_item, StepProduced):
             outgoing_to_list: list[Process] = get_process_outgoing_to(processes, input_item)
-            input_id = outgoing_to_list[0].node_id if len(outgoing_to_list) == 1 else input_item.node_id
+            if len(outgoing_to_list) != 1:
+                logging.warning(f"StepProduced {input_item} has more than one incoming process: {outgoing_to_list}")
+            input_id = outgoing_to_list[0].label if len(outgoing_to_list) == 1 else input_item.label
         else:
             raise ValueError(f"Node type {type(input_item)} not supported.")
 
@@ -154,27 +161,20 @@ class NxToMermaid:
             self.add_process_node(process)
             for input_item, _ in process.inputs.items():
                 input_id = self.get_process_input(processes, input_item)
-                self.mermaid.add_arrow(input_id, process.node_id)
+                self.mermaid.add_arrow(input_id, process.label)
             if isinstance(process.output, StepProduced):
                 continue
-            self.mermaid.add_arrow(process.node_id, process.output.node_id)
+            self.mermaid.add_arrow(process.label, process.output.label)
 
-    def add_subgraph(self, subgraph: SubGraph):
+    def add_subgraph(self, subgraph: BaseGraph):
         with self.mermaid.create_subgraph(subgraph.label):
-            self.add_processes(subgraph.processes)
-            for node_aggregate in subgraph.child_node_aggregates:
-                if isinstance(node_aggregate, SubGraph):
-                    self.add_subgraph(node_aggregate)
-
-    def add_node_aggregate(self, node_aggregate: NodeAggregate):
-        if isinstance(node_aggregate, SubGraph):
-            self.add_subgraph(node_aggregate)
-        else:
-            raise ValueError(f"Node type {type(node_aggregate)} not supported.")
+            self.add_processes(subgraph.get_own_processes())
+            for sub_graph in subgraph.get_subgraphs():
+                self.add_subgraph(sub_graph)
 
     def convert(self):
-        for node_aggregate in self.graph.child_node_aggregates:
-            self.add_node_aggregate(node_aggregate)
+        for subgraph in self.graph.get_subgraphs():
+            self.add_subgraph(subgraph)
         return self.mermaid.get_content()
 
     def save_html(self, mermaid_code, graph_name):

@@ -14,7 +14,7 @@ class GraphValidator:
         if weight != 1:
             raise ValueError(f"Output edge must have weight 1. {source_node} -> {target_node}")
         # noinspection PyTypeChecker
-        if int(self.graph.out_degree(source_node.node_id)) != 0:
+        if int(self.graph.out_degree(source_node.label)) != 0:
             raise ValueError(
                 "Each node must have exactly one outgoing edge. So for adding to be valid, the out degree must be 0." +
                 f" {source_node} -> {target_node}"

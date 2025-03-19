@@ -52,7 +52,7 @@ def test_subgraph_add_process_edges(graph: MaterialProductGraph):
         output_uid="E1",
     )
     assert process is not None, "Process node not added."
-    expected_uid = process.node_id  # Computed by the Process implementation.
+    expected_uid = process.label  # Computed by the Process implementation.
     # Check that the process node is in the graph.
     assert expected_uid in graph.nx_graph.nodes
     # Check that the edge from input ("K1") to process exists with weight 2.
@@ -90,6 +90,6 @@ def test_subgraph_addition():
     subgraph = SubGraph("test", parent_graph)
     item = Item.from_node_id("K5")
     subgraph.add_node(item)
-    key = f"{item._node_type.value}{item.node_id}"
+    key = f"{item._node_type.value}{item.label}"
     assert key in parent_graph.nx_graph.nodes
-    assert item in subgraph.get_node_aggregates()
+    assert item in subgraph.get_subgraphs()

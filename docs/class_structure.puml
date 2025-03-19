@@ -1,0 +1,53 @@
+@startuml
+
+
+class BaseGraph{
+    - subgraphs: List<BaseGraph>
+    - processes: List<Process>
+    + subgraphs(): List<BaseGraph>
+    + processes(): List<Process>
+    + nodes(): List<Item>
+}
+
+
+class ItemNode{
+    + label: str
+    + id: str
+
+}
+
+class BoughtItem extends ItemNode{
+   + base_price: float
+   + discount_amount: int
+   + discount_percentage: int
+   + mean_order_duration_in_periodes: float
+   + mean_order_standard_deviation_in_periodes: float
+}
+
+class Produced extends ItemNode{
+    - sell_price: float
+    - is_primary: bool = False
+}
+
+class FullProduced extends Produced{
+}
+
+class SubStepProducedItem extends Produced{
+    - parent: ProducedItem
+}
+
+class Process{
+    + id: str
+    + label: str
+    + setup_duration_minutes: int
+    + process_duration_minutes: int
+    + inputs: List<Item>
+    + output: Produced
+}
+
+Process "1" o--> "1" Produced
+Process "n" o--> "m" ItemNode
+BaseGraph "1" o--> "n" Process
+
+SubStepProducedItem "1" o--> "1" FullProduced
+@enduml

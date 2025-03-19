@@ -1,54 +1,51 @@
 from material.core.resource_counter import ResourceCounterBuilder
-from material.graph.nodes.graph_nodes import Produced, Bought, StepProduced
+from material.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced
 from material.graph.nodes.process import Process
-from material.graph.production_graph.material_product_graph import MaterialProductGraph
-from material.graph.sub_graph import SubGraph
+from material.graph.production_graph.base_graph import MaterialProductGraphBuilder
 
 
 # noinspection PyPep8Naming
 def create_full_production_graph():
-    graph = MaterialProductGraph()
+    graph = MaterialProductGraphBuilder("Full Production Graph")
 
-    graph = MaterialProductGraph()
+    subX = graph.create_subgraph("X")
+    sub1 = graph.create_subgraph("1")
+    sub2 = graph.create_subgraph("2")
+    sub3 = graph.create_subgraph("3")
 
-    subX = graph.add_subgraph("X")
-    sub1 = graph.add_subgraph("1")
-    sub2 = graph.add_subgraph("2")
-    sub3 = graph.add_subgraph("3")
+    subgraph_XA = subX.create_subgraph("XA")
+    subgraph_XB = subX.create_subgraph("XB")
+    subgraph_XC = subX.create_subgraph("XC")
 
-    subgraph_XA = subX.add_subgraph("XA")
-    subgraph_XB = subX.add_subgraph("XB")
-    subgraph_XC = subX.add_subgraph("XC")
+    subgraph_1A = sub1.create_subgraph("1A")
+    subgraph_1B = sub1.create_subgraph("1B")
+    subgraph_1C = sub1.create_subgraph("1C")
+    subgraph_1D = sub1.create_subgraph("1D")
+    subgraph_1E = sub1.create_subgraph("1E")
+    subgraph_1w = sub1.create_subgraph("1w")
+    subgraph_1x = sub1.create_subgraph("1x")
+    subgraph_1y = sub1.create_subgraph("1y")
+    subgraph_1z = sub1.create_subgraph("1z")
 
-    subgraph_1A = sub1.add_subgraph("1A")
-    subgraph_1B = sub1.add_subgraph("1B")
-    subgraph_1C = sub1.add_subgraph("1C")
-    subgraph_1D = sub1.add_subgraph("1D")
-    subgraph_1E = sub1.add_subgraph("1E")
-    subgraph_1w = sub1.add_subgraph("1w")
-    subgraph_1x = sub1.add_subgraph("1x")
-    subgraph_1y = sub1.add_subgraph("1y")
-    subgraph_1z = sub1.add_subgraph("1z")
+    subgraph_2A = sub2.create_subgraph("2A")
+    subgraph_2B = sub2.create_subgraph("2B")
+    subgraph_2C = sub2.create_subgraph("2C")
+    subgraph_2D = sub2.create_subgraph("2D")
+    subgraph_2E = sub2.create_subgraph("2E")
+    subgraph_2w = sub2.create_subgraph("2w")
+    subgraph_2x = sub2.create_subgraph("2x")
+    subgraph_2y = sub2.create_subgraph("2y")
+    subgraph_2z = sub2.create_subgraph("2z")
 
-    subgraph_2A = sub2.add_subgraph("2A")
-    subgraph_2B = sub2.add_subgraph("2B")
-    subgraph_2C = sub2.add_subgraph("2C")
-    subgraph_2D = sub2.add_subgraph("2D")
-    subgraph_2E = sub2.add_subgraph("2E")
-    subgraph_2w = sub2.add_subgraph("2w")
-    subgraph_2x = sub2.add_subgraph("2x")
-    subgraph_2y = sub2.add_subgraph("2y")
-    subgraph_2z = sub2.add_subgraph("2z")
-
-    subgraph_3A = sub3.add_subgraph("3A")
-    subgraph_3B = sub3.add_subgraph("3B")
-    subgraph_3C = sub3.add_subgraph("3C")
-    subgraph_3D = sub3.add_subgraph("3D")
-    subgraph_3E = sub3.add_subgraph("3E")
-    subgraph_3w = sub3.add_subgraph("3w")
-    subgraph_3x = sub3.add_subgraph("3x")
-    subgraph_3y = sub3.add_subgraph("3y")
-    subgraph_3z = sub3.add_subgraph("3z")
+    subgraph_3A = sub3.create_subgraph("3A")
+    subgraph_3B = sub3.create_subgraph("3B")
+    subgraph_3C = sub3.create_subgraph("3C")
+    subgraph_3D = sub3.create_subgraph("3D")
+    subgraph_3E = sub3.create_subgraph("3E")
+    subgraph_3w = sub3.create_subgraph("3w")
+    subgraph_3x = sub3.create_subgraph("3x")
+    subgraph_3y = sub3.create_subgraph("3y")
+    subgraph_3z = sub3.create_subgraph("3z")
 
     subgraph_XA.add_process(
         Process(
@@ -59,12 +56,11 @@ def create_full_production_graph():
             ResourceCounterBuilder()
             .add_items([Bought(43), Bought(44), Bought(45), Bought(46)])
             .build(),
-            output=Produced(17)
+            output=FullProduced(17)
         )
     )
-
-    p_16 = Produced(16)
-    p16_1 = StepProduced(p_16, 1)
+    p16 = FullProduced(16)
+    p16_1 = StepProduced(p16, 1)
 
     subgraph_XB.add_process(
         Process(
@@ -86,7 +82,7 @@ def create_full_production_graph():
             .add_items([Bought(41)])
             .add(Bought(42), 2)
             .build(),
-            output=Produced(16)
+            output=p16
         )
     )
 
@@ -99,7 +95,7 @@ def create_full_production_graph():
             .add(Bought(44), 2)
             .add(Bought(48), 2)
             .build(),
-            output=StepProduced(Produced(26), 1)
+            output=StepProduced(FullProduced(26), 1)
         )
     )
     subgraph_XC.add_process(
@@ -108,10 +104,10 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(26), 1)])
+            .add_items([StepProduced(FullProduced(26), 1)])
             .add_items([Bought(47)])
             .build(),
-            output=Produced(26)
+            output=FullProduced(26)
         )
     )
 
@@ -123,7 +119,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(13), 1)
+            output=StepProduced(FullProduced(13), 1)
         )
     )
     subgraph_1A.add_process(
@@ -132,9 +128,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(13), 1)])
+            .add_items([StepProduced(FullProduced(13), 1)])
             .build(),
-            output=StepProduced(Produced(13), 2)
+            output=StepProduced(FullProduced(13), 2)
         )
     )
     subgraph_1A.add_process(
@@ -143,9 +139,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(13), 2)])
+            .add_items([StepProduced(FullProduced(13), 2)])
             .build(),
-            output=StepProduced(Produced(13), 3)
+            output=StepProduced(FullProduced(13), 3)
         )
     )
     subgraph_1A.add_process(
@@ -154,10 +150,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(13), 3)])
+            .add_items([StepProduced(FullProduced(13), 3)])
             .add_items([Bought(32)])
             .build(),
-            output=StepProduced(Produced(13), 4)
+            output=StepProduced(FullProduced(13), 4)
         )
     )
     subgraph_1A.add_process(
@@ -166,9 +162,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(13), 4)])
+            .add_items([StepProduced(FullProduced(13), 4)])
             .build(),
-            output=Produced(13)
+            output=FullProduced(13)
         )
     )
 
@@ -180,7 +176,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(28), 3)
             .build(),
-            output=StepProduced(Produced(18), 1)
+            output=StepProduced(FullProduced(18), 1)
         )
     )
     subgraph_1B.add_process(
@@ -189,9 +185,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(18), 1)])
+            .add_items([StepProduced(FullProduced(18), 1)])
             .build(),
-            output=StepProduced(Produced(18), 2)
+            output=StepProduced(FullProduced(18), 2)
         )
     )
     subgraph_1B.add_process(
@@ -200,10 +196,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(18), 2)])
+            .add_items([StepProduced(FullProduced(18), 2)])
             .add(Bought(59), 2)
             .build(),
-            output=StepProduced(Produced(18), 3)
+            output=StepProduced(FullProduced(18), 3)
         )
     )
     subgraph_1B.add_process(
@@ -212,9 +208,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(18), 3)])
+            .add_items([StepProduced(FullProduced(18), 3)])
             .build(),
-            output=Produced(18)
+            output=FullProduced(18)
         )
     )
 
@@ -227,7 +223,7 @@ def create_full_production_graph():
             .add_items([Bought(52)])
             .add(Bought(53), 36)
             .build(),
-            output=StepProduced(Produced(7), 1)
+            output=StepProduced(FullProduced(7), 1)
         )
     )
     subgraph_1C.add_process(
@@ -236,12 +232,12 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(7), 1)])
+            .add_items([StepProduced(FullProduced(7), 1)])
             .add(Bought(35), 2)
             .add(Bought(37), 2)
             .add_items([Bought(38)])
             .build(),
-            output=Produced(7)
+            output=FullProduced(7)
         )
     )
 
@@ -254,7 +250,7 @@ def create_full_production_graph():
             .add_items([Bought(52)])
             .add(Bought(53), 36)
             .build(),
-            output=StepProduced(Produced(4), 1)
+            output=StepProduced(FullProduced(4), 1)
         )
     )
     subgraph_1D.add_process(
@@ -263,11 +259,11 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(4), 1)])
+            .add_items([StepProduced(FullProduced(4), 1)])
             .add(Bought(35), 2)
             .add_items([Bought(36)])
             .build(),
-            output=Produced(4)
+            output=FullProduced(4)
         )
     )
 
@@ -279,7 +275,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(10), 1)
+            output=StepProduced(FullProduced(10), 1)
         )
     )
     subgraph_1E.add_process(
@@ -288,9 +284,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(10), 1)])
+            .add_items([StepProduced(FullProduced(10), 1)])
             .build(),
-            output=StepProduced(Produced(10), 2)
+            output=StepProduced(FullProduced(10), 2)
         )
     )
     subgraph_1E.add_process(
@@ -299,9 +295,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(10), 2)])
+            .add_items([StepProduced(FullProduced(10), 2)])
             .build(),
-            output=StepProduced(Produced(10), 3)
+            output=StepProduced(FullProduced(10), 3)
         )
     )
     subgraph_1E.add_process(
@@ -310,9 +306,9 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(10), 3)])
+            .add_items([StepProduced(FullProduced(10), 3)])
             .build(),
-            output=StepProduced(Produced(10), 4)
+            output=StepProduced(FullProduced(10), 4)
         )
     )
     subgraph_1E.add_process(
@@ -321,9 +317,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(10), 4)])
+            .add_items([StepProduced(FullProduced(10), 4)])
             .build(),
-            output=Produced(10)
+            output=FullProduced(10)
         )
     )
 
@@ -335,11 +331,11 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(24), 2)
             .add(Bought(25), 2)
-            .add_items([Produced(13)])
-            .add_items([Produced(18)])
-            .add_items([Produced(7)])
+            .add_items([FullProduced(13)])
+            .add_items([FullProduced(18)])
+            .add_items([FullProduced(7)])
             .build(),
-            output=Produced(49)
+            output=FullProduced(49)
         )
     )
 
@@ -349,13 +345,13 @@ def create_full_production_graph():
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(49)])
-            .add_items([Produced(4)])
-            .add_items([Produced(10)])
+            .add_items([FullProduced(49)])
+            .add_items([FullProduced(4)])
+            .add_items([FullProduced(10)])
             .add(Bought(24), 2)
             .add(Bought(25), 2)
             .build(),
-            output=Produced(50)
+            output=FullProduced(50)
         )
     )
 
@@ -365,13 +361,13 @@ def create_full_production_graph():
             process_duration=5,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(17)])
-            .add_items([Produced(16)])
-            .add_items([Produced(50)])
+            .add_items([FullProduced(17)])
+            .add_items([FullProduced(16)])
+            .add_items([FullProduced(50)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(51)
+            output=FullProduced(51)
         )
     )
 
@@ -381,13 +377,13 @@ def create_full_production_graph():
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(26)])
-            .add_items([Produced(51)])
+            .add_items([FullProduced(26)])
+            .add_items([FullProduced(51)])
             .add_items([Bought(21)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(1)
+            output=FullProduced(1)
         )
     )
 
@@ -399,7 +395,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(14), 1)
+            output=StepProduced(FullProduced(14), 1)
         )
     )
     subgraph_2A.add_process(
@@ -408,9 +404,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(14), 1)])
+            .add_items([StepProduced(FullProduced(14), 1)])
             .build(),
-            output=StepProduced(Produced(14), 2)
+            output=StepProduced(FullProduced(14), 2)
         )
     )
     subgraph_2A.add_process(
@@ -419,9 +415,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(14), 2)])
+            .add_items([StepProduced(FullProduced(14), 2)])
             .build(),
-            output=StepProduced(Produced(14), 3)
+            output=StepProduced(FullProduced(14), 3)
         )
     )
     subgraph_2A.add_process(
@@ -430,10 +426,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(14), 3)])
+            .add_items([StepProduced(FullProduced(14), 3)])
             .add_items([Bought(32)])
             .build(),
-            output=StepProduced(Produced(14), 4)
+            output=StepProduced(FullProduced(14), 4)
         )
     )
     subgraph_2A.add_process(
@@ -442,9 +438,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(14), 4)])
+            .add_items([StepProduced(FullProduced(14), 4)])
             .build(),
-            output=Produced(14)
+            output=FullProduced(14)
         )
     )
 
@@ -457,7 +453,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(28), 3)
             .build(),
-            output=StepProduced(Produced(19), 1)
+            output=StepProduced(FullProduced(19), 1)
         )
     )
     subgraph_2B.add_process(
@@ -466,9 +462,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(19), 1)])
+            .add_items([StepProduced(FullProduced(19), 1)])
             .build(),
-            output=StepProduced(Produced(19), 2)
+            output=StepProduced(FullProduced(19), 2)
         )
     )
     subgraph_2B.add_process(
@@ -477,10 +473,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(19), 2)])
+            .add_items([StepProduced(FullProduced(19), 2)])
             .add(Bought(59), 2)
             .build(),
-            output=StepProduced(Produced(19), 3)
+            output=StepProduced(FullProduced(19), 3)
         )
     )
     subgraph_2B.add_process(
@@ -489,9 +485,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(19), 3)])
+            .add_items([StepProduced(FullProduced(19), 3)])
             .build(),
-            output=Produced(19)
+            output=FullProduced(19)
         )
     )
 
@@ -505,7 +501,7 @@ def create_full_production_graph():
             .add_items([Bought(57)])
             .add(Bought(58), 36)
             .build(),
-            output=StepProduced(Produced(8), 1)
+            output=StepProduced(FullProduced(8), 1)
         )
     )
     subgraph_2C.add_process(
@@ -514,12 +510,12 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(8), 1)])
+            .add_items([StepProduced(FullProduced(8), 1)])
             .add(Bought(35), 2)
             .add(Bought(37), 2)
             .add_items([Bought(38)])
             .build(),
-            output=Produced(8)
+            output=FullProduced(8)
         )
     )
 
@@ -533,7 +529,7 @@ def create_full_production_graph():
             .add_items([Bought(57)])
             .add(Bought(58), 36)
             .build(),
-            output=StepProduced(Produced(5), 1)
+            output=StepProduced(FullProduced(5), 1)
         )
     )
     subgraph_2D.add_process(
@@ -542,11 +538,11 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(5), 1)])
+            .add_items([StepProduced(FullProduced(5), 1)])
             .add(Bought(35), 2)
             .add_items([Bought(36)])
             .build(),
-            output=Produced(5)
+            output=FullProduced(5)
         )
     )
 
@@ -559,7 +555,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(11), 1)
+            output=StepProduced(FullProduced(11), 1)
         )
     )
     subgraph_2E.add_process(
@@ -568,9 +564,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(11), 1)])
+            .add_items([StepProduced(FullProduced(11), 1)])
             .build(),
-            output=StepProduced(Produced(11), 2)
+            output=StepProduced(FullProduced(11), 2)
         )
     )
     subgraph_2E.add_process(
@@ -579,9 +575,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(11), 2)])
+            .add_items([StepProduced(FullProduced(11), 2)])
             .build(),
-            output=StepProduced(Produced(11), 3)
+            output=StepProduced(FullProduced(11), 3)
         )
     )
     subgraph_2E.add_process(
@@ -590,9 +586,9 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(11), 3)])
+            .add_items([StepProduced(FullProduced(11), 3)])
             .build(),
-            output=StepProduced(Produced(11), 4)
+            output=StepProduced(FullProduced(11), 4)
         )
     )
     subgraph_2E.add_process(
@@ -601,9 +597,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(11), 4)])
+            .add_items([StepProduced(FullProduced(11), 4)])
             .build(),
-            output=Produced(11)
+            output=FullProduced(11)
         )
     )
 
@@ -616,11 +612,11 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(24), 2)
             .add(Bought(25), 2)
-            .add_items([Produced(14)])
-            .add_items([Produced(19)])
-            .add_items([Produced(8)])
+            .add_items([FullProduced(14)])
+            .add_items([FullProduced(19)])
+            .add_items([FullProduced(8)])
             .build(),
-            output=Produced(54)
+            output=FullProduced(54)
         )
     )
 
@@ -631,13 +627,13 @@ def create_full_production_graph():
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(54)])
-            .add_items([Produced(5)])
-            .add_items([Produced(11)])
+            .add_items([FullProduced(54)])
+            .add_items([FullProduced(5)])
+            .add_items([FullProduced(11)])
             .add(Bought(24), 2)
             .add(Bought(25), 2)
             .build(),
-            output=Produced(55)
+            output=FullProduced(55)
         )
     )
 
@@ -648,13 +644,13 @@ def create_full_production_graph():
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(17)])
-            .add_items([Produced(16)])
-            .add_items([Produced(55)])
+            .add_items([FullProduced(17)])
+            .add_items([FullProduced(16)])
+            .add_items([FullProduced(55)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(56)
+            output=FullProduced(56)
         )
     )
 
@@ -665,21 +661,16 @@ def create_full_production_graph():
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(26)])
-            .add_items([Produced(56)])
+            .add_items([FullProduced(26)])
+            .add_items([FullProduced(56)])
             .add_items([Bought(22)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(2)
+            output=FullProduced(2)
         )
     )
 
-    # Mapping for group 3:
-    # A -> XA, B -> XB, C -> 3A, D -> 3B, E -> 3C, F -> 3D, G -> 3E, H -> XC,
-    # w -> 3w, x -> 3x, y -> 3y, z -> 3z
-
-    # Group 3A (old group C -> 3A):
     subgraph_3A.add_process(
         Process(
             workstation_id=13,
@@ -688,7 +679,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(15), 1)
+            output=StepProduced(FullProduced(15), 1)
         )
     )
     subgraph_3A.add_process(
@@ -697,9 +688,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(15), 1)])
+            .add_items([StepProduced(FullProduced(15), 1)])
             .build(),
-            output=StepProduced(Produced(15), 2)
+            output=StepProduced(FullProduced(15), 2)
         )
     )
     subgraph_3A.add_process(
@@ -708,9 +699,9 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(15), 2)])
+            .add_items([StepProduced(FullProduced(15), 2)])
             .build(),
-            output=StepProduced(Produced(15), 3)
+            output=StepProduced(FullProduced(15), 3)
         )
     )
     subgraph_3A.add_process(
@@ -719,10 +710,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(15), 3)])
+            .add_items([StepProduced(FullProduced(15), 3)])
             .add_items([Bought(32)])
             .build(),
-            output=StepProduced(Produced(15), 4)
+            output=StepProduced(FullProduced(15), 4)
         )
     )
     subgraph_3A.add_process(
@@ -731,9 +722,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(15), 4)])
+            .add_items([StepProduced(FullProduced(15), 4)])
             .build(),
-            output=Produced(15)
+            output=FullProduced(15)
         )
     )
 
@@ -746,7 +737,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(28), 3)
             .build(),
-            output=StepProduced(Produced(20), 1)
+            output=StepProduced(FullProduced(20), 1)
         )
     )
     subgraph_3B.add_process(
@@ -755,9 +746,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(20), 1)])
+            .add_items([StepProduced(FullProduced(20), 1)])
             .build(),
-            output=StepProduced(Produced(20), 2)
+            output=StepProduced(FullProduced(20), 2)
         )
     )
     subgraph_3B.add_process(
@@ -766,10 +757,10 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(20), 2)])
+            .add_items([StepProduced(FullProduced(20), 2)])
             .add(Bought(59), 2)
             .build(),
-            output=StepProduced(Produced(20), 3)
+            output=StepProduced(FullProduced(20), 3)
         )
     )
     subgraph_3B.add_process(
@@ -778,9 +769,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(20), 3)])
+            .add_items([StepProduced(FullProduced(20), 3)])
             .build(),
-            output=Produced(20)
+            output=FullProduced(20)
         )
     )
 
@@ -794,7 +785,7 @@ def create_full_production_graph():
             .add_items([Bought(57)])
             .add(Bought(58), 36)
             .build(),
-            output=StepProduced(Produced(9), 1)
+            output=StepProduced(FullProduced(9), 1)
         )
     )
     subgraph_3C.add_process(
@@ -803,12 +794,12 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(9), 1)])
+            .add_items([StepProduced(FullProduced(9), 1)])
             .add(Bought(35), 2)
             .add(Bought(37), 2)
             .add_items([Bought(38)])
             .build(),
-            output=Produced(9)
+            output=FullProduced(9)
         )
     )
 
@@ -822,7 +813,7 @@ def create_full_production_graph():
             .add_items([Bought(33)])
             .add(Bought(34), 36)
             .build(),
-            output=StepProduced(Produced(6), 1)
+            output=StepProduced(FullProduced(6), 1)
         )
     )
     subgraph_3D.add_process(
@@ -831,15 +822,14 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(6), 1)])
+            .add_items([StepProduced(FullProduced(6), 1)])
             .add(Bought(35), 2)
             .add_items([Bought(36)])
             .build(),
-            output=Produced(6)
+            output=FullProduced(6)
         )
     )
 
-    # Group 3E (old group G -> 3E):
     subgraph_3E.add_process(
         Process(
             workstation_id=13,
@@ -848,7 +838,7 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add_items([Bought(39)])
             .build(),
-            output=StepProduced(Produced(12), 1)
+            output=StepProduced(FullProduced(12), 1)
         )
     )
     subgraph_3E.add_process(
@@ -857,9 +847,9 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(12), 1)])
+            .add_items([StepProduced(FullProduced(12), 1)])
             .build(),
-            output=StepProduced(Produced(12), 2)
+            output=StepProduced(FullProduced(12), 2)
         )
     )
     subgraph_3E.add_process(
@@ -868,9 +858,9 @@ def create_full_production_graph():
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(12), 2)])
+            .add_items([StepProduced(FullProduced(12), 2)])
             .build(),
-            output=StepProduced(Produced(12), 3)
+            output=StepProduced(FullProduced(12), 3)
         )
     )
     subgraph_3E.add_process(
@@ -879,9 +869,9 @@ def create_full_production_graph():
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(12), 3)])
+            .add_items([StepProduced(FullProduced(12), 3)])
             .build(),
-            output=StepProduced(Produced(12), 4)
+            output=StepProduced(FullProduced(12), 4)
         )
     )
     subgraph_3E.add_process(
@@ -890,13 +880,12 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(Produced(12), 4)])
+            .add_items([StepProduced(FullProduced(12), 4)])
             .build(),
-            output=Produced(12)
+            output=FullProduced(12)
         )
     )
 
-    # Group 3w (old group w -> 3w):
     subgraph_3w.add_process(
         Process(
             workstation_id=1,
@@ -905,63 +894,60 @@ def create_full_production_graph():
             inputs=ResourceCounterBuilder()
             .add(Bought(24), 2)
             .add(Bought(25), 2)
-            .add_items([Produced(15)])
-            .add_items([Produced(20)])
-            .add_items([Produced(9)])
+            .add_items([FullProduced(15)])
+            .add_items([FullProduced(20)])
+            .add_items([FullProduced(9)])
             .build(),
-            output=Produced(29)
+            output=FullProduced(29)
         )
     )
 
-    # Group 3x (old group x -> 3x):
     subgraph_3x.add_process(
         Process(
             workstation_id=2,
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(29)])
-            .add_items([Produced(6)])
-            .add_items([Produced(12)])
+            .add_items([FullProduced(29)])
+            .add_items([FullProduced(6)])
+            .add_items([FullProduced(12)])
             .add(Bought(24), 2)
             .add(Bought(25), 2)
             .build(),
-            output=Produced(30)
+            output=FullProduced(30)
         )
     )
 
-    # Group 3y (old group y -> 3y):
     subgraph_3y.add_process(
         Process(
             workstation_id=3,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(17)])
-            .add_items([Produced(16)])
-            .add_items([Produced(30)])
+            .add_items([FullProduced(17)])
+            .add_items([FullProduced(16)])
+            .add_items([FullProduced(30)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(31)
+            output=FullProduced(31)
         )
     )
 
-    # Group 3z (old group z -> 3z):
     subgraph_3z.add_process(
         Process(
             workstation_id=4,
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([Produced(26)])
-            .add_items([Produced(31)])
+            .add_items([FullProduced(26)])
+            .add_items([FullProduced(31)])
             .add_items([Bought(23)])
             .add_items([Bought(24)])
             .add_items([Bought(27)])
             .build(),
-            output=Produced(3)
+            output=FullProduced(3)
         )
     )
 
-    return graph
+    return graph.build()

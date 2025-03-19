@@ -2,13 +2,14 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Self, TypeVar
 
-from material.graph.nodes.graph_nodes import Item, Node, StepProduced
+from material.graph.nodes.graph_nodes import Item, StepProduced
+from material.graph.nodes.mermaid_node import LabeledGraphNode
 
-T = TypeVar("T", bound=Node)
+T = TypeVar("T", bound=LabeledGraphNode)
 
 
 class ResourceCounter[T](Counter[T]):
-    def _get_entries_sort_value(self, entry: tuple[Node, int]) -> int:
+    def _get_entries_sort_value(self, entry: tuple[LabeledGraphNode, int]) -> int:
         node, _ = entry
         if isinstance(node, Item):
             return node.node_numerical_id
@@ -17,14 +18,17 @@ class ResourceCounter[T](Counter[T]):
     def print_sorted_resources(self) -> None:
         for key, count in sorted(self.items(), key=lambda x: self._get_entries_sort_value(x)):
             if isinstance(key, Item) and not isinstance(key, StepProduced):
-                print(f"{key.node_id}: {count}")
+                print(f"{key.label}: {count}")
+
+    def __hash__(self):
+        return hash(tuple(self.items()))
 
 
 @dataclass
 class ResourceCounterBuilder:
-    counter: ResourceCounter[Node] = field(default_factory=ResourceCounter)
+    counter: ResourceCounter[LabeledGraphNode] = field(default_factory=ResourceCounter)
 
-    def add(self, node: Node, count: int = 1) -> Self:
+    def add(self, node: LabeledGraphNode, count: int = 1) -> Self:
         self.counter[node] += count
         return self
 

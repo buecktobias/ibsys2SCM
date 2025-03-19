@@ -23,9 +23,9 @@ class ResourceCalculator:
         inventory, and updates the required_resources counter.
         """
         g = graph.nx_graph
-        for pred_key in g.predecessors(node.node_id):
+        for pred_key in g.predecessors(node.label):
             pred_node = graph.get_node_by_uid(pred_key)
-            edge_weight = g[pred_key][node.node_id].get("weight", 1)
+            edge_weight = g[pred_key][node.label].get("weight", 1)
             total_weight = edge_weight * multiplier
             available = inventory[pred_node]
             needed = total_weight - available
