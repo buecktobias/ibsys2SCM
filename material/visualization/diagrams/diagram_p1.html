@@ -54,9 +54,6 @@ subgraph X
         PR15_17 --> E17
     end
     subgraph XB
-        PR6_16["<div style='font-size:18px'><b>PR6_16</b></div>2<br/>2"]
-        K28_0 --> PR6_16
-        PR6_16 --> E16_1
         PR14_16["<div style='font-size:18px'><b>PR14_16</b></div>3<br/>3"]
         K24_0 --> PR14_16
         E16_1 --> PR14_16
@@ -64,63 +61,66 @@ subgraph X
         K41_0 --> PR14_16
         K42_0 --> PR14_16
         PR14_16 --> E16
+        PR6_16["<div style='font-size:18px'><b>PR6_16</b></div>2<br/>2"]
+        K28_0 --> PR6_16
+        PR6_16 --> E16_1
     end
     subgraph XC
-        PR7_26["<div style='font-size:18px'><b>PR7_26</b></div>2<br/>2"]
-        K44_1 --> PR7_26
-        K48_0 --> PR7_26
-        PR7_26 --> E26_1
         PR15_26["<div style='font-size:18px'><b>PR15_26</b></div>3<br/>3"]
         E26_1 --> PR15_26
         K47_0 --> PR15_26
         PR15_26 --> E26
+        PR7_26["<div style='font-size:18px'><b>PR7_26</b></div>2<br/>2"]
+        K44_1 --> PR7_26
+        K48_0 --> PR7_26
+        PR7_26 --> E26_1
     end
 end
 subgraph 1
     subgraph 1A
-        PR9_13["<div style='font-size:18px'><b>PR9_13</b></div>3<br/>3"]
-        E13_4 --> PR9_13
-        PR9_13 --> E13
         PR13_13["<div style='font-size:18px'><b>PR13_13</b></div>2<br/>2"]
         K39_0 --> PR13_13
         PR13_13 --> E13_1
+        PR8_13["<div style='font-size:18px'><b>PR8_13</b></div>1<br/>1"]
+        E13_2 --> PR8_13
+        PR8_13 --> E13_3
+        PR9_13["<div style='font-size:18px'><b>PR9_13</b></div>3<br/>3"]
+        E13_4 --> PR9_13
+        PR9_13 --> E13
         PR7_13["<div style='font-size:18px'><b>PR7_13</b></div>2<br/>2"]
         E13_3 --> PR7_13
         K32_0 --> PR7_13
         PR7_13 --> E13_4
-        PR8_13["<div style='font-size:18px'><b>PR8_13</b></div>1<br/>1"]
-        E13_2 --> PR8_13
-        PR8_13 --> E13_3
         PR12_13["<div style='font-size:18px'><b>PR12_13</b></div>3<br/>3"]
         E13_1 --> PR12_13
         PR12_13 --> E13_2
     end
     subgraph 1B
-        PR7_18["<div style='font-size:18px'><b>PR7_18</b></div>2<br/>2"]
-        E18_2 --> PR7_18
-        K59_0 --> PR7_18
-        PR7_18 --> E18_3
+        PR8_18["<div style='font-size:18px'><b>PR8_18</b></div>1<br/>1"]
+        E18_1 --> PR8_18
+        PR8_18 --> E18_2
         PR6_18["<div style='font-size:18px'><b>PR6_18</b></div>3<br/>3"]
         K28_1 --> PR6_18
         PR6_18 --> E18_1
         PR9_18["<div style='font-size:18px'><b>PR9_18</b></div>3<br/>3"]
         E18_3 --> PR9_18
         PR9_18 --> E18
-        PR8_18["<div style='font-size:18px'><b>PR8_18</b></div>1<br/>1"]
-        E18_1 --> PR8_18
-        PR8_18 --> E18_2
+        PR7_18["<div style='font-size:18px'><b>PR7_18</b></div>2<br/>2"]
+        E18_2 --> PR7_18
+        K59_0 --> PR7_18
+        PR7_18 --> E18_3
     end
     subgraph 1C
+        PR10_7["<div style='font-size:18px'><b>PR10_7</b></div>4<br/>4"]
+        K52_0 --> PR10_7
+        K53_0 --> PR10_7
+        PR10_7 --> E7_1
         PR11_7["<div style='font-size:18px'><b>PR11_7</b></div>3<br/>3"]
         E7_1 --> PR11_7
         K35_0 --> PR11_7
         K37_0 --> PR11_7
         K38_0 --> PR11_7
         PR11_7 --> E7
-        PR10_7["<div style='font-size:18px'><b>PR10_7</b></div>4<br/>4"]
-        K52_0 --> PR10_7
-        K53_0 --> PR10_7
-        PR10_7 --> E7_1
     end
     subgraph 1D
         PR10_4["<div style='font-size:18px'><b>PR10_4</b></div>4<br/>4"]
@@ -137,15 +137,15 @@ subgraph 1
         PR13_10["<div style='font-size:18px'><b>PR13_10</b></div>2<br/>2"]
         K39_1 --> PR13_10
         PR13_10 --> E10_1
-        PR12_10["<div style='font-size:18px'><b>PR12_10</b></div>3<br/>3"]
-        E10_1 --> PR12_10
-        PR12_10 --> E10_2
-        PR9_10["<div style='font-size:18px'><b>PR9_10</b></div>3<br/>3"]
-        E10_4 --> PR9_10
-        PR9_10 --> E10
         PR7_10["<div style='font-size:18px'><b>PR7_10</b></div>2<br/>2"]
         E10_3 --> PR7_10
         PR7_10 --> E10_4
+        PR9_10["<div style='font-size:18px'><b>PR9_10</b></div>3<br/>3"]
+        E10_4 --> PR9_10
+        PR9_10 --> E10
+        PR12_10["<div style='font-size:18px'><b>PR12_10</b></div>3<br/>3"]
+        E10_1 --> PR12_10
+        PR12_10 --> E10_2
         PR8_10["<div style='font-size:18px'><b>PR8_10</b></div>1<br/>1"]
         E10_2 --> PR8_10
         PR8_10 --> E10_3
@@ -189,10 +189,6 @@ subgraph 1
 end
 subgraph 2
     subgraph 2A
-        PR7_14["<div style='font-size:18px'><b>PR7_14</b></div>2<br/>2"]
-        E14_3 --> PR7_14
-        K32_1 --> PR7_14
-        PR7_14 --> E14_4
         PR9_14["<div style='font-size:18px'><b>PR9_14</b></div>3<br/>3"]
         E14_4 --> PR9_14
         PR9_14 --> E14
@@ -205,8 +201,18 @@ subgraph 2
         PR8_14["<div style='font-size:18px'><b>PR8_14</b></div>1<br/>1"]
         E14_2 --> PR8_14
         PR8_14 --> E14_3
+        PR7_14["<div style='font-size:18px'><b>PR7_14</b></div>2<br/>2"]
+        E14_3 --> PR7_14
+        K32_1 --> PR7_14
+        PR7_14 --> E14_4
     end
     subgraph 2B
+        PR9_19["<div style='font-size:18px'><b>PR9_19</b></div>3<br/>3"]
+        E19_3 --> PR9_19
+        PR9_19 --> E19
+        PR6_19["<div style='font-size:18px'><b>PR6_19</b></div>3<br/>3"]
+        K28_2 --> PR6_19
+        PR6_19 --> E19_1
         PR8_19["<div style='font-size:18px'><b>PR8_19</b></div>1<br/>1"]
         E19_1 --> PR8_19
         PR8_19 --> E19_2
@@ -214,24 +220,18 @@ subgraph 2
         E19_2 --> PR7_19
         K59_1 --> PR7_19
         PR7_19 --> E19_3
-        PR9_19["<div style='font-size:18px'><b>PR9_19</b></div>3<br/>3"]
-        E19_3 --> PR9_19
-        PR9_19 --> E19
-        PR6_19["<div style='font-size:18px'><b>PR6_19</b></div>3<br/>3"]
-        K28_2 --> PR6_19
-        PR6_19 --> E19_1
     end
     subgraph 2C
+        PR10_8["<div style='font-size:18px'><b>PR10_8</b></div>4<br/>4"]
+        K57_0 --> PR10_8
+        K58_0 --> PR10_8
+        PR10_8 --> E8_1
         PR11_8["<div style='font-size:18px'><b>PR11_8</b></div>3<br/>3"]
         E8_1 --> PR11_8
         K35_2 --> PR11_8
         K37_1 --> PR11_8
         K38_1 --> PR11_8
         PR11_8 --> E8
-        PR10_8["<div style='font-size:18px'><b>PR10_8</b></div>4<br/>4"]
-        K57_0 --> PR10_8
-        K58_0 --> PR10_8
-        PR10_8 --> E8_1
     end
     subgraph 2D
         PR10_5["<div style='font-size:18px'><b>PR10_5</b></div>4<br/>4"]
@@ -245,21 +245,21 @@ subgraph 2
         PR11_5 --> E5
     end
     subgraph 2E
-        PR8_11["<div style='font-size:18px'><b>PR8_11</b></div>1<br/>1"]
-        E11_2 --> PR8_11
-        PR8_11 --> E11_3
-        PR12_11["<div style='font-size:18px'><b>PR12_11</b></div>3<br/>3"]
-        E11_1 --> PR12_11
-        PR12_11 --> E11_2
-        PR7_11["<div style='font-size:18px'><b>PR7_11</b></div>2<br/>2"]
-        E11_3 --> PR7_11
-        PR7_11 --> E11_4
         PR13_11["<div style='font-size:18px'><b>PR13_11</b></div>2<br/>2"]
         K39_3 --> PR13_11
         PR13_11 --> E11_1
+        PR12_11["<div style='font-size:18px'><b>PR12_11</b></div>3<br/>3"]
+        E11_1 --> PR12_11
+        PR12_11 --> E11_2
         PR9_11["<div style='font-size:18px'><b>PR9_11</b></div>3<br/>3"]
         E11_4 --> PR9_11
         PR9_11 --> E11
+        PR8_11["<div style='font-size:18px'><b>PR8_11</b></div>1<br/>1"]
+        E11_2 --> PR8_11
+        PR8_11 --> E11_3
+        PR7_11["<div style='font-size:18px'><b>PR7_11</b></div>2<br/>2"]
+        E11_3 --> PR7_11
+        PR7_11 --> E11_4
     end
     subgraph 2w
         PR1_54["<div style='font-size:18px'><b>PR1_54</b></div>6<br/>6"]
@@ -300,12 +300,12 @@ subgraph 2
 end
 subgraph 3
     subgraph 3A
-        PR8_15["<div style='font-size:18px'><b>PR8_15</b></div>2<br/>2"]
-        E15_2 --> PR8_15
-        PR8_15 --> E15_3
         PR9_15["<div style='font-size:18px'><b>PR9_15</b></div>3<br/>3"]
         E15_4 --> PR9_15
         PR9_15 --> E15
+        PR8_15["<div style='font-size:18px'><b>PR8_15</b></div>2<br/>2"]
+        E15_2 --> PR8_15
+        PR8_15 --> E15_3
         PR7_15["<div style='font-size:18px'><b>PR7_15</b></div>2<br/>2"]
         E15_3 --> PR7_15
         K32_2 --> PR7_15
@@ -321,9 +321,6 @@ subgraph 3
         PR8_20["<div style='font-size:18px'><b>PR8_20</b></div>1<br/>1"]
         E20_1 --> PR8_20
         PR8_20 --> E20_2
-        PR9_20["<div style='font-size:18px'><b>PR9_20</b></div>3<br/>3"]
-        E20_3 --> PR9_20
-        PR9_20 --> E20
         PR6_20["<div style='font-size:18px'><b>PR6_20</b></div>3<br/>3"]
         K28_3 --> PR6_20
         PR6_20 --> E20_1
@@ -331,6 +328,9 @@ subgraph 3
         E20_2 --> PR7_20
         K59_2 --> PR7_20
         PR7_20 --> E20_3
+        PR9_20["<div style='font-size:18px'><b>PR9_20</b></div>3<br/>3"]
+        E20_3 --> PR9_20
+        PR9_20 --> E20
     end
     subgraph 3C
         PR10_9["<div style='font-size:18px'><b>PR10_9</b></div>4<br/>4"]
@@ -356,21 +356,21 @@ subgraph 3
         PR10_6 --> E6_1
     end
     subgraph 3E
-        PR7_12["<div style='font-size:18px'><b>PR7_12</b></div>2<br/>2"]
-        E12_3 --> PR7_12
-        PR7_12 --> E12_4
-        PR13_12["<div style='font-size:18px'><b>PR13_12</b></div>2<br/>2"]
-        K39_5 --> PR13_12
-        PR13_12 --> E12_1
         PR8_12["<div style='font-size:18px'><b>PR8_12</b></div>1<br/>1"]
         E12_2 --> PR8_12
         PR8_12 --> E12_3
-        PR12_12["<div style='font-size:18px'><b>PR12_12</b></div>3<br/>3"]
-        E12_1 --> PR12_12
-        PR12_12 --> E12_2
+        PR13_12["<div style='font-size:18px'><b>PR13_12</b></div>2<br/>2"]
+        K39_5 --> PR13_12
+        PR13_12 --> E12_1
+        PR7_12["<div style='font-size:18px'><b>PR7_12</b></div>2<br/>2"]
+        E12_3 --> PR7_12
+        PR7_12 --> E12_4
         PR9_12["<div style='font-size:18px'><b>PR9_12</b></div>3<br/>3"]
         E12_4 --> PR9_12
         PR9_12 --> E12
+        PR12_12["<div style='font-size:18px'><b>PR12_12</b></div>3<br/>3"]
+        E12_1 --> PR12_12
+        PR12_12 --> E12_2
     end
     subgraph 3w
         PR1_29["<div style='font-size:18px'><b>PR1_29</b></div>6<br/>6"]
@@ -411,72 +411,72 @@ subgraph 3
 end
 
 PR15_17:::PR
-PR6_16:::PR
 PR14_16:::PR
-PR7_26:::PR
+PR6_16:::PR
 PR15_26:::PR
-PR9_13:::PR
+PR7_26:::PR
 PR13_13:::PR
-PR7_13:::PR
 PR8_13:::PR
+PR9_13:::PR
+PR7_13:::PR
 PR12_13:::PR
-PR7_18:::PR
+PR8_18:::PR
 PR6_18:::PR
 PR9_18:::PR
-PR8_18:::PR
-PR11_7:::PR
+PR7_18:::PR
 PR10_7:::PR
+PR11_7:::PR
 PR10_4:::PR
 PR11_4:::PR
 PR13_10:::PR
-PR12_10:::PR
-PR9_10:::PR
 PR7_10:::PR
+PR9_10:::PR
+PR12_10:::PR
 PR8_10:::PR
 PR1_49:::PR
 PR2_50:::PR
 PR3_51:::PR
 PR4_1:::PR
-PR7_14:::PR
 PR9_14:::PR
 PR13_14:::PR
 PR12_14:::PR
 PR8_14:::PR
-PR8_19:::PR
-PR7_19:::PR
+PR7_14:::PR
 PR9_19:::PR
 PR6_19:::PR
-PR11_8:::PR
+PR8_19:::PR
+PR7_19:::PR
 PR10_8:::PR
+PR11_8:::PR
 PR10_5:::PR
 PR11_5:::PR
-PR8_11:::PR
-PR12_11:::PR
-PR7_11:::PR
 PR13_11:::PR
+PR12_11:::PR
 PR9_11:::PR
+PR8_11:::PR
+PR7_11:::PR
 PR1_54:::PR
 PR2_55:::PR
 PR3_56:::PR
 PR4_2:::PR
-PR8_15:::PR
 PR9_15:::PR
+PR8_15:::PR
 PR7_15:::PR
 PR12_15:::PR
 PR13_15:::PR
 PR8_20:::PR
-PR9_20:::PR
 PR6_20:::PR
 PR7_20:::PR
+PR9_20:::PR
 PR10_9:::PR
 PR11_9:::PR
 PR11_6:::PR
 PR10_6:::PR
-PR7_12:::PR
-PR13_12:::PR
 PR8_12:::PR
-PR12_12:::PR
+PR13_12:::PR
+PR7_12:::PR
 PR9_12:::PR
+PR12_12:::PR
 PR1_29:::PR
 PR2_30:::PR
 PR3_31:::PR

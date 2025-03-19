@@ -28,7 +28,7 @@ class Node(NodeAggregate, abc.ABC):
     @abc.abstractmethod
     def node_type(self) -> ProductionNodeType:
         """
-        Returns the production node type of the node.
+        Returns the production node diagram_type of the node.
         """
         raise NotImplementedError
 
@@ -64,7 +64,7 @@ class Item(Node):
 
     Attributes:
         node_numerical_id (int): The numerical identifier of the item.
-        _node_type (ProductionNodeType): The type of the item, either BOUGHT or PRODUCED.
+        _node_type (ProductionNodeType): The diagram_type of the item, either BOUGHT or PRODUCED.
     """
 
     def __init__(self, node_numerical_id: int, node_type: ProductionNodeType):
@@ -74,7 +74,7 @@ class Item(Node):
     @property
     def node_type(self):
         """
-        Returns the production node type of the item.
+        Returns the production node diagram_type of the item.
         """
         return self._node_type
 

@@ -56,7 +56,7 @@ class Process(Node):
     @property
     def node_type(self):
         """
-        Returns the production node type for a process, which is always PROCESS.
+        Returns the production node diagram_type for a process, which is always PROCESS.
         """
         return ProductionNodeType.PROCESS
 
