@@ -31,27 +31,28 @@ class ProcessConverter:
         )
         for item, qty in process.inputs.items():
             self._persist_item(item)
-            inp = ProcessInputORM(process_id=process.unique_numerical_id, item_id=item.node_numerical_id, quantity=qty)
+            inp = ProcessInputORM(process_id=process.unique_numerical_id, item_id=item.unique_numerical_id,
+                                  quantity=qty)
             self.session.merge(inp)
         output = process.output
         self._persist_item(output)
-        out = ProcessOutputORM(process_id=process.unique_numerical_id, item_id=output.node_numerical_id)
+        out = ProcessOutputORM(process_id=process.unique_numerical_id, item_id=output.unique_numerical_id)
         self.session.merge(out)
         return orm_process
 
     def _persist_item(self, item: Item):
         if isinstance(item, Bought):
-            get_or_create(self.session, BoughtItemORM, item.node_numerical_id,
+            get_or_create(self.session, BoughtItemORM, item.unique_numerical_id,
                           base_price=item.base_price, discount_amount=item.discount_amount,
                           discount_percentage=item.discount_percentage,
                           mean_order_duration_in_periodes=item.mean_order_duration,
                           mean_order_standard_deviation_in_periodes=item.mean_order_std_dev)
         elif isinstance(item, FullProduced):
-            get_or_create(self.session, FullProducedItemORM, item.node_numerical_id,
+            get_or_create(self.session, FullProducedItemORM, item.unique_numerical_id,
                           base_value_price=item.base_value_price)
         elif isinstance(item, StepProduced):
             if item.produced_by_workstation:
-                get_or_create(self.session, StepProducedORM, item.unique_item_id,
+                get_or_create(self.session, StepProducedORM, item.unique_numerical_id,
                               parent_item_id=item.parent_produced.node_numerical_id)
         else:
             get_or_create(self.session, ItemORM, item.node_numerical_id)

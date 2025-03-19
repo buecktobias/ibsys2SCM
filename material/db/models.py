@@ -69,9 +69,9 @@ class PrimaryItem(FullProducedItem):
 
 
 ### StepProduced ###
-class StepProduced(Base):
+class StepProduced(Item):
     __tablename__ = "step_produced"
-    unique_item_id = Column(Integer, primary_key=True)
+    item_id = Column(Integer, ForeignKey("item.item_id"), primary_key=True)
     parent_item_id = Column(Integer, ForeignKey("full_produced_item.item_id"), nullable=False)
 
     __mapper_args__ = {

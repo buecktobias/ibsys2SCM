@@ -25,8 +25,8 @@ class ResourceCounter[T](Counter[T]):
 
 
 @dataclass
-class ResourceCounterBuilder:
-    counter: ResourceCounter[LabeledGraphNode] = field(default_factory=ResourceCounter)
+class ResourceCounterBuilder[T]:
+    counter: ResourceCounter[T] = field(default_factory=ResourceCounter)
 
     def add(self, node: LabeledGraphNode, count: int = 1) -> Self:
         self.counter[node] += count

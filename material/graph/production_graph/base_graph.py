@@ -1,11 +1,12 @@
 import abc
 import logging
 from dataclasses import dataclass, field
-from typing import List, Self
+from typing import Self
 
 import networkx as nx
 
 from material.core.resource_counter import ResourceCounter
+from material.graph.nodes.graph_nodes import StepProduced
 from material.graph.nodes.mermaid_node import LabeledGraphNode
 from material.graph.nodes.process import Process
 
@@ -28,8 +29,20 @@ class BaseGraph(abc.ABC):
         self._subgraphs.add(new_graph)
         return new_graph
 
+    def get_process_by_output(self, step_produced: StepProduced):
+        for process in self._processes:
+            if (isinstance(process.output, StepProduced)
+                    and process.output.parent_produced == step_produced.parent_produced
+                    and process.output.step_number == step_produced.step_number):
+                return process
+
     def add_process(self, process: Process):
         self._processes.add(process)
+        step_inputs = filter(lambda x: isinstance(x, StepProduced), process.inputs.keys())
+        for step_produced in step_inputs:
+            previous_process = self.get_process_by_output(step_produced)
+            if previous_process:
+                step_produced.produced_by_workstation = process.workstation_id
 
     def get_own_processes(self) -> set[Process]:
         return self._processes

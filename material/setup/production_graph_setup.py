@@ -1,5 +1,5 @@
 from material.core.resource_counter import ResourceCounterBuilder
-from material.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced
+from material.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced, Item
 from material.graph.nodes.process import Process
 from material.graph.production_graph.base_graph import MaterialProductGraphBuilder
 
@@ -53,7 +53,7 @@ def create_full_production_graph():
             process_duration=3,
             setup_duration=15,
             inputs=
-            ResourceCounterBuilder()
+            ResourceCounterBuilder[Item]()
             .add_items([Bought(43), Bought(44), Bought(45), Bought(46)])
             .build(),
             output=FullProduced(17)

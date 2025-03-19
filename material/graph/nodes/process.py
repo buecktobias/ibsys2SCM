@@ -16,13 +16,13 @@ class Process(LabeledGraphNode):
         _output (Item, optional): The output Item of the process.
     """
     _output: Item
-    _inputs: ResourceCounter
+    _inputs: ResourceCounter[Item]
     _setup_duration: int
     _process_duration: int
     _workstation_id: int
 
     def __init__(self, workstation_id: int, process_duration: int, setup_duration: int,
-                 inputs: ResourceCounter, output: Item):
+                 inputs: ResourceCounter[Item], output: Item):
         if isinstance(output, StepProduced):
             output.produced_by_workstation = workstation_id
         self._workstation_id = workstation_id

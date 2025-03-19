@@ -20,6 +20,10 @@ class Item(LabeledGraphNode, abc.ABC):
             f"{self.node_type.value}{self.node_numerical_id}"
         )
 
+    @property
+    def unique_numerical_id(self) -> int:
+        return self.node_numerical_id
+
     def __hash__(self):
         return hash((self.node_type, self.node_numerical_id))
 
@@ -98,9 +102,9 @@ class StepProduced(Produced):
         self.produced_by_workstation: int | None = None
 
     @property
-    def unique_item_id(self) -> int:
+    def unique_numerical_id(self) -> int:
         if not self.produced_by_workstation:
-            raise ValueError("Workstation ID not set")
+            raise ValueError(f"Workstation ID not set {self}")
         return self.produced_by_workstation * 10 ** 4 + self.parent_produced.node_numerical_id
 
     @property
