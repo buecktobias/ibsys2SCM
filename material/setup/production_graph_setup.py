@@ -1,12 +1,12 @@
-from material.core.resource_counter import ResourceCounterBuilder
-from material.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced, Item
-from material.graph.nodes.process import Process
-from material.graph.production_graph.base_graph import MaterialProductGraphBuilder
+from supply_chain_optimization.core.resource_counter import ResourceCounterBuilder
+from supply_chain_optimization.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced, Item
+from supply_chain_optimization.graph.nodes.process import Process
+from supply_chain_optimization.graph.production_graph.base_graph import MaterialProductGraphBuilder
 
 
 # noinspection PyPep8Naming
 def create_full_production_graph():
-    graph = MaterialProductGraphBuilder("Full Production Graph")
+    graph = MaterialProductGraphBuilder("Full Production GraphORM")
 
     subX = graph.create_subgraph("X")
     sub1 = graph.create_subgraph("1")

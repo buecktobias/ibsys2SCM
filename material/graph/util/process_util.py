@@ -1,7 +1,7 @@
 import typing
 
-from material.graph.nodes.graph_nodes import Item
-from material.graph.nodes.process import Process
+from supply_chain_optimization.graph.nodes.graph_nodes import Item
+from supply_chain_optimization.graph.nodes.process import Process
 
 
 def get_process_outgoing_to(processes: typing.Collection[Process], item: Item):

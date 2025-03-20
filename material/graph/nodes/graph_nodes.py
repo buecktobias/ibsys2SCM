@@ -1,8 +1,8 @@
 import abc
 from dataclasses import dataclass
 
-from material.graph.nodes.mermaid_node import LabeledGraphNode
-from material.graph.nodes.production_node_type import ProductionNodeType
+from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
+from supply_chain_optimization.graph.nodes.production_node_type import ProductionNodeType
 
 
 @dataclass()
@@ -36,16 +36,16 @@ class Item(LabeledGraphNode, abc.ABC):
 @dataclass()
 class Bought(Item):
     """
-        base_price=item.base_price, discount_amount=item.discount_amount,
-        discount_percentage=item.discount_percentage,
-        mean_order_duration_in_periods=item.mean_order_duration,
-        order_standard_deviation_in_periods=item.mean_order_std_dev
+        base_price=item.base_price, discount=item.discount,
+        discount=item.discount,
+        mean_order_duration_in_periods=item.mean_order_duration_in_periods,
+        order_standard_deviation_in_periods=item.order_std_dev
     """
     base_price: float = 0
     discount_amount: int = 0
     discount: float = 0
     mean_order_duration: float = 0
-    mean_order_std_dev: float = 0
+    order_std_dev: float = 0
 
     @property
     def node_type(self) -> ProductionNodeType:

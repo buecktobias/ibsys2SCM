@@ -1,7 +1,7 @@
 import networkx as nx
 
-from material.graph.nodes.graph_nodes import Node
-from material.graph.nodes.production_node_type import ProductionNodeType
+from supply_chain_optimization.graph.nodes.graph_nodes import Node
+from supply_chain_optimization.graph.nodes.production_node_type import ProductionNodeType
 
 
 class GraphValidator:
@@ -38,7 +38,7 @@ class GraphValidator:
 
     def validate_cycle(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
-            raise ValueError("Graph is not a directed acyclic nx_graph (DAG).")
+            raise ValueError("GraphORM is not a directed acyclic nx_graph (DAG).")
 
     def validate_connectedness(self) -> None:
         # Every node must be connected (i.e. have degree >= 1)

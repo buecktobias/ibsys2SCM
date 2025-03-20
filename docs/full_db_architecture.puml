@@ -1,0 +1,137 @@
+@startuml
+
+' ===== Domain Package =====
+package "Domain" {
+  class MaterialGraph {
+    - subgraphs: List<MaterialGraph>
+    - process_set: List<Process>
+  }
+
+  abstract class Item {
+    + id: String
+    + label: String
+  }
+
+  class BoughtItem extends Item {
+    + price: float
+  }
+
+  class Produced extends Item {
+    - sell: float
+    - primary: bool
+  }
+
+  class FullProduced extends Produced {
+  }
+
+  class SubStepItem extends Produced {
+    - parent: Produced
+  }
+
+  class Process {
+    + label: String
+    + setup: int
+    + dur: int
+    + inputs: List<Item>
+    + output: Produced
+  }
+
+  ' Domain Associations
+  MaterialGraph "1" o-- "n" Process : contains
+  MaterialGraph "1" o-- "n" MaterialGraph : subgraphs
+  Process "1" o-- "1" Produced : output
+  Process "n" o-- "m" Item : inputs
+  SubStepItem "1" o-- "1" Produced : parent
+}
+
+' ===== ORM Package =====
+package "ORM" {
+  class GraphORM {
+    + id: int
+    + name: String
+  }
+
+  class ProcessORM {
+    + id: int
+    + duration: int
+  }
+
+  class ProcessInORM {
+    + quantity: int
+  }
+
+  class ProcessOutORM {
+  }
+
+  class ItemORM {
+    + id: int
+    + type: String
+    + price: float
+  }
+
+  class WorkstationORM {
+    + id: int
+  }
+
+  ' ORM Associations
+  GraphORM "1" o-- "n" ProcessORM
+  GraphORM "1" o-- "n" GraphORM
+  ProcessORM "1" o-- "n" ProcessInORM
+  ProcessORM "1" o-- "1" ProcessOutORM
+  ProcessInORM o-- ItemORM
+  ProcessOutORM o-- ItemORM
+  ProcessORM "n" o-- "1" WorkstationORM
+}
+
+package "Conversion" {
+  class ProcessConverter {
+    + convert(process): ProcessORM
+    + toDomain(procORM): Process
+  }
+
+  class GraphConverter {
+    + convert(graph: MaterialGraph): GraphORM
+    + toDomain(graphORM): MaterialGraph
+  }
+
+  ' Dependencies
+  GraphConverter --> ProcessConverter
+  GraphConverter --> MaterialGraph
+  GraphConverter --> GraphORM
+  ProcessConverter --> ProcessORM
+  ProcessConverter --> Process
+}
+
+package "Visualization" {
+  interface MermaidContent {
+    + get_mermaid_code() : String
+  }
+
+  class ClassDef implements MermaidContent {
+    + fill: String
+    + stroke: String
+  }
+
+  class MermaidStyle implements MermaidContent {
+    + get_mermaid_code() : String
+  }
+
+  class MermaidBuilder implements MermaidContent {
+    + addNode()
+    + addRounded()
+    + addArrow()
+  }
+
+  class VisualizeMermaid implements MermaidContent {
+    - graph: MaterialGraph
+    + get_mermaid_code() : String
+  }
+
+  ' Visualization Dependencies
+  VisualizeMermaid --> MermaidBuilder
+  VisualizeMermaid --> MaterialGraph
+  VisualizeMermaid ..> Process
+  VisualizeMermaid ..> Item
+}
+
+@enduml

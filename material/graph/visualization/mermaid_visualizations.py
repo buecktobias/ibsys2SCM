@@ -7,10 +7,10 @@ from dataclasses import dataclass
 
 import yaml
 
-from material.graph.nodes.graph_nodes import Item, Bought, StepProduced, FullProduced
-from material.graph.nodes.process import Process
-from material.graph.production_graph.base_graph import MaterialProductGraph, BaseGraph
-from material.graph.util.process_util import get_process_outgoing_to
+from supply_chain_optimization.graph.nodes.graph_nodes import Item, Bought, StepProduced, FullProduced
+from supply_chain_optimization.graph.nodes.process import Process
+from supply_chain_optimization.graph.production_graph.base_graph import MaterialProductGraph, BaseGraph
+from supply_chain_optimization.graph.util.process_util import get_process_outgoing_to
 
 
 @dataclass

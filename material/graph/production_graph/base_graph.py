@@ -1,14 +1,16 @@
 import abc
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import Self
 
+import base62
 import networkx as nx
 
-from material.core.resource_counter import ResourceCounter
-from material.graph.nodes.graph_nodes import StepProduced
-from material.graph.nodes.mermaid_node import LabeledGraphNode
-from material.graph.nodes.process import Process
+from supply_chain_optimization.core.resource_counter import ResourceCounter
+from supply_chain_optimization.graph.nodes.graph_nodes import StepProduced
+from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
+from supply_chain_optimization.graph.nodes.process import Process
 
 
 class BaseGraph(abc.ABC):
@@ -54,6 +56,11 @@ class BaseGraph(abc.ABC):
             for subgraph in self.get_subgraphs()
             for process in subgraph.get_all_processes()
         ])
+
+    @property
+    def unique_numerical_id(self):
+        base62_label = re.sub(r'[^A-Za-z\d]+', '', self.label)
+        return base62.decode(base62_label) % 62 ** 6
 
 
 class SubGraph(BaseGraph):

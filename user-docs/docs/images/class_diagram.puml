@@ -14,13 +14,13 @@ class PurchasePart extends Item {
   + orderTimeDeviation : float
 }
 
-' InventoryEntry: Verknüpft ein Item mit dem Lagerbestand
+' InventoryEntry: Verknüpft ein ItemORM mit dem Lagerbestand
 class InventoryEntry {
   + item : Item
   + quantity : int
 }
 
-' ResourceCounter verwaltet eine Zuordnung von Item-ID zu InventoryEntry
+' ResourceCounter verwaltet eine Zuordnung von ItemORM-ID zu InventoryEntry
 class Inventory {
   - entries : Map<int, InventoryEntry>
   + getQuantity(itemId: int) : int

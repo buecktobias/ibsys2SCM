@@ -1,6 +1,6 @@
-from material.core.calculate_required_resources import ResourceCalculator
-from material.core.resource_counter import ResourceCounter
-from material.setup.production_graph_setup import create_full_production_graph
+from supply_chain_optimization.core.calculate_required_resources import ResourceCalculator
+from supply_chain_optimization.core.resource_counter import ResourceCounter
+from supply_chain_optimization.setup.production_graph_setup import create_full_production_graph
 
 
 def calc_basic_demand():

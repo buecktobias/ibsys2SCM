@@ -2,8 +2,8 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Self, TypeVar
 
-from material.graph.nodes.graph_nodes import Item, StepProduced
-from material.graph.nodes.mermaid_node import LabeledGraphNode
+from supply_chain_optimization.graph.nodes.graph_nodes import Item, StepProduced
+from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
 
 T = TypeVar("T", bound=LabeledGraphNode)
 
