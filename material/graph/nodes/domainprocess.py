@@ -1,10 +1,11 @@
-from supply_chain_optimization.core.resource_counter import ResourceCounter
-from supply_chain_optimization.graph.nodes.graph_nodes import Item, StepProduced
-from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
-from supply_chain_optimization.graph.nodes.production_node_type import ProductionNodeType
+from material.core.resource_counter import ResourceCounter
+from material.db.models import Item
+from material.graph.nodes.graph_nodes import DomainStepProduced
+from material.graph.nodes.mermaid_node import LabeledGraphNode
+from material.graph.nodes.production_node_type import ProductionNodeType
 
 
-class Process(LabeledGraphNode):
+class DomainProcess(LabeledGraphNode):
     """
     Represents a process node in the nx_graph.
     """
@@ -17,7 +18,7 @@ class Process(LabeledGraphNode):
 
     def __init__(self, workstation_id: int, process_duration: int, setup_duration: int,
                  inputs: ResourceCounter[Item], output: Item):
-        if isinstance(output, StepProduced):
+        if isinstance(output, DomainStepProduced):
             output.produced_by_workstation = workstation_id
         self._workstation_id = workstation_id
         self._process_duration = process_duration
@@ -64,7 +65,7 @@ class Process(LabeledGraphNode):
         return hash((self._workstation_id, self._output, self._inputs, self.setup_duration, self.process_duration))
 
     def __eq__(self, other):
-        if not isinstance(other, Process):
+        if not isinstance(other, DomainProcess):
             return False
         return self._workstation_id == other.workstation_id and self._output == other.output and \
             self._inputs == other.inputs and self.setup_duration == other.setup_duration and \

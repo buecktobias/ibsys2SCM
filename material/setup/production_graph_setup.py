@@ -1,7 +1,12 @@
-from supply_chain_optimization.core.resource_counter import ResourceCounterBuilder
-from supply_chain_optimization.graph.nodes.graph_nodes import Bought, StepProduced, FullProduced, Item
-from supply_chain_optimization.graph.nodes.process import Process
-from supply_chain_optimization.graph.production_graph.base_graph import MaterialProductGraphBuilder
+from material.core.resource_counter import ResourceCounterBuilder
+from material.graph.nodes.graph_nodes import (
+    DomainItem as DomainItem,
+    DomainBought as DomainBought,
+    DomainFullProduced as DomainFullProduced,
+    DomainStepProduced as DomainStepProduced
+)
+from material.graph.nodes.domainprocess import DomainProcess as DomainProcess
+from material.graph.production_graph.base_graph import MaterialProductGraphBuilder
 
 
 # noinspection PyPep8Naming
@@ -48,905 +53,905 @@ def create_full_production_graph():
     subgraph_3z = sub3.create_subgraph("3z")
 
     subgraph_XA.add_process(
-        Process(
+        DomainProcess(
             workstation_id=15,
             process_duration=3,
             setup_duration=15,
             inputs=
-            ResourceCounterBuilder[Item]()
-            .add_items([Bought(43), Bought(44), Bought(45), Bought(46)])
+            ResourceCounterBuilder[DomainItem]()
+            .add_items([DomainBought(43), DomainBought(44), DomainBought(45), DomainBought(46)])
             .build(),
-            output=FullProduced(17)
+            output=DomainFullProduced(17)
         )
     )
-    p16 = FullProduced(16)
-    p16_1 = StepProduced(p16, 1)
+    p16 = DomainFullProduced(16)
+    p16_1 = DomainStepProduced(p16, 1)
 
     subgraph_XB.add_process(
-        Process(
+        DomainProcess(
             workstation_id=6,
             process_duration=2,
             setup_duration=15,
-            inputs=ResourceCounterBuilder().add_items([Bought(28)]).build(),
+            inputs=ResourceCounterBuilder().add_items([DomainBought(28)]).build(),
             output=p16_1
         )
     )
     subgraph_XB.add_process(
-        Process(
+        DomainProcess(
             workstation_id=14,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(24), p16_1])
-            .add_items([Bought(40)])
-            .add_items([Bought(41)])
-            .add(Bought(42), 2)
+            .add_items([DomainBought(24), p16_1])
+            .add_items([DomainBought(40)])
+            .add_items([DomainBought(41)])
+            .add(DomainBought(42), 2)
             .build(),
             output=p16
         )
     )
 
     subgraph_XC.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add(Bought(44), 2)
-            .add(Bought(48), 2)
+            .add(DomainBought(44), 2)
+            .add(DomainBought(48), 2)
             .build(),
-            output=StepProduced(FullProduced(26), 1)
+            output=DomainStepProduced(DomainFullProduced(26), 1)
         )
     )
     subgraph_XC.add_process(
-        Process(
+        DomainProcess(
             workstation_id=15,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(26), 1)])
-            .add_items([Bought(47)])
+            .add_items([DomainStepProduced(DomainFullProduced(26), 1)])
+            .add_items([DomainBought(47)])
             .build(),
-            output=FullProduced(26)
+            output=DomainFullProduced(26)
         )
     )
 
     subgraph_1A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(13), 1)
+            output=DomainStepProduced(DomainFullProduced(13), 1)
         )
     )
     subgraph_1A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(13), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(13), 1)])
             .build(),
-            output=StepProduced(FullProduced(13), 2)
+            output=DomainStepProduced(DomainFullProduced(13), 2)
         )
     )
     subgraph_1A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(13), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(13), 2)])
             .build(),
-            output=StepProduced(FullProduced(13), 3)
+            output=DomainStepProduced(DomainFullProduced(13), 3)
         )
     )
     subgraph_1A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(13), 3)])
-            .add_items([Bought(32)])
+            .add_items([DomainStepProduced(DomainFullProduced(13), 3)])
+            .add_items([DomainBought(32)])
             .build(),
-            output=StepProduced(FullProduced(13), 4)
+            output=DomainStepProduced(DomainFullProduced(13), 4)
         )
     )
     subgraph_1A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(13), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(13), 4)])
             .build(),
-            output=FullProduced(13)
+            output=DomainFullProduced(13)
         )
     )
 
     subgraph_1B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=6,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add(Bought(28), 3)
+            .add(DomainBought(28), 3)
             .build(),
-            output=StepProduced(FullProduced(18), 1)
+            output=DomainStepProduced(DomainFullProduced(18), 1)
         )
     )
     subgraph_1B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(18), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(18), 1)])
             .build(),
-            output=StepProduced(FullProduced(18), 2)
+            output=DomainStepProduced(DomainFullProduced(18), 2)
         )
     )
     subgraph_1B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(18), 2)])
-            .add(Bought(59), 2)
+            .add_items([DomainStepProduced(DomainFullProduced(18), 2)])
+            .add(DomainBought(59), 2)
             .build(),
-            output=StepProduced(FullProduced(18), 3)
+            output=DomainStepProduced(DomainFullProduced(18), 3)
         )
     )
     subgraph_1B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(18), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(18), 3)])
             .build(),
-            output=FullProduced(18)
+            output=DomainFullProduced(18)
         )
     )
 
     subgraph_1C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(52)])
-            .add(Bought(53), 36)
+            .add_items([DomainBought(52)])
+            .add(DomainBought(53), 36)
             .build(),
-            output=StepProduced(FullProduced(7), 1)
+            output=DomainStepProduced(DomainFullProduced(7), 1)
         )
     )
     subgraph_1C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(7), 1)])
-            .add(Bought(35), 2)
-            .add(Bought(37), 2)
-            .add_items([Bought(38)])
+            .add_items([DomainStepProduced(DomainFullProduced(7), 1)])
+            .add(DomainBought(35), 2)
+            .add(DomainBought(37), 2)
+            .add_items([DomainBought(38)])
             .build(),
-            output=FullProduced(7)
+            output=DomainFullProduced(7)
         )
     )
 
     subgraph_1D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(52)])
-            .add(Bought(53), 36)
+            .add_items([DomainBought(52)])
+            .add(DomainBought(53), 36)
             .build(),
-            output=StepProduced(FullProduced(4), 1)
+            output=DomainStepProduced(DomainFullProduced(4), 1)
         )
     )
     subgraph_1D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(4), 1)])
-            .add(Bought(35), 2)
-            .add_items([Bought(36)])
+            .add_items([DomainStepProduced(DomainFullProduced(4), 1)])
+            .add(DomainBought(35), 2)
+            .add_items([DomainBought(36)])
             .build(),
-            output=FullProduced(4)
+            output=DomainFullProduced(4)
         )
     )
 
     subgraph_1E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(10), 1)
+            output=DomainStepProduced(DomainFullProduced(10), 1)
         )
     )
     subgraph_1E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(10), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(10), 1)])
             .build(),
-            output=StepProduced(FullProduced(10), 2)
+            output=DomainStepProduced(DomainFullProduced(10), 2)
         )
     )
     subgraph_1E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(10), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(10), 2)])
             .build(),
-            output=StepProduced(FullProduced(10), 3)
+            output=DomainStepProduced(DomainFullProduced(10), 3)
         )
     )
     subgraph_1E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(10), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(10), 3)])
             .build(),
-            output=StepProduced(FullProduced(10), 4)
+            output=DomainStepProduced(DomainFullProduced(10), 4)
         )
     )
     subgraph_1E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(10), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(10), 4)])
             .build(),
-            output=FullProduced(10)
+            output=DomainFullProduced(10)
         )
     )
 
     subgraph_1w.add_process(
-        Process(
+        DomainProcess(
             workstation_id=1,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
-            .add_items([FullProduced(13)])
-            .add_items([FullProduced(18)])
-            .add_items([FullProduced(7)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
+            .add_items([DomainFullProduced(13)])
+            .add_items([DomainFullProduced(18)])
+            .add_items([DomainFullProduced(7)])
             .build(),
-            output=FullProduced(49)
+            output=DomainFullProduced(49)
         )
     )
 
     subgraph_1x.add_process(
-        Process(
+        DomainProcess(
             workstation_id=2,
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(49)])
-            .add_items([FullProduced(4)])
-            .add_items([FullProduced(10)])
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
+            .add_items([DomainFullProduced(49)])
+            .add_items([DomainFullProduced(4)])
+            .add_items([DomainFullProduced(10)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
             .build(),
-            output=FullProduced(50)
+            output=DomainFullProduced(50)
         )
     )
 
     subgraph_1y.add_process(
-        Process(
+        DomainProcess(
             workstation_id=3,
             process_duration=5,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(17)])
-            .add_items([FullProduced(16)])
-            .add_items([FullProduced(50)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(17)])
+            .add_items([DomainFullProduced(16)])
+            .add_items([DomainFullProduced(50)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(51)
+            output=DomainFullProduced(51)
         )
     )
 
     subgraph_1z.add_process(
-        Process(
+        DomainProcess(
             workstation_id=4,
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(26)])
-            .add_items([FullProduced(51)])
-            .add_items([Bought(21)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(26)])
+            .add_items([DomainFullProduced(51)])
+            .add_items([DomainBought(21)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(1)
+            output=DomainFullProduced(1)
         )
     )
 
     subgraph_2A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(14), 1)
+            output=DomainStepProduced(DomainFullProduced(14), 1)
         )
     )
     subgraph_2A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(14), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(14), 1)])
             .build(),
-            output=StepProduced(FullProduced(14), 2)
+            output=DomainStepProduced(DomainFullProduced(14), 2)
         )
     )
     subgraph_2A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(14), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(14), 2)])
             .build(),
-            output=StepProduced(FullProduced(14), 3)
+            output=DomainStepProduced(DomainFullProduced(14), 3)
         )
     )
     subgraph_2A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(14), 3)])
-            .add_items([Bought(32)])
+            .add_items([DomainStepProduced(DomainFullProduced(14), 3)])
+            .add_items([DomainBought(32)])
             .build(),
-            output=StepProduced(FullProduced(14), 4)
+            output=DomainStepProduced(DomainFullProduced(14), 4)
         )
     )
     subgraph_2A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(14), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(14), 4)])
             .build(),
-            output=FullProduced(14)
+            output=DomainFullProduced(14)
         )
     )
 
     # Old group D becomes 2B:
     subgraph_2B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=6,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add(Bought(28), 3)
+            .add(DomainBought(28), 3)
             .build(),
-            output=StepProduced(FullProduced(19), 1)
+            output=DomainStepProduced(DomainFullProduced(19), 1)
         )
     )
     subgraph_2B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(19), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(19), 1)])
             .build(),
-            output=StepProduced(FullProduced(19), 2)
+            output=DomainStepProduced(DomainFullProduced(19), 2)
         )
     )
     subgraph_2B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(19), 2)])
-            .add(Bought(59), 2)
+            .add_items([DomainStepProduced(DomainFullProduced(19), 2)])
+            .add(DomainBought(59), 2)
             .build(),
-            output=StepProduced(FullProduced(19), 3)
+            output=DomainStepProduced(DomainFullProduced(19), 3)
         )
     )
     subgraph_2B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(19), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(19), 3)])
             .build(),
-            output=FullProduced(19)
+            output=DomainFullProduced(19)
         )
     )
 
     # Old group E becomes 2C:
     subgraph_2C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(57)])
-            .add(Bought(58), 36)
+            .add_items([DomainBought(57)])
+            .add(DomainBought(58), 36)
             .build(),
-            output=StepProduced(FullProduced(8), 1)
+            output=DomainStepProduced(DomainFullProduced(8), 1)
         )
     )
     subgraph_2C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(8), 1)])
-            .add(Bought(35), 2)
-            .add(Bought(37), 2)
-            .add_items([Bought(38)])
+            .add_items([DomainStepProduced(DomainFullProduced(8), 1)])
+            .add(DomainBought(35), 2)
+            .add(DomainBought(37), 2)
+            .add_items([DomainBought(38)])
             .build(),
-            output=FullProduced(8)
+            output=DomainFullProduced(8)
         )
     )
 
     # Old group F becomes 2D:
     subgraph_2D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(57)])
-            .add(Bought(58), 36)
+            .add_items([DomainBought(57)])
+            .add(DomainBought(58), 36)
             .build(),
-            output=StepProduced(FullProduced(5), 1)
+            output=DomainStepProduced(DomainFullProduced(5), 1)
         )
     )
     subgraph_2D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(5), 1)])
-            .add(Bought(35), 2)
-            .add_items([Bought(36)])
+            .add_items([DomainStepProduced(DomainFullProduced(5), 1)])
+            .add(DomainBought(35), 2)
+            .add_items([DomainBought(36)])
             .build(),
-            output=FullProduced(5)
+            output=DomainFullProduced(5)
         )
     )
 
     # Old group G becomes 2E:
     subgraph_2E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(11), 1)
+            output=DomainStepProduced(DomainFullProduced(11), 1)
         )
     )
     subgraph_2E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(11), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(11), 1)])
             .build(),
-            output=StepProduced(FullProduced(11), 2)
+            output=DomainStepProduced(DomainFullProduced(11), 2)
         )
     )
     subgraph_2E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(11), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(11), 2)])
             .build(),
-            output=StepProduced(FullProduced(11), 3)
+            output=DomainStepProduced(DomainFullProduced(11), 3)
         )
     )
     subgraph_2E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(11), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(11), 3)])
             .build(),
-            output=StepProduced(FullProduced(11), 4)
+            output=DomainStepProduced(DomainFullProduced(11), 4)
         )
     )
     subgraph_2E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(11), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(11), 4)])
             .build(),
-            output=FullProduced(11)
+            output=DomainFullProduced(11)
         )
     )
 
     # Old group w becomes 2w:
     subgraph_2w.add_process(
-        Process(
+        DomainProcess(
             workstation_id=1,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
-            .add_items([FullProduced(14)])
-            .add_items([FullProduced(19)])
-            .add_items([FullProduced(8)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
+            .add_items([DomainFullProduced(14)])
+            .add_items([DomainFullProduced(19)])
+            .add_items([DomainFullProduced(8)])
             .build(),
-            output=FullProduced(54)
+            output=DomainFullProduced(54)
         )
     )
 
     # Old group x becomes 2x:
     subgraph_2x.add_process(
-        Process(
+        DomainProcess(
             workstation_id=2,
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(54)])
-            .add_items([FullProduced(5)])
-            .add_items([FullProduced(11)])
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
+            .add_items([DomainFullProduced(54)])
+            .add_items([DomainFullProduced(5)])
+            .add_items([DomainFullProduced(11)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
             .build(),
-            output=FullProduced(55)
+            output=DomainFullProduced(55)
         )
     )
 
     # Old group y becomes 2y:
     subgraph_2y.add_process(
-        Process(
+        DomainProcess(
             workstation_id=3,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(17)])
-            .add_items([FullProduced(16)])
-            .add_items([FullProduced(55)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(17)])
+            .add_items([DomainFullProduced(16)])
+            .add_items([DomainFullProduced(55)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(56)
+            output=DomainFullProduced(56)
         )
     )
 
     # Old group z becomes 2z:
     subgraph_2z.add_process(
-        Process(
+        DomainProcess(
             workstation_id=4,
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(26)])
-            .add_items([FullProduced(56)])
-            .add_items([Bought(22)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(26)])
+            .add_items([DomainFullProduced(56)])
+            .add_items([DomainBought(22)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(2)
+            output=DomainFullProduced(2)
         )
     )
 
     subgraph_3A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(15), 1)
+            output=DomainStepProduced(DomainFullProduced(15), 1)
         )
     )
     subgraph_3A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(15), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(15), 1)])
             .build(),
-            output=StepProduced(FullProduced(15), 2)
+            output=DomainStepProduced(DomainFullProduced(15), 2)
         )
     )
     subgraph_3A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=2,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(15), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(15), 2)])
             .build(),
-            output=StepProduced(FullProduced(15), 3)
+            output=DomainStepProduced(DomainFullProduced(15), 3)
         )
     )
     subgraph_3A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(15), 3)])
-            .add_items([Bought(32)])
+            .add_items([DomainStepProduced(DomainFullProduced(15), 3)])
+            .add_items([DomainBought(32)])
             .build(),
-            output=StepProduced(FullProduced(15), 4)
+            output=DomainStepProduced(DomainFullProduced(15), 4)
         )
     )
     subgraph_3A.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(15), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(15), 4)])
             .build(),
-            output=FullProduced(15)
+            output=DomainFullProduced(15)
         )
     )
 
     # Group 3B (old group D -> 3B):
     subgraph_3B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=6,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add(Bought(28), 3)
+            .add(DomainBought(28), 3)
             .build(),
-            output=StepProduced(FullProduced(20), 1)
+            output=DomainStepProduced(DomainFullProduced(20), 1)
         )
     )
     subgraph_3B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(20), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(20), 1)])
             .build(),
-            output=StepProduced(FullProduced(20), 2)
+            output=DomainStepProduced(DomainFullProduced(20), 2)
         )
     )
     subgraph_3B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(20), 2)])
-            .add(Bought(59), 2)
+            .add_items([DomainStepProduced(DomainFullProduced(20), 2)])
+            .add(DomainBought(59), 2)
             .build(),
-            output=StepProduced(FullProduced(20), 3)
+            output=DomainStepProduced(DomainFullProduced(20), 3)
         )
     )
     subgraph_3B.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(20), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(20), 3)])
             .build(),
-            output=FullProduced(20)
+            output=DomainFullProduced(20)
         )
     )
 
     # Group 3C (old group E -> 3C):
     subgraph_3C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(57)])
-            .add(Bought(58), 36)
+            .add_items([DomainBought(57)])
+            .add(DomainBought(58), 36)
             .build(),
-            output=StepProduced(FullProduced(9), 1)
+            output=DomainStepProduced(DomainFullProduced(9), 1)
         )
     )
     subgraph_3C.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(9), 1)])
-            .add(Bought(35), 2)
-            .add(Bought(37), 2)
-            .add_items([Bought(38)])
+            .add_items([DomainStepProduced(DomainFullProduced(9), 1)])
+            .add(DomainBought(35), 2)
+            .add(DomainBought(37), 2)
+            .add_items([DomainBought(38)])
             .build(),
-            output=FullProduced(9)
+            output=DomainFullProduced(9)
         )
     )
 
     # Group 3D (old group F -> 3D):
     subgraph_3D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=10,
             process_duration=4,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(33)])
-            .add(Bought(34), 36)
+            .add_items([DomainBought(33)])
+            .add(DomainBought(34), 36)
             .build(),
-            output=StepProduced(FullProduced(6), 1)
+            output=DomainStepProduced(DomainFullProduced(6), 1)
         )
     )
     subgraph_3D.add_process(
-        Process(
+        DomainProcess(
             workstation_id=11,
             process_duration=3,
             setup_duration=10,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(6), 1)])
-            .add(Bought(35), 2)
-            .add_items([Bought(36)])
+            .add_items([DomainStepProduced(DomainFullProduced(6), 1)])
+            .add(DomainBought(35), 2)
+            .add_items([DomainBought(36)])
             .build(),
-            output=FullProduced(6)
+            output=DomainFullProduced(6)
         )
     )
 
     subgraph_3E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=13,
             process_duration=2,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([Bought(39)])
+            .add_items([DomainBought(39)])
             .build(),
-            output=StepProduced(FullProduced(12), 1)
+            output=DomainStepProduced(DomainFullProduced(12), 1)
         )
     )
     subgraph_3E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=12,
             process_duration=3,
             setup_duration=0,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(12), 1)])
+            .add_items([DomainStepProduced(DomainFullProduced(12), 1)])
             .build(),
-            output=StepProduced(FullProduced(12), 2)
+            output=DomainStepProduced(DomainFullProduced(12), 2)
         )
     )
     subgraph_3E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=8,
             process_duration=1,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(12), 2)])
+            .add_items([DomainStepProduced(DomainFullProduced(12), 2)])
             .build(),
-            output=StepProduced(FullProduced(12), 3)
+            output=DomainStepProduced(DomainFullProduced(12), 3)
         )
     )
     subgraph_3E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=7,
             process_duration=2,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(12), 3)])
+            .add_items([DomainStepProduced(DomainFullProduced(12), 3)])
             .build(),
-            output=StepProduced(FullProduced(12), 4)
+            output=DomainStepProduced(DomainFullProduced(12), 4)
         )
     )
     subgraph_3E.add_process(
-        Process(
+        DomainProcess(
             workstation_id=9,
             process_duration=3,
             setup_duration=15,
             inputs=ResourceCounterBuilder()
-            .add_items([StepProduced(FullProduced(12), 4)])
+            .add_items([DomainStepProduced(DomainFullProduced(12), 4)])
             .build(),
-            output=FullProduced(12)
+            output=DomainFullProduced(12)
         )
     )
 
     subgraph_3w.add_process(
-        Process(
+        DomainProcess(
             workstation_id=1,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
-            .add_items([FullProduced(15)])
-            .add_items([FullProduced(20)])
-            .add_items([FullProduced(9)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
+            .add_items([DomainFullProduced(15)])
+            .add_items([DomainFullProduced(20)])
+            .add_items([DomainFullProduced(9)])
             .build(),
-            output=FullProduced(29)
+            output=DomainFullProduced(29)
         )
     )
 
     subgraph_3x.add_process(
-        Process(
+        DomainProcess(
             workstation_id=2,
             process_duration=5,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(29)])
-            .add_items([FullProduced(6)])
-            .add_items([FullProduced(12)])
-            .add(Bought(24), 2)
-            .add(Bought(25), 2)
+            .add_items([DomainFullProduced(29)])
+            .add_items([DomainFullProduced(6)])
+            .add_items([DomainFullProduced(12)])
+            .add(DomainBought(24), 2)
+            .add(DomainBought(25), 2)
             .build(),
-            output=FullProduced(30)
+            output=DomainFullProduced(30)
         )
     )
 
     subgraph_3y.add_process(
-        Process(
+        DomainProcess(
             workstation_id=3,
             process_duration=6,
             setup_duration=20,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(17)])
-            .add_items([FullProduced(16)])
-            .add_items([FullProduced(30)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(17)])
+            .add_items([DomainFullProduced(16)])
+            .add_items([DomainFullProduced(30)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(31)
+            output=DomainFullProduced(31)
         )
     )
 
     subgraph_3z.add_process(
-        Process(
+        DomainProcess(
             workstation_id=4,
             process_duration=6,
             setup_duration=30,
             inputs=ResourceCounterBuilder()
-            .add_items([FullProduced(26)])
-            .add_items([FullProduced(31)])
-            .add_items([Bought(23)])
-            .add_items([Bought(24)])
-            .add_items([Bought(27)])
+            .add_items([DomainFullProduced(26)])
+            .add_items([DomainFullProduced(31)])
+            .add_items([DomainBought(23)])
+            .add_items([DomainBought(24)])
+            .add_items([DomainBought(27)])
             .build(),
-            output=FullProduced(3)
+            output=DomainFullProduced(3)
         )
     )
 

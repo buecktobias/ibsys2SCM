@@ -1,12 +1,12 @@
 import abc
 from dataclasses import dataclass
 
-from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
-from supply_chain_optimization.graph.nodes.production_node_type import ProductionNodeType
+from material.graph.nodes.mermaid_node import LabeledGraphNode
+from material.graph.nodes.production_node_type import ProductionNodeType
 
 
 @dataclass()
-class Item(LabeledGraphNode, abc.ABC):
+class DomainItem(LabeledGraphNode, abc.ABC):
     node_numerical_id: int
 
     @property
@@ -28,16 +28,16 @@ class Item(LabeledGraphNode, abc.ABC):
         return hash((self.node_type, self.node_numerical_id))
 
     def __eq__(self, other):
-        if not isinstance(other, Item):
+        if not isinstance(other, DomainItem):
             return False
         return self.node_numerical_id == other.node_numerical_id and self.node_type == other.node_type
 
 
 @dataclass()
-class Bought(Item):
+class DomainBought(DomainItem):
     """
-        base_price=item.base_price, discount=item.discount,
-        discount=item.discount,
+        base_price=item.base_price, discount_amount=item.discount_amount,
+        discount_amount=item.discount_amount,
         mean_order_duration_in_periods=item.mean_order_duration_in_periods,
         order_standard_deviation_in_periods=item.order_std_dev
     """
@@ -55,12 +55,12 @@ class Bought(Item):
         return hash((self.node_type, self.node_numerical_id))
 
     def __eq__(self, other):
-        if not isinstance(other, Item):
+        if not isinstance(other, DomainItem):
             return False
         return self.node_numerical_id == other.node_numerical_id and self.node_type == other.node_type
 
 
-class Produced(Item, abc.ABC):
+class Produced(DomainItem, abc.ABC):
     def __init__(self, node_numerical_id: int):
         super().__init__(node_numerical_id)
 
@@ -76,28 +76,28 @@ class Produced(Item, abc.ABC):
         return hash((self.node_type, self.node_numerical_id))
 
     def __eq__(self, other):
-        if not isinstance(other, Item):
+        if not isinstance(other, DomainItem):
             return False
         return self.node_numerical_id == other.node_numerical_id and self.node_type == other.node_type
 
 
 @dataclass
-class FullProduced(Produced):
+class DomainFullProduced(Produced):
     base_value_price: float = 0
 
     def __hash__(self):
         return hash((self.node_type, self.node_numerical_id))
 
     def __eq__(self, other):
-        if not isinstance(other, Item):
+        if not isinstance(other, DomainItem):
             return False
         return self.node_numerical_id == other.node_numerical_id and self.node_type == other.node_type
 
 
-class StepProduced(Produced):
-    def __init__(self, parent_produced: FullProduced, step_number: int):
+class DomainStepProduced(Produced):
+    def __init__(self, parent_produced: DomainFullProduced, step_number: int):
         super().__init__(parent_produced.node_numerical_id)
-        self.parent_produced: FullProduced = parent_produced
+        self.parent_produced: DomainFullProduced = parent_produced
         self.step_number = step_number
         self.produced_by_workstation: int | None = None
 
@@ -122,6 +122,6 @@ class StepProduced(Produced):
         return hash((self.parent_produced, self.step_number))
 
     def __eq__(self, other):
-        if not isinstance(other, StepProduced):
+        if not isinstance(other, DomainStepProduced):
             return False
         return self.parent_produced == other.parent_produced and self.step_number == other.step_number

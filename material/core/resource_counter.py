@@ -2,8 +2,9 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Self, TypeVar
 
-from supply_chain_optimization.graph.nodes.graph_nodes import Item, StepProduced
-from supply_chain_optimization.graph.nodes.mermaid_node import LabeledGraphNode
+from material.db.models import Item
+from material.graph.nodes.graph_nodes import DomainStepProduced
+from material.graph.nodes.mermaid_node import LabeledGraphNode
 
 T = TypeVar("T", bound=LabeledGraphNode)
 
@@ -17,7 +18,7 @@ class ResourceCounter[T](Counter[T]):
 
     def print_sorted_resources(self) -> None:
         for key, count in sorted(self.items(), key=lambda x: self._get_entries_sort_value(x)):
-            if isinstance(key, Item) and not isinstance(key, StepProduced):
+            if isinstance(key, Item) and not isinstance(key, DomainStepProduced):
                 print(f"{key.label}: {count}")
 
     def __hash__(self):
