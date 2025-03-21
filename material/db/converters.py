@@ -26,7 +26,7 @@ class ProcessConverter:
     def add_process_to_db(self, process: DomainProcess):
         """
         Persists a single process (with its inputs and output). Assumes
-        process.unique_numerical_id is the primary key and process.graph_id
+        process.unique_numerical_id is the primary key and process.id
         is already set.
         """
         orm_process = ProcessORM(
@@ -34,7 +34,7 @@ class ProcessConverter:
             workstation_id=process.workstation_id,
             process_duration=process.process_duration,
             setup_duration=process.setup_duration,
-            graph_id=process.graph_id
+            graph_id=process.id
         )
         self.session.merge(orm_process)
         # Persist each input
@@ -84,7 +84,7 @@ class GraphConverter:
     """
     Converts a domain BaseGraph (with processes and subgraphs) to ORM objects
     using session.merge. BaseGraph is assumed to have:
-      - label (used as unique graph_id)
+      - label (used as unique id)
       - get_own_processes() returning a set of processes,
       - get_subgraphs() returning a set of subgraphs.
     """
@@ -96,7 +96,7 @@ class GraphConverter:
     def add_graph(self, graph: BaseGraph, parent_graph_id: int = None):
         """
         Persists the BaseGraph and its processes, then recursively persists its subgraphs.
-        The BaseGraph's label is used as its graph_id.
+        The BaseGraph's label is used as its id.
         """
         orm_graph = GraphORM(
             graph_id=graph.unique_numerical_id,
@@ -106,7 +106,7 @@ class GraphConverter:
         self.session.merge(orm_graph)
         # Persist the graph's own processes
         for process in graph.get_own_processes():
-            process.graph_id = orm_graph.graph_id  # assign current graph id
+            process.id = orm_graph.id  # assign current graph id
             self.process_converter.add_process_to_db(process)
         # Recursively persist subgraphs, passing the current graph id as parent_graph_id
         for subgraph in graph.get_subgraphs():

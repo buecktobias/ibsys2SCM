@@ -8,13 +8,13 @@ if __name__ == '__main__':
 
     # Rename and select required columns for Bought model import
     bought_items = bought_items.rename(columns={
-        "article_id": "item_id",
+        "article_id": "id",
         "price_per_part": "base_price",
         "order_price": "base_order_cost",
         "order_duration": "mean_order_duration",
         "order_standard_deviation": "order_std_dev",
         "discount_quantity": "discount_amount",
-    })[["item_id", "base_price", "base_order_cost", "mean_order_duration", "order_std_dev", "discount_amount"]]
+    })[["id", "base_price", "base_order_cost", "mean_order_duration", "order_std_dev", "discount_amount"]]
 
     # Convert decimal format if necessary
     bought_items = bought_items.applymap(lambda x: str(x).replace(",", ".") if isinstance(x, str) else x)

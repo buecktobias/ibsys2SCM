@@ -1,98 +1,99 @@
-import logging
-from dataclasses import dataclass, field
+from typing import cast
 
 import networkx as nx
+from sqlmodel import Session, select
 
-from material.core.resource_counter import ResourceCounter
-from material.db.models import Process
-from material.graph.nodes.mermaid_node import LabeledGraphNode
+from material.db.models import Process, ProcessInput, ProcessOutput
+
+
+class DatabaseGraphLoader:
+    """
+    Loads processes and related data from the database.
+    """
+
+    def __init__(self, session: Session):
+        self.session = session
+
+    def load_processes(self):
+        """Returns all Process records from the DB."""
+        return self.session.exec(select(Process)).all()
+
+    def load_process_inputs(self, process_id: int):
+        stmt = select(ProcessInput).where(ProcessInput. == process_id)
+        return self.session.exec(stmt).all()
+
+    def load_process_output(self, process_id: int):
+        stmt: Select[ProcessOutput] = cast(Select[ProcessOutput],
+                                           select(ProcessOutput).where(ProcessOutput.process_id == process_id))
+        return self.session.exec(stmt).first()
+
+    def get_item(self, item_id: int):
+        """Retrieves an Item by its ID."""
+        return self.session.get(Item, item_id)
 
 
 class NxGraphBuilder:
-    processes: set[Process] = field(default_factory=set)
-    nx_graph: nx.DiGraph = field(default_factory=nx.DiGraph)
+    """
+    Builds a networkx directed graph from processes and items.
+    Each node stores the actual model instance in its 'data' attribute.
+    """
 
-    def _get_all_nodes(self):
-        nodes: set[LabeledGraphNode] = set()
-        for process in self.processes:
-            nodes.add(process)
-            nodes.add(process.output)
-            for input_node in process.inputs:
-                nodes.add(input_node)
-        return nodes
+    def __init__(self):
+        self.graph = nx.DiGraph()
 
-    def _has_node(self, node: LabeledGraphNode):
-        return node in self._get_all_nodes()
+    def add_process_node(self, process: Process) -> str:
+        node_id = f"P{process.id}"
+        # Do not hardcode type; simply store the model instance.
+        self.graph.add_node(node_id, data=process)
+        return node_id
 
-    def _add_to_networkx(self, node: LabeledGraphNode) -> None:
-        self.nx_graph.add_node(node, data=node)
+    def add_item_node(self, item: Item) -> str:
+        node_id = f"I{item.id}"
+        self.graph.add_node(node_id, data=item)
+        return node_id
 
-    def _add_node(self, node: LabeledGraphNode) -> None:
-        logging.info(f"Adding node {node} to child aggregates.")
-        self._add_to_networkx(node)
+    def add_edge(self, source_node: str, target_node: str, weight: int = 1) -> None:
+        self.graph.add_edge(source_node, target_node, weight=weight)
 
-    def _add_edges(self, from_resources: ResourceCounter, process: Process) -> None:
+    def build_from_database(self, loader: DatabaseGraphLoader) -> nx.DiGraph:
         """
-        Adds edges to the nx_graph from input resources to the process and from the process to the _output item.
+        Loads processes and associated items from the database via loader,
+        and builds a networkx directed graph.
+        - Edges from an input item node to its process node carry a weight equal to the quantity.
+        - Edges from a process node to its output item node have a weight of 1.
         """
-        for item, quantity in from_resources.items():
-            if not self._has_node(item):
-                logging.info(f"Item {item} not found in subgraph; adding it.")
-                self._add_node(item)
-            self._add_edge(item, process, weight=quantity)
-            logging.debug(f"Added edge from {item} to {process} with weight {quantity}.")
-        self._add_edge(process, process.output)
-
-    def _add_process_to_nx_graph(
-            self,
-            new_process: Process,
-    ) -> Process | None:
-
-        if self._has_node(new_process) or new_process in self.processes:
-            logging.warning(f"Node {new_process} already exists in the nx_graph! Skipping addition.")
-            return None
-
-        self._add_node(new_process.output)
-        self._add_node(new_process)
-        self._add_edges(new_process.inputs, new_process)
-
-        self._add_edge(new_process, new_process.output)
-        logging.debug(f"Added edge from {new_process} to {new_process.output} with weight 1.")
-
-        return new_process
-
-    def _add_edge(self, source_node: LabeledGraphNode, target_node: LabeledGraphNode, weight: int = 1) -> None:
-        self._add_edge(source_node, target_node, weight)
-
-    def build_from_processes(self, processes: set[Process]) -> nx.DiGraph:
+        processes = loader.load_processes()
         for process in processes:
-            self._add_process_to_nx_graph(process)
-        return self.nx_graph
+            proc_node = self.add_process_node(process)
+
+            # Process Inputs (can be either bought or produced items)
+            inputs = loader.load_process_inputs(process.id)
+            for inp in inputs:
+                item = loader.get_item(inp.id)
+                item_node = self.add_item_node(item)
+                self.add_edge(item_node, proc_node, weight=inp.quantity)
+
+            # Process Output (should be a produced item)
+            output = loader.load_process_output(process.id)
+            if output:
+                item = loader.get_item(output.item_id)
+                item_node = self.add_item_node(item)
+                self.add_edge(proc_node, item_node, weight=1)
+
+        return self.graph
 
 
-@dataclass
-class MaterialProductGraphBuilder:
-    label: str
-    nx_graph: nx.DiGraph = field(default_factory=nx.DiGraph)
-    subgraphs: set[SubGraph] = field(default_factory=set)
-    processes: set[Process] = field(default_factory=set)
+# Example usage:
+if __name__ == "__main__":
+    with Session(engine) as session:
+        loader = DatabaseGraphLoader(session)
+        builder = NxGraphBuilder()
+        nx_graph = builder.build_from_database(loader)
 
-    def __post_init__(self):
-        if not isinstance(self.subgraphs, set):
-            raise ValueError("Subgraphs must be a set.")
+    # Optionally, visualize the graph using matplotlib:
+    import matplotlib.pyplot as plt
 
-    def create_subgraph(self, label: str) -> SubGraph:
-        new_graph = SubGraph(label, set(), set())
-        self.subgraphs.add(new_graph)
-        return new_graph
-
-    def create_nx_graph(self) -> nx.DiGraph:
-        return NxGraphBuilder().build_from_processes(self.processes)
-
-    def build(self) -> DomainMaterialProductGraph:
-        return DomainMaterialProductGraph(
-            self.label,
-            self.subgraphs,
-            self.processes,
-            self.create_nx_graph()
-        )
+    pos = nx.spring_layout(nx_graph)
+    nx.draw(nx_graph, pos, with_labels=True, node_color='lightblue', node_size=2500, font_size=10)
+    plt.title("Process-Item Graph")
+    plt.show()

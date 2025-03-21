@@ -1,9 +1,5 @@
 from collections import Counter
 
-from supply_chain_optimization.core.resource_counter import ResourceCounter
-from supply_chain_optimization.graph.nodes.graph_nodes import Node
-from supply_chain_optimization.graph.production_graph.material_product_graph import MaterialProductGraph
-
 
 class ResourceCalculator:
     def __init__(self, productions_graph: MaterialProductGraph):

@@ -1,77 +1,86 @@
 from typing import Optional
-from sqlmodel import SQLModel, Field
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-class Workstation(SQLModel, table=True):
-    """Represents a workstation where processes are executed."""
-    __table_args__ = {"extend_existing": True}
-    workstation_id: int = Field(primary_key=True)
-    labour_cost_1: float
-    labour_cost_2: float
-    labour_cost_3: float
-    labour_overtime_cost: float
-    variable_machine_cost: float
-    fixed_machine_cost: float
+class Base(DeclarativeBase):
+    pass
 
 
-class Item(SQLModel, table=True):
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    """Base class for all items (bought or produced)."""
-    item_id: int = Field(primary_key=True)
-
-
-class BoughtItem(SQLModel, table=True):
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    """Represents items that are purchased, not produced."""
-    item_id: int = Field(foreign_key="item.item_id", primary_key=True)
-    base_price: float
-    discount_amount: Optional[int] = None
-    mean_order_duration: Optional[float] = None
-    order_std_dev: Optional[float] = None
-    base_order_cost: Optional[float] = None
+class Workstation(Base):
+    __tablename__ = "workstation"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    labour_cost_1: Mapped[float]
+    labour_cost_2: Mapped[float]
+    labour_cost_3: Mapped[float]
+    labour_overtime_cost: Mapped[float]
+    variable_machine_cost: Mapped[float]
+    fixed_machine_cost: Mapped[float]
 
 
-class ProducedItem(SQLModel, table=True):
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    """Represents items that are produced through a process."""
-    item_id: int = Field(foreign_key="item.item_id", primary_key=True)
+class Item(Base):
+    __tablename__ = "item"
+    id: Mapped[int] = mapped_column(primary_key=True)
 
 
-class MaterialGraph(SQLModel, table=True):
-    """Represents the overall Material Graph containing subgraphs and processes."""
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    graph_id: int = Field(primary_key=True)
-    name: Optional[str] = None
-    parent_graph_id: Optional[str] = Field(default=None, foreign_key="materialgraph.graph_id")
-
-
-class Process(SQLModel, table=True):
-    """Represents a manufacturing process."""
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    process_id: int = Field(primary_key=True)
-    graph_id: str = Field(foreign_key="materialgraph.graph_id")
-    workstation_id: int
-    process_duration: int
-    setup_duration: int
+class BoughtItem(Base):
+    __tablename__ = "bought_item"
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    base_price: Mapped[float]
+    discount_amount: Mapped[int]
+    mean_order_duration: Mapped[float]
+    order_std_dev: Mapped[float]
+    base_order_cost: Mapped[float]
 
 
-class ProcessInput(SQLModel, table=True):
-    """Links processes to their input items."""
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
-
-    process_id: int = Field(foreign_key="process.process_id", primary_key=True)
-    item_id: int = Field(foreign_key="item.item_id", primary_key=True)
-    quantity: int
+class ProducedItem(Base):
+    __tablename__ = "produced_item"
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
 
 
-class ProcessOutput(SQLModel, table=True):
-    """Represents the single output of a process."""
-    __table_args__ = {"extend_existing": True}  # Allow redefinition
+class MaterialGraph(Base):
+    __tablename__ = "material_graph"
 
-    process_id: int = Field(foreign_key="process.process_id", primary_key=True)
-    item_id: int = Field(foreign_key="item.item_id", primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    parent_graph_id: Mapped[int | None] = mapped_column(ForeignKey("material_graph.id"))
+
+    parent_graph: Mapped["MaterialGraph"] = relationship(back_populates="subgraphs", remote_side=[id])
+    subgraphs: Mapped[list["MaterialGraph"]] = relationship(back_populates="parent_graph")
+
+    processes: Mapped[list["Process"]] = relationship(back_populates="graph")
+
+
+class Process(Base):
+    __tablename__ = "process"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    graph_id: Mapped[int] = mapped_column(ForeignKey("material_graph.id"))
+    workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"))
+    process_duration: Mapped[int]
+    setup_duration: Mapped[int]
+
+    graph: Mapped[MaterialGraph] = relationship(back_populates="processes")
+    inputs: Mapped[list["ProcessInput"]] = relationship(back_populates="process")
+    output: Mapped["ProcessOutput"] = relationship(back_populates="process", uselist=False)
+
+
+class ProcessInput(Base):
+    __tablename__ = "process_input"
+
+    process_id: Mapped[int] = mapped_column(ForeignKey("process.id"), primary_key=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    quantity: Mapped[int]
+    item: Mapped[Item] = relationship()
+
+    process: Mapped[Process] = relationship(back_populates="inputs")
+
+
+class ProcessOutput(Base):
+    __tablename__ = "process_output"
+    process_id: Mapped[int] = mapped_column(ForeignKey("process.id"), primary_key=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    item: Mapped[Item] = relationship()
+
+    process: Mapped[Process] = relationship(back_populates="output")

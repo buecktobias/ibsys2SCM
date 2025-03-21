@@ -1,51 +1,57 @@
+import abc
 import logging
 import re
 import typing
+from abc import abstractmethod
 from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
 
 import yaml
 
+from material.db.models import MaterialGraph, BoughtItem, Process, Item, ProducedItem
+from material.graph.util.process_util import get_process_outgoing_to
+
+
+class MermaidContent(abc.ABC):
+    @abstractmethod
+    def get_mermaid_content(self):
+        pass
+
 
 @dataclass
-class ClassDef:
+class ClassDef(MermaidContent):
+    name: str
     fill: str
     stroke: str
     stroke_width: str
     color: str
 
-    def __str__(self):
-        return f"fill:{self.fill},stroke:{self.stroke},stroke-width:{self.stroke_width},color:{self.color}"
+    def get_mermaid_content(self):
+        return (f"classDef {self.name} "
+                f"fill:{self.fill},"
+                f"stroke:{self.stroke},"
+                f"stroke-width:{self.stroke_width},"
+                f"color:{self.color}")
 
 
-class MermaidStyle:
-    def __init__(self):
-        self.class_defs = {}
-        self.class_assignments = []
+class MermaidClass(MermaidContent):
+    def __init__(self, class_def: ClassDef):
+        self.class_def = class_def
+        self.nodes = []
 
-    def add_class_def(self, name: str, fill: str, stroke: str, stroke_width: str, color: str):
-        self.class_defs[name] = ClassDef(fill, stroke, stroke_width, color)
+    def assign_node(self, node_uid):
+        return self.nodes.append(node_uid)
 
-    def get_class_defs(self):
-        return "\n".join([f"classDef {k} {v}" for k, v in self.class_defs.items()])
-
-    def add_class_assignment(self, node_uid, node_type):
-        self.class_assignments.append(f"{node_uid}:::{node_type}")
-
-    def get_class_assignments(self):
-        return "\n".join(self.class_assignments)
-
-    def get_mermaid_code(self):
-        return "\n".join([self.get_class_defs(), self.get_class_assignments()])
+    def get_mermaid_content(self):
+        return f"{self.class_def.get_mermaid_content()}\n class {', '.join(self.nodes)} {self.class_def.name}"
 
 
-class MermaidStringBuilder:
+class MermaidStringBuilder(MermaidContent):
     def __init__(self, indent_level=0):
         self._lines = []
         self._indent_level = indent_level
         self._indent_str = "    "  # 4 spaces per indent level
-        self.style = MermaidStyle()
 
     def init_mermaid(self, settings: dict[str, str | dict], diagram_type: str):
         self.add_lines(self.create_settings_lines(settings))
@@ -87,22 +93,15 @@ class MermaidStringBuilder:
         arrow = f"{from_node} --{label}--> {to_node}" if label else f"{from_node} --> {to_node}"
         self.add_line(f"{arrow}")
 
-    def add_class_assignment(self, node_uid, node_type):
-        self.style.add_class_assignment(node_uid, node_type)
-
-    def add_class_definition(self, name: str, fill: str, stroke: str, stroke_width: str, color: str):
-        self.style.add_class_def(name, fill, stroke, stroke_width, color)
-
-    def get_content(self) -> str:
-        """Returns the full Mermaid diagram content including styles."""
-        return "\n".join(self._lines + [self.style.get_mermaid_code()])
+    def get_mermaid_content(self):
+        return "\n".join(self._lines)
 
 
 class NxToMermaid:
     def __init__(self, graph):
-        self.graph: MaterialProductGraph = graph
+        self.graph: MaterialGraph = graph
         self.mermaid = MermaidStringBuilder()
-        self.duplicate_bought_nodes: Counter[Bought] = Counter()
+        self.duplicate_bought_nodes: Counter[BoughtItem] = Counter()
         settings = {
             "title": "Material Flow",
             "config": {
@@ -115,41 +114,28 @@ class NxToMermaid:
             }
         }
         self.mermaid.init_mermaid(settings, "flowchart LR")
+        self.class_defs: dict[str, MermaidClass] = {}
 
     def add_process_node(self, node: Process):
-        self.mermaid.add_class_assignment(node.label, node.node_type.value)
-        label = f"<b>{node.label}</b>"
-        self.mermaid.add_node(node.label, label)
+        label = f"<b>{node.workstation_id}</b>"
+        self.mermaid.add_node(str(node.id), label)
 
-    def add_item_node(self, node: Item):
-        self.mermaid.add_class_assignment(node.label, node.node_type.value)
-        self.mermaid.add_rounded_node(node.label, node.label)
+    def add_produced_item_node(self, produced_item: ProducedItem):
+        self.mermaid.add_rounded_node(str(produced_item.item_id), str(produced_item.item_id))
 
-    def add_rounded_styled_node(self, node_id, label, style_class: str):
-        self.mermaid.add_class_assignment(node_id, style_class)
+    def add_rounded_styled_node(self, node_id: str, label: str):
         self.mermaid.add_rounded_node(node_id, label)
 
-    def get_unique_bought_node_id(self, node: Bought):
+    def get_unique_bought_node_id(self, node: BoughtItem):
         current_count = self.duplicate_bought_nodes.get(node, 0)
         self.duplicate_bought_nodes[node] = current_count + 1
-        return node.label + f"_{current_count}"
+        return str(node.id) + f"_{current_count}"
 
-    def get_process_input(self, processes: typing.Collection[Process], input_item: Item):
-        if isinstance(input_item, Bought):
-            input_id = self.get_unique_bought_node_id(input_item)
-            self.add_rounded_styled_node(input_id, input_item.label, input_item.node_type.value)
-        elif isinstance(input_item, FullProduced):
-            input_id = input_item.label
-            self.add_item_node(input_item)
-        elif isinstance(input_item, StepProduced):
-            outgoing_to_list: list[Process] = get_process_outgoing_to(processes, input_item)
-            if len(outgoing_to_list) != 1:
-                logging.warning(f"StepProduced {input_item} has more than one incoming process: {outgoing_to_list}")
-            input_id = outgoing_to_list[0].label if len(outgoing_to_list) == 1 else input_item.label
-        else:
-            raise ValueError(f"Node type {type(input_item)} not supported.")
+    def add_class_assignment(self, node_id: str, class_id: str):
+        self.class_defs[class_id].assign_node(node_id)
 
-        return input_id
+    def add_class_definition(self, class_def: ClassDef):
+        self.class_defs[class_def.name] = MermaidClass(class_def)
 
     def add_processes(self, processes: typing.Collection[Process]):
         for process in processes:
