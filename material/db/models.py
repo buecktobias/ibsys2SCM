@@ -1,5 +1,4 @@
 from typing import Optional
-
 from sqlalchemy import ForeignKey, CheckConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -23,8 +22,12 @@ class Item(Base):
     __tablename__ = "item"
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    bought: Mapped["BoughtItem"] = relationship("BoughtItem", back_populates="item", uselist=False)
-    produced: Mapped["ProducedItem"] = relationship("ProducedItem", back_populates="item", uselist=False)
+    bought: Mapped["BoughtItem"] = relationship(
+        "BoughtItem", back_populates="item", uselist=False, lazy="joined"
+    )
+    produced: Mapped["ProducedItem"] = relationship(
+        "ProducedItem", back_populates="item", uselist=False, lazy="joined"
+    )
 
     def is_bought(self) -> bool:
         return self.bought is not None
@@ -44,7 +47,7 @@ class BoughtItem(Base):
     order_std_dev: Mapped[float]
     base_order_cost: Mapped[float]
 
-    item: Mapped[Item] = relationship("Item", back_populates="bought", uselist=False)
+    item: Mapped[Item] = relationship("Item", back_populates="bought", uselist=False, lazy="joined")
 
 
 class ProducedItem(Base):
@@ -53,7 +56,7 @@ class ProducedItem(Base):
         ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )
 
-    item: Mapped[Item] = relationship("Item", back_populates="produced", uselist=False)
+    item: Mapped[Item] = relationship("Item", back_populates="produced", uselist=False, lazy="joined")
 
 
 class MaterialGraphORM(Base):
@@ -63,9 +66,11 @@ class MaterialGraphORM(Base):
     parent_graph_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("material_graph.id", onupdate="CASCADE", ondelete="SET NULL")
     )
-    parent_graph: Mapped["MaterialGraphORM"] = relationship(back_populates="subgraphs", remote_side=[id])
-    subgraphs: Mapped[list["MaterialGraphORM"]] = relationship(back_populates="parent_graph")
-    processes: Mapped[list["Process"]] = relationship(back_populates="graph")
+    parent_graph: Mapped["MaterialGraphORM"] = relationship(
+        back_populates="subgraphs", remote_side=[id], lazy="joined"
+    )
+    subgraphs: Mapped[list["MaterialGraphORM"]] = relationship(back_populates="parent_graph", lazy="joined")
+    processes: Mapped[list["Process"]] = relationship(back_populates="graph", lazy="joined")
 
 
 class Process(Base):
@@ -80,10 +85,11 @@ class Process(Base):
     )
     process_duration: Mapped[int]
     setup_duration: Mapped[int]
-    graph: Mapped[MaterialGraphORM] = relationship(back_populates="processes")
-    inputs: Mapped[list["ProcessInput"]] = relationship(back_populates="process")
-    workstation: Mapped[Workstation] = relationship()
-    output: Mapped["ProcessOutput"] = relationship(back_populates="process", uselist=False)
+
+    graph: Mapped[MaterialGraphORM] = relationship(back_populates="processes", lazy="joined")
+    inputs: Mapped[list["ProcessInput"]] = relationship(back_populates="process", lazy="joined")
+    workstation: Mapped[Workstation] = relationship(lazy="joined")
+    output: Mapped["ProcessOutput"] = relationship(back_populates="process", uselist=False, lazy="joined")
 
 
 class ProcessInput(Base):
@@ -96,8 +102,9 @@ class ProcessInput(Base):
         ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )
     quantity: Mapped[int] = mapped_column(default=1)
-    item: Mapped[Item] = relationship()
-    process: Mapped[Process] = relationship(back_populates="inputs")
+
+    item: Mapped[Item] = relationship(lazy="joined")
+    process: Mapped[Process] = relationship(back_populates="inputs", lazy="joined")
 
 
 class ProcessOutput(Base):
@@ -108,5 +115,6 @@ class ProcessOutput(Base):
     item_id: Mapped[int] = mapped_column(
         ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )
-    item: Mapped[Item] = relationship()
-    process: Mapped[Process] = relationship(back_populates="output")
+
+    item: Mapped[Item] = relationship(lazy="joined")
+    process: Mapped[Process] = relationship(back_populates="output", lazy="joined")

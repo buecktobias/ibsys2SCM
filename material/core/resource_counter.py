@@ -1,42 +1,23 @@
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Self, TypeVar
+from typing import Self
 
-from material.db.models import Item
-from material.graph.nodes.graph_nodes import DomainStepProduced
-from material.graph.nodes.mermaid_node import LabeledGraphNode
-
-T = TypeVar("T", bound=LabeledGraphNode)
-
-
-class ResourceCounter[T](Counter[T]):
-    def _get_entries_sort_value(self, entry: tuple[LabeledGraphNode, int]) -> int:
-        node, _ = entry
-        if isinstance(node, Item):
-            return node.node_numerical_id
-        return 0
-
-    def print_sorted_resources(self) -> None:
-        for key, count in sorted(self.items(), key=lambda x: self._get_entries_sort_value(x)):
-            if isinstance(key, Item) and not isinstance(key, DomainStepProduced):
-                print(f"{key.label}: {count}")
-
-    def __hash__(self):
-        return hash(tuple(self.items()))
+from material.initialize_db.graph.nodes.graph_nodes import DomainItem
+from material.initialize_db.graph.nodes.mermaid_node import LabeledGraphNode
 
 
 @dataclass
 class ResourceCounterBuilder[T]:
-    counter: ResourceCounter[T] = field(default_factory=ResourceCounter)
+    counter: Counter[T] = field(default_factory=Counter)
 
     def add(self, node: LabeledGraphNode, count: int = 1) -> Self:
         self.counter[node] += count
         return self
 
-    def add_items(self, items: list[Item], count: int = 1) -> Self:
+    def add_items(self, items: list[DomainItem], count: int = 1) -> Self:
         for item in items:
             self.counter[item] += count
         return self
 
     def build(self):
-        return ResourceCounter(self.counter)
+        return self.counter
