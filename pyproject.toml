@@ -5,6 +5,7 @@ description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.15.1",
+    "cvxpy>=1.6.4",
     "frozendict>=2.4.6",
     "markdown-include>=0.8.1",
     "matplotlib>=3.10.1",
@@ -12,6 +13,7 @@ dependencies = [
     "mkdocs-material>=9.6.7",
     "networkx>=3.4.2",
     "numpy>=2.2.3",
+    "ortools>=9.12.4544",
     "pandas>=2.2.3",
     "psycopg[binary,pool]>=3.2.6",
     "pybase62>=1.0.0",

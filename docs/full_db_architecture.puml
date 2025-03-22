@@ -10,12 +10,14 @@ package Models {
     + id: int
     + duration: int
   }
+    interface ItemCounter{
+  }
 
-  class ProcessIn {
+  class ProcessIn implements ItemCounter {
     + quantity: int
   }
 
-  class ProcessOut {
+  class ProcessOut implements ItemCounter {
   }
 
   class Item {
@@ -28,18 +30,23 @@ package Models {
     + id: int
   }
 
-  class TimeStamp {
-    + day: int
-    + hour: int
-    + minute: int
+  class ExpectedSales {
+    - period: int
+  }
 
-    - calculate_period(): int
+  class ExpectedSalesItem implements ItemCounter {
+    - quantity: int
   }
 
   class Inventory{
-    + id: int
-    - timestamp: TimeStamp
+    - period: int
   }
+
+  class InventoryItem implements ItemCounter{
+    - quantity: int
+  }
+
+
 
   ' ORM Associations
   MaterialGraphORM "0..1" o-- "n" Process
@@ -49,6 +56,11 @@ package Models {
   ProcessIn o-- Item
   ProcessOut o-- Item
   ProcessORM "n" o-- "1" Workstation
+  Inventory "1" o-- "n" InventoryItem
+  InventoryItem o-- Item
+
+  ExpectedSales "1" o-- "n" ExpectedSalesItem
+  ExpectedSalesItem o-- Item
 }
 
 
@@ -64,7 +76,13 @@ package Material {
 
 
     class CalculateResourceRequirements {
-        + calculate(graph: MaterialGraph): List[Workstation]
+        - graph: Material.MaterialGraph
+        + calculate_needed_resources(): List<ItemCounter>
+    }
+
+    class CalculateReorderPoints {
+        - graph: Material.MaterialGraph
+        + calculate_reorder_points(): List<ItemCounter>
     }
 
 }

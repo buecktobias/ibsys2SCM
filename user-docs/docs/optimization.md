@@ -73,8 +73,7 @@
 ### Diagramm
 
 !!! note Vereinfachung
-    Keine Beachtung der Optimierung über mehrere Perioden. Keine Einbeziehung der Prognosen.
-
+Keine Beachtung der Optimierung über mehrere Perioden. Keine Einbeziehung der Prognosen.
 
 ```mermaid
 flowchart TD
@@ -103,16 +102,16 @@ flowchart TD
     end
 
 %% Datenfluss
-SALES --> PRIM
-OPEN_SALES --> PRIM
-CURINV --> PRIM
-PRODSTR --> SEK
-PRIM --> SEK
-SEK --> BESTORD
-SEK --> PRODORD
-class PRODSTR,TEILDAT,CAPCOST,SALES,OPEN_SALES,CURINV inputData;
-class PRIM,NET,SEK,TER,PRODORD,BESTORD,NEWINV calcData;
-classDef inputData fill: green, stroke:white;
+    SALES --> PRIM
+    OPEN_SALES --> PRIM
+    CURINV --> PRIM
+    PRODSTR --> SEK
+    PRIM --> SEK
+    SEK --> BESTORD
+    SEK --> PRODORD
+class PRODSTR, TEILDAT, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
+class PRIM, NET, SEK, TER, PRODORD, BESTORD, NEWINV calcData;
+classDef inputData fill: green, stroke: white;
 classDef calcData fill: blue, stroke: white;
 classDef resultData fill: yellow, stroke: white;
 ```
@@ -124,12 +123,14 @@ classDef resultData fill: yellow, stroke: white;
 Der Primärbedarf berechnet sich sehr einfach aus den Verkaufsaufträgen und den offenen Aufträgen.
 
 #### Höhere Produktion als Bedarf
+
 Wie optimiert man den Primärbedarf? Sollte man immer genau so viel produzieren wie beauftragt wird.
 Es könnte durchaus Sinn machen mehr zu produzieren vor allem, wenn das Inventar niedrig ist und es
 wenig Bestellungen gibt.
 Da man so schon für die nächste Periode produziert hat. Dies führt zu komplizierten Berechnungen.
 
 #### Niedrigere Produktion als Bedarf
+
 Man sollte weniger produzieren als bestellt wurde, wenn bei weiterer Produktion die Kosten anfangen
 höher zu sien als
 der Verkaufswert.
@@ -247,18 +248,80 @@ flowchart TD
     EXPECTED_INV_COST --> TOTAL_COST
     REVENUE --> EARNINGS
     TOTAL_COST --> EARNINGS
-class PRODSTR,CAPCOST,SALES,OPEN_SALES,CURINV inputData;
-class PRIM,NET,SEK,TER,PRODORD,BESTORD,NEWINV,WORK_TIMES,WORKSTATION_REQ,PLANNED_INV calcData;
-class EARNINGS,REVENUE,TOTAL_COST,MACHINE_COST,EXPECTED_INV_COST.WORK_COST calcData;
+class PRODSTR, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
+class PRIM, NET,SEK, TER, PRODORD, BESTORD, NEWINV, WORK_TIMES, WORKSTATION_REQ, PLANNED_INV calcData;
+class EARNINGS, REVENUE,TOTAL_COST, MACHINE_COST, EXPECTED_INV_COST.WORK_COST calcData;
 class RES resultData;
-classDef inputData fill:#223, stroke: white, stroke-width: 2px, color: #fff;
-classDef calcData fill:#333, stroke: white, stroke-width: 2px, color: #fff;
-classDef resultData fill:#232, stroke: white, stroke-width: 2px, color: #fff;
+classDef inputData fill: #223, stroke: white, stroke-width: 2px, color: #fff;
+classDef calcData fill: #333, stroke: white, stroke-width: 2px, color: #fff;
+classDef resultData fill: #232, stroke: white, stroke-width: 2px, color: #fff;
 ```
 
 !!! question Optimierung
-    Ist das ganze nicht ein lineares Optimierungsproblem?
-    mit Variablen und Bedingungen?
-    Sowie einer Zielfunktion!
-    
+Ist das ganze nicht ein lineares Optimierungsproblem?
+mit Variablen und Bedingungen?
+Sowie einer Zielfunktion!
+
     Optimierungsproblem mit Variablen und Bedingungen, sollte man mit Google OR Tools lösen können.
+
+Wie viele Entscheidungsvariablen hat man?
+Primärbedarf von Endprodukten 3 Integer Variablen, Bereich Begrenzt 50 - 200
+Sekundärbedarf von Eigenfertigungsprodukten ca. 20 Integer Variablen 0 <= x < 2*Primärbedarf*BOM
+Kaufteile ca. 20 Integer Variablen 0 <= x < 2*Primärbedarf*BOM
+7 Perioden
+
+Primärbedarf simple Optimierung
+Für die 4 Vorschau Perioden
+
+Minimierung der Produktionsmengen Schwangungen
+Minimierung der Lagerkosten
+
+Variable
+I = Inventar
+I_p = Inventar in Periode p
+I_pi = Inventar in Periode p von Produkt i
+
+Eingabe
+O = Orders
+O_p = Orders in Periode p
+O_pi = Orders in Periode p von Produkt i
+
+I_0 = Anfangs Inventar
+
+Ausgabe
+P = Produktion
+P_p = Produktion in Periode p
+P_pi = Produktion in Periode p von Produkt i
+
+Berechnung I
+$$
+I_p(i) = I_{p-1}(i) + P_p(i) - O_p(i)
+$$
+
+Durschnitts Perioden Produktion =
+$$
+\frac{\sum{P_p(i)}}{4}
+$$
+
+Squared Produktions Abweichung von Durchschnitt =
+$$
+\sum{(P_p(i) - \mu)^2}
+$$
+
+Lagerkosten Faktor von Periode p = Sum(I_p) ^ 2
+
+Bedingungen
+
+Inventar für alle p und i >= 0
+$$
+I_p(i) >= 0
+$$
+
+Produktion für alle p und i >= 0
+$$
+P_p(i) >= 0
+$$
+
+
+
+
