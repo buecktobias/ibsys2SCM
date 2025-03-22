@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import yaml
 
-from material.db.models import MaterialGraph, BoughtItem, Process, Item, ProducedItem
+from material.db.models import MaterialGraphORM, BoughtItem, Process, Item, ProducedItem
 from material.graph.util.process_util import get_process_outgoing_to
 
 
@@ -99,7 +99,7 @@ class MermaidStringBuilder(MermaidContent):
 
 class NxToMermaid:
     def __init__(self, graph):
-        self.graph: MaterialGraph = graph
+        self.graph: MaterialGraphORM = graph
         self.mermaid = MermaidStringBuilder()
         self.duplicate_bought_nodes: Counter[BoughtItem] = Counter()
         settings = {

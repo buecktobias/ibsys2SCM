@@ -1,7 +1,7 @@
 @startuml
 ' ===== ORM Package =====
-package "Models" {
-  class MaterialGraph {
+package Models {
+  class MaterialGraphORM {
     + id: int
     + name: String
   }
@@ -11,11 +11,11 @@ package "Models" {
     + duration: int
   }
 
-  class ProcessInORM {
+  class ProcessIn {
     + quantity: int
   }
 
-  class ProcessOutORM {
+  class ProcessOut {
   }
 
   class Item {
@@ -24,36 +24,71 @@ package "Models" {
   class Bought extends Item{
   }
 
-  class WorkstationORM {
+  class Workstation {
     + id: int
   }
 
+  class TimeStamp {
+    + day: int
+    + hour: int
+    + minute: int
+
+    - calculate_period(): int
+  }
+
+  class Inventory{
+    + id: int
+    - timestamp: TimeStamp
+  }
+
   ' ORM Associations
-  MaterialGraph "1" o-- "n" ProcessORM
-  MaterialGraph "1" o-- "n" MaterialGraph: "has"
-  ProcessORM "1" o-- "n" ProcessInORM
-  ProcessORM "1" o-- "1" ProcessOutORM
-  ProcessInORM o-- Item
-  ProcessOutORM o-- Item
-  ProcessORM "n" o-- "1" WorkstationORM
+  MaterialGraphORM "0..1" o-- "n" Process
+  MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
+  Process "1" o-- "n" ProcessIn
+  Process "1" o-- "1" ProcessOut
+  ProcessIn o-- Item
+  ProcessOut o-- Item
+  ProcessORM "n" o-- "1" Workstation
 }
 
+
+
+package Material {
+
+    class MaterialGraph {
+        + id: int
+        + name: String
+        + processes: List<Process>
+        + subgraphs: List<MaterialGraph>
+    }
+
+
+    class CalculateResourceRequirements {
+        + calculate(graph: MaterialGraph): List[Workstation]
+    }
+
+}
 package Conversion {
   class ProcessConverter {
-    + convert(process): ProcessORM
-    + toDomain(procORM): Process
   }
 
   class GraphConverter {
   }
 
   ' Dependencies
-  GraphConverter --> ProcessConverter
-  GraphConverter --> MaterialGraph
-  ProcessConverter --> Process
+  GraphConverter ..> ProcessConverter
+  GraphConverter ..> Material.MaterialGraph
+  GraphConverter ..> Models.MaterialGraphORM
+  ProcessConverter ..> Process
 }
 
+
+
+
 package "Visualization" {
+    class VisualizationConverter {
+      + convert(graph): MaterialGraph
+    }
   interface MermaidContent {
     + get_mermaid_code() : String
   }
@@ -79,9 +114,12 @@ package "Visualization" {
   }
 
   ' Visualization Dependencies
+  VisualizationConverter --> Material.MaterialGraph
   VisualizeMermaid --> MermaidBuilder
   VisualizeMermaid --> MaterialGraph
   VisualizeMermaid ..> Process
 }
+
+Material.MaterialGraph ... Models.MaterialGraphORM
 
 @enduml
