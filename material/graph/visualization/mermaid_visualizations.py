@@ -1,5 +1,4 @@
 import abc
-import logging
 import re
 import typing
 from abc import abstractmethod
@@ -7,10 +6,29 @@ from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
 
+import networkx as nx
 import yaml
 
-from material.db.models import MaterialGraphORM, BoughtItem, Process, Item, ProducedItem
-from material.graph.util.process_util import get_process_outgoing_to
+from material.db.models import MaterialGraphORM, BoughtItem, Process, ProducedItem
+
+
+class VisualizationMaterialGraph:
+    def __init__(self, orm_node: MaterialGraphORM, nx_graph: nx.DiGraph):
+        self.id = orm_node.id
+        self.name = orm_node.name
+        # Filter processes: include only those whose process node still exists in the NX graph.
+        self.processes = []
+        for process in orm_node.processes:
+            # Assume the process node ID in the NX graph is constructed as follows:
+            process_node_id = f"{process.id}"
+            if nx_graph.has_node(process_node_id):
+                # Optionally, update the process inputs/outputs from the NX graph here.
+                self.processes.append(process)
+        # Recursively build the subgraph visualization structure.
+        self.subgraphs = [
+            VisualizationMaterialGraph(child, nx_graph)
+            for child in orm_node.subgraphs
+        ]
 
 
 class MermaidContent(abc.ABC):
@@ -98,8 +116,8 @@ class MermaidStringBuilder(MermaidContent):
 
 
 class NxToMermaid:
-    def __init__(self, graph):
-        self.graph: MaterialGraphORM = graph
+    def __init__(self, graph: VisualizationMaterialGraph):
+        self.graph: VisualizationMaterialGraph = graph
         self.mermaid = MermaidStringBuilder()
         self.duplicate_bought_nodes: Counter[BoughtItem] = Counter()
         settings = {
@@ -115,21 +133,39 @@ class NxToMermaid:
         }
         self.mermaid.init_mermaid(settings, "flowchart LR")
         self.class_defs: dict[str, MermaidClass] = {}
+        self._unique_nodes: set[str] = set()
 
-    def add_process_node(self, node: Process):
+    def _add_process_node(self, node: Process):
         label = f"<b>{node.workstation_id}</b>"
-        self.mermaid.add_node(str(node.id), label)
+        node_id = str(node.id)
+        if node_id not in self._unique_nodes:
+            self._unique_nodes.add(node_id)
+            self.mermaid.add_node(node_id, label)
+        return node_id
 
-    def add_produced_item_node(self, produced_item: ProducedItem):
-        self.mermaid.add_rounded_node(str(produced_item.item_id), str(produced_item.item_id))
+    def _add_produced_item_node(self, produced_item: ProducedItem):
+        node_id = "E" + str(produced_item.item_id)
+        if node_id not in self._unique_nodes:
+            self._unique_nodes.add(node_id)
+            self.mermaid.add_rounded_node(node_id, node_id)
+        return node_id
 
-    def add_rounded_styled_node(self, node_id: str, label: str):
-        self.mermaid.add_rounded_node(node_id, label)
-
-    def get_unique_bought_node_id(self, node: BoughtItem):
+    def __get_unique_bought_node_id(self, node: BoughtItem):
         current_count = self.duplicate_bought_nodes.get(node, 0)
         self.duplicate_bought_nodes[node] = current_count + 1
-        return str(node.id) + f"_{current_count}"
+        return "K" + str(node.item_id) + f"{current_count}"
+
+    def _add_bought_item_node(self, bought_item: BoughtItem):
+        node_id = self.__get_unique_bought_node_id(bought_item)
+        self.mermaid.add_rounded_node(node_id, str(bought_item.item_id))
+        return node_id
+
+    def add_item(self, item):
+        if item.is_bought():
+            return self._add_bought_item_node(item.bought)
+        elif item.is_produced():
+            return self._add_produced_item_node(item.produced)
+        raise ValueError(f"Item type {type(item)} not recognized")
 
     def add_class_assignment(self, node_id: str, class_id: str):
         self.class_defs[class_id].assign_node(node_id)
@@ -139,24 +175,23 @@ class NxToMermaid:
 
     def add_processes(self, processes: typing.Collection[Process]):
         for process in processes:
-            self.add_process_node(process)
-            for input_item, _ in process.inputs.items():
-                input_id = self.get_process_input(processes, input_item)
-                self.mermaid.add_arrow(input_id, process.label)
-            if isinstance(process.output, StepProduced):
-                continue
-            self.mermaid.add_arrow(process.label, process.output.label)
+            self._add_process_node(process)
+            for input_item in process.inputs:
+                input_item_id = self.add_item(input_item.item)
+                self.mermaid.add_arrow(input_item_id, str(process.id))
+            output_item_id = self.add_item(process.output.item)
+            self.mermaid.add_arrow(str(process.id), output_item_id)
 
-    def add_subgraph(self, subgraph: BaseGraph):
-        with self.mermaid.create_subgraph(subgraph.label):
-            self.add_processes(subgraph.get_own_processes())
-            for sub_graph in subgraph.get_subgraphs():
+    def add_subgraph(self, subgraph: VisualizationMaterialGraph):
+        with self.mermaid.create_subgraph(subgraph.name):
+            self.add_processes(subgraph.processes)
+            for sub_graph in subgraph.subgraphs:
                 self.add_subgraph(sub_graph)
 
-    def convert(self):
-        for subgraph in self.graph.get_subgraphs():
+    def get_mermaid_content(self):
+        for subgraph in self.graph.subgraphs:
             self.add_subgraph(subgraph)
-        return self.mermaid.get_content()
+        return self.mermaid.get_mermaid_content()
 
     def save_html(self, mermaid_code, graph_name):
         with open(f"diagrams/template.html", encoding="utf-8") as f:
@@ -171,6 +206,6 @@ class NxToMermaid:
             f.write(diagram_code)
 
     def nx_to_mermaid(self, name: str):
-        content = self.convert()
+        content = self.get_mermaid_content()
         self.save_mmd(content, name)
         self.save_html(content, name)

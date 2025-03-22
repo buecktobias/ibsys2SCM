@@ -9,7 +9,7 @@ class NxGraphBuilder:
         self.graph = nx.DiGraph()
 
     def add_process_node(self, process: Process) -> str:
-        node_id = f"P{process.id}"
+        node_id = f"{process.id}"
         self.graph.add_node(node_id, data=process)
         return node_id
 
