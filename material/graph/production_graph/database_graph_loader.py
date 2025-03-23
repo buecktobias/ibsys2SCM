@@ -3,7 +3,8 @@ import typing
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from material.db.models import Process, Item, MaterialGraphORM
+from material.db.models.item import Item
+from material.db.models.models import Process, MaterialGraphORM
 
 
 class DatabaseGraphLoader:

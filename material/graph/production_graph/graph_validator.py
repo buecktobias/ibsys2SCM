@@ -1,5 +1,7 @@
 import networkx as nx
-from material.db.models import Process, Item
+
+from material.db.models.item import Item
+from material.db.models.models import Process
 
 
 class GraphValidator:
