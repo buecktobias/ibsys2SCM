@@ -2,8 +2,13 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Self
 
+from material.db.models.item import Item
 from material.initialize_db.graph.nodes.graph_nodes import DomainItem
 from material.initialize_db.graph.nodes.mermaid_node import LabeledGraphNode
+
+
+class ItemCounter(Counter[Item]):
+    pass
 
 
 @dataclass

@@ -1,10 +1,12 @@
 from typing import Optional
+
 from sqlalchemy import ForeignKey, CheckConstraint
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-
-class Base(DeclarativeBase):
-    pass
+from material.db.models.base import Base
+from material.db.models.item import Item
+from material.db.models.periodic_quantity import PeriodicQuantity
+from material.db.models.quantity_mapping_mixin import QuantityMappingMixin
 
 
 class Workstation(Base):
@@ -18,22 +20,12 @@ class Workstation(Base):
     fixed_machine_cost: Mapped[float]
 
 
-class Item(Base):
-    __tablename__ = "item"
-    id: Mapped[int] = mapped_column(primary_key=True)
+class DemandForecast(PeriodicQuantity, Base):
+    __tablename__ = "demand_forecast"
 
-    bought: Mapped["BoughtItem"] = relationship(
-        "BoughtItem", back_populates="item", uselist=False, lazy="joined"
-    )
-    produced: Mapped["ProducedItem"] = relationship(
-        "ProducedItem", back_populates="item", uselist=False, lazy="joined"
-    )
 
-    def is_bought(self) -> bool:
-        return self.bought is not None
-
-    def is_produced(self) -> bool:
-        return self.produced is not None
+class Inventory(PeriodicQuantity, Base):
+    __tablename__ = "inventory"
 
 
 class BoughtItem(Base):
@@ -92,18 +84,12 @@ class Process(Base):
     output: Mapped["ProcessOutput"] = relationship(back_populates="process", uselist=False, lazy="joined")
 
 
-class ProcessInput(Base):
+class ProcessInput(QuantityMappingMixin, Base):
     __tablename__ = "process_input"
     __table_args__ = (CheckConstraint("quantity >= 1"),)
     process_id: Mapped[int] = mapped_column(
         ForeignKey("process.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )
-    item_id: Mapped[int] = mapped_column(
-        ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
-    )
-    quantity: Mapped[int] = mapped_column(default=1)
-
-    item: Mapped[Item] = relationship(lazy="joined")
     process: Mapped[Process] = relationship(back_populates="inputs", lazy="joined")
 
 

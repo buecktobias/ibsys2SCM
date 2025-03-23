@@ -1,141 +1,243 @@
-from ortools.sat.python import cp_model
+import abc
+
+from pyomo.environ import ConcreteModel, Var, Constraint, Objective, SolverFactory, NonNegativeReals, exp, value
+
+from material.core.resource_counter import ItemCounter
+from material.db.models.periodic_item_quantity import PeriodicItemQuantity
 
 
-def round_production_plan_to10(production_plan):
-    for product, plan in production_plan.items():
-        for i, p in enumerate(plan):
-            production_plan[product][i] = round(p, -1)
-    return production_plan
+class PrimaryDemandOptimization(abc.ABC):
+    @abc.abstractmethod
+    def get_production_plan(self) -> PeriodicItemQuantity:
+        pass
 
 
-class ProductionPlanner:
-    def __init__(self, order_forecast, initial_inventory, num_virtual_periods=2):
-        self.order_forecast = order_forecast
-        self.initial_inventory = initial_inventory
-        self.num_products = len(order_forecast)
-        self.num_actual_periods = len(order_forecast[0])
-        self.num_virtual_periods = num_virtual_periods
-        self.total_periods = self.num_actual_periods + self.num_virtual_periods
-        self.extended_orders = self._extend_orders()
-
-    def _extend_orders(self):
-        ext = []
-        for i in range(self.num_products):
-            avg = sum(self.order_forecast[i]) // self.num_actual_periods
-            ext.append(self.order_forecast[i] + [avg] * self.num_virtual_periods)
-        return ext
+class PrimaryDemandOptimizationModel(PrimaryDemandOptimization):
+    def __init__(self,
+                 current_primary_inventory: ItemCounter,
+                 demand_forecast: PeriodicItemQuantity,
+                 ):
+        self.demand_forecast: PeriodicItemQuantity = demand_forecast
+        self.current_primary_inventory: ItemCounter = current_primary_inventory
+        self.inventories = {}
+        self.optimization_model = ConcreteModel("MultiProductProduction")
 
     def build_model(self):
-        model = cp_model.CpModel()
-        max_prod = 250
-        min_prod = 50
-        max_inv = 1000000
-        P = {}
-        I = {}
-        for i in range(self.num_products):
-            for p in range(self.total_periods):
-                P[i, p] = model.NewIntVar(min_prod, max_prod, f'P_{i}_{p}')
-                I[i, p] = model.NewIntVar(0, max_inv, f'I_{i}_{p}')
-        for i in range(self.num_products):
-            model.Add(I[i, 0] == self.initial_inventory[i] + P[i, 0] - self.extended_orders[i][0])
-            for p in range(1, self.total_periods):
-                model.Add(I[i, p] == I[i, p - 1] + P[i, p] - self.extended_orders[i][p])
-        total_production = model.NewIntVar(0, 100000000, 'total_production')
-        model.Add(total_production == sum(P[i, p] for i in range(self.num_products) for p in range(self.total_periods)))
+        """
+        Create a Pyomo model that:
+        - Has variables: P[t,i], I[t,i]
+        - Constrains inventory: I[t,i] = I[t-1,i] + P[t,i] - D[t,i]
+        - Has a cost-based objective that includes:
+            * Production cost
+            * Inventory cost (quadratic)
+            * Production variance penalty
+        - Maximizes profit = Revenue - costs, or Minimizes negative profit
+        """
 
-        prod_costs = []
-        for p in range(self.total_periods):
-            Q_p = model.NewIntVar(0, max_prod * self.num_products, f'TotalProd_{p}')
-            model.Add(Q_p == sum(P[i, p] for i in range(self.num_products)))
-            bp1 = model.NewBoolVar(f'b_prod1_{p}')
-            bp2 = model.NewBoolVar(f'b_prod2_{p}')
-            bp3 = model.NewBoolVar(f'b_prod3_{p}')
-            model.Add(Q_p <= 299).OnlyEnforceIf(bp1)
-            model.Add(Q_p >= 300).OnlyEnforceIf(bp1.Not())
-            model.Add(Q_p >= 300).OnlyEnforceIf(bp2)
-            model.Add(Q_p <= 399).OnlyEnforceIf(bp2)
-            model.Add(Q_p >= 400).OnlyEnforceIf(bp3)
-            model.Add(bp1 + bp2 + bp3 == 1)
-            cost_prod_p = model.NewIntVar(0, max_prod * self.num_products * 200, f'prod_cost_{p}')
-            model.Add(cost_prod_p == 20_000 + 150 * Q_p).OnlyEnforceIf(bp1)
-            model.Add(cost_prod_p == 20_000 + 160 * Q_p).OnlyEnforceIf(bp2)
-            model.Add(cost_prod_p == 20_000 + 180 * Q_p).OnlyEnforceIf(bp3)
-            prod_costs.append(cost_prod_p)
-        prod_cost_total = model.NewIntVar(0, 1000000, 'prod_cost_total')
-        model.Add(prod_cost_total == sum(prod_costs))
+        # -- Sets in the model (we'll store as lists for iteration) --
 
-        # Total production over all periods (for revenue calculation)
-        total_production = model.NewIntVar(0, 10000, 'total_production')
-        model.Add(total_production == sum(P[i, p] for i in range(self.num_products)
-                                          for p in range(self.total_periods)))
+        # -- Variables --
+        # P[t,i] production
+        m.P = Var(((t, i) for t in m.T for i in m.I), domain=NonNegativeReals)
+        # I[t,i] inventory
+        m.Inv = Var(((t, i) for t in m.T for i in m.I), domain=NonNegativeReals)
 
-        inv_costs = []
-        for p in range(self.total_periods):
-            T_p = model.NewIntVar(0, max_inv * self.num_products, f'TotalInv_{p}')
-            model.Add(T_p == sum(I[i, p] for i in range(self.num_products)))
-            b1 = model.NewBoolVar(f'b_inv1_{p}')
-            b2 = model.NewBoolVar(f'b_inv2_{p}')
-            b3 = model.NewBoolVar(f'b_inv3_{p}')
-            model.Add(T_p <= 199).OnlyEnforceIf(b1)
-            model.Add(T_p >= 200).OnlyEnforceIf(b1.Not())
-            model.Add(T_p >= 200).OnlyEnforceIf(b2)
-            model.Add(T_p <= 299).OnlyEnforceIf(b2)
-            model.Add(T_p >= 300).OnlyEnforceIf(b3)
-            model.Add(b1 + b2 + b3 == 1)
-            cost_p = model.NewIntVar(0, 200000000, f'inv_cost_{p}')
-            model.Add(cost_p == 2 * T_p).OnlyEnforceIf(b1)
-            model.Add(cost_p == 4 * T_p).OnlyEnforceIf(b2)
-            model.Add(cost_p == 30 * T_p).OnlyEnforceIf(b3)
-            inv_costs.append(cost_p)
-        inv_cost_total = model.NewIntVar(0, 1000000000, 'inv_cost_total')
-        model.Add(inv_cost_total == sum(inv_costs))
+        # -- Constraints --
 
-        revenue = model.NewIntVar(0, 200000000000, 'revenue')
-        model.Add(revenue == 200 * total_production)
-        profit = model.NewIntVar(-10000000000, 10000000000, 'profit')
-        model.Add(profit == revenue - prod_cost_total - inv_cost_total)
-        model.Maximize(profit)
-        return model, P, I, total_production, inv_cost_total, prod_cost_total, revenue, profit
+        # (1) Inventory balance
+        def inv_balance_rule(mdl, t, i):
+            idx_t = m.T.index(t)
+            if idx_t == 0:
+                # first period
+                init_inv = self.init_inventory.get(i, 0.0)
+                return mdl.Inv[t, i] == init_inv + mdl.P[t, i] - self.demand[t][i]
+            else:
+                # previous period
+                tprev = m.T[idx_t - 1]
+                return mdl.Inv[t, i] == mdl.Inv[tprev, i] + mdl.P[t, i] - self.demand[t][i]
 
-    def plan_production(self):
-        model, P, I, total_production, inv_cost_total, prod_cost, revenue, profit = self.build_model()
-        solver = cp_model.CpSolver()
-        status = solver.Solve(model)
-        if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            production_plan = {i: [solver.Value(P[i, p]) for p in range(self.total_periods)]
-                               for i in range(self.num_products)}
-            inventory_plan = {i: [solver.Value(I[i, p]) for p in range(self.total_periods)]
-                              for i in range(self.num_products)}
-            return {
-                'production_plan': production_plan,
-                'inventory_plan': inventory_plan,
-                'total_production': solver.Value(total_production),
-                'inv_cost_total': solver.Value(inv_cost_total),
-                'prod_cost': solver.Value(prod_cost),
-                'revenue': solver.Value(revenue),
-                'profit': solver.Value(profit)
-            }
-        return None
+        m.InvBalance = Constraint(m.P.keys(), rule=inv_balance_rule)
+
+        # (2) Max production per period (if set)
+        if self.max_period_production is not None:
+            def max_production_rule(mdl, t):
+                return sum(mdl.P[t, i] for i in m.I) <= self.max_period_production
+
+            m.MaxProd = Constraint(m.T, rule=max_production_rule)
+
+        # -- We define some expressions for sums needed in objective --
+
+        # Sum of total production across all products and periods
+        def total_production_expr(mdl):
+            return sum(mdl.P[t, i] for t in m.T for i in m.I)
+
+        m.TotalProduction = pyo.Expression(rule=total_production_expr)
+
+        # Inventory cost expression
+        # We'll do a single aggregated approach: sum over products of [a + b * ( totalInv_i )^2]
+        # But we must define "totalInv_i" = sum of I[t,i] over all periods t or just final inventory?
+        # Let's do sum of all end-of-period inventories for that product as a proxy
+        #   totalInv_i = sum_{t} Inv[t,i]
+        # Then cost = a + b*( totalInv_i^2 ) per product
+        def inv_cost_expr(mdl):
+            cost = 0
+            for i in m.I:
+                totinv_i = sum(mdl.Inv[t, i] for t in m.T)
+                cost += self.inventory_a + self.inventory_b * (totinv_i ** 2)
+            return cost
+
+        m.InventoryCost = pyo.Expression(rule=inv_cost_expr)
+
+        # Production cost expression
+        # as specified: ProdCost = fixed_cost + var_cost * ( total production )
+        def prod_cost_expr(mdl):
+            return self.prod_fixed_cost + self.prod_var_cost * mdl.TotalProduction
+
+        m.ProductionCost = pyo.Expression(rule=prod_cost_expr)
+
+        # Production variance penalty
+        # For each product i: Var(P^i) = (1/T)* sum_{t}( P[t,i] - Pbar_i )^2
+        # We'll define an expression for Pbar_i = (1/T)* sum_{t} P[t,i]
+        # Then define a sum-of-squares, multiply by factor_i
+        # We'll store partial expressions for clarity
+        def avg_production_expr(mdl, i):
+            return (1.0 / len(m.T)) * sum(mdl.P[t, i] for t in m.T)
+
+        # We'll create dict-of-Expressions for Pbar_i
+        m.Pbar = pyo.Expression(m.I, rule=lambda mdl, i: avg_production_expr(mdl, i))
+
+        def variance_expr(mdl):
+            # sum_{i in I} [ factor_i * Var(P^i ) ]
+            # Var(P^i) = (1/T)* sum_{t}( P[t,i] - Pbar_i )^2
+            var_sum = 0
+            for i in m.I:
+                factor_i = self.variance_factor.get(i, 0.0)
+                # compute var(P^i)
+                # We'll multiply the sum-of-squares by (1/ T) inside
+                sum_sq = 0
+                for t in m.T:
+                    sum_sq += (mdl.P[t, i] - mdl.Pbar[i]) ** 2
+                # var_i = (1/ T)* sum_sq
+                var_i = sum_sq / len(m.T)
+                var_sum += factor_i * var_i
+            return var_sum
+
+        m.ProductionVariance = pyo.Expression(rule=variance_expr)
+
+        # Let's define revenue for completeness, if you want:
+        #   e.g. revenue = 200 * total produced
+        # but the user might want multi-product different revenues => up to you
+        # We'll do a simple approach:  self.revenue_unit[i]? or single number?
+        # Let's skip or do a placeholder revenue?
+
+        m.Revenue = pyo.Expression(expr=0.0)  # or define your own if needed
+
+        # -- Objective: Maximize profit = revenue - (ProductionCost + InventoryCost + ProductionVariance) --
+        def obj_rule(mdl):
+            return mdl.Revenue - (mdl.ProductionCost + mdl.InventoryCost + mdl.ProductionVariance)
+
+        m.Obj = pyo.Objective(rule=obj_rule, sense=maximize)
+
+        return m
+
+    def solve(self):
+        """
+        Build and solve the model with Pyomo Ipopt or another suitable solver
+        """
+        m = self.build_model()
+        solver = pyo.SolverFactory('ipopt')  # because we have squares => nonlinear
+        result = solver.solve(m, tee=False)
+        # Extract solution
+        production_plan = {}
+        inventory_plan = {}
+
+        for (t, i) in m.P.keys():
+            production_plan[(t, i)] = value(m.P[t, i])
+        for (t, i) in m.Inv.keys():
+            inventory_plan[(t, i)] = value(m.Inv[t, i])
+
+        # Evaluate cost components:
+        total_prod_cost = value(m.ProductionCost)
+        total_inv_cost = value(m.InventoryCost)
+        total_var_cost = value(m.ProductionVariance)
+        total_obj = value(m.Obj)
+
+        return {
+            'production': production_plan,
+            'inventory': inventory_plan,
+            'production_cost': total_prod_cost,
+            'inventory_cost': total_inv_cost,
+            'variance_penalty': total_var_cost,
+            'objective': total_obj
+        }
+
+
+class MultiProductProductionOptimizer:
+    """
+    A multi-period, multi-product production planning model using Pyomo.
+    """
+
+    def __init__(self, periods, products, demand, init_inventory):
+        """
+        :param periods: list of period indices (e.g. [1,2,3,4])
+        :param products: list of product IDs (e.g. ['P1','P2'])
+        :param demand: dict of dict, e.g. demand[period][product] = quantity
+        :param init_inventory: dict of product-> initial inventory
+        """
+        self.periods = periods
+        self.products = products
+        self.demand = demand
+        self.init_inventory = init_inventory
+
+        self.inventory_a = 0.0
+        self.inventory_b = 0.01
+        self.prod_fixed_cost = 0.0
+        self.prod_var_cost = 0.0
+        self.max_period_production = None
+        self.variance_factor = {}
+
+    def set_inventory_cost_func(self, a, b):
+        """
+        Inventory cost = sum_{prod} [ a + b * ( total inventory for prod )^2 ]
+        across all periods or at the end.
+        (You can adapt details in build_model.)
+        """
+        self.inventory_a = a
+        self.inventory_b = b
+
+    def set_production_cost(self, fixed_cost, var_cost):
+        """
+        Production cost = fixed_cost + var_cost * ( total production )
+        ( Possibly across all periods. )
+        """
+        self.prod_fixed_cost = fixed_cost
+        self.prod_var_cost = var_cost
+
+    def set_max_period_production(self, max_pp):
+        """
+        A limit on the total production across all products for each period.
+        e.g. sum_{prod} P_{t,prod} <= max_pp
+        """
+        self.max_period_production = max_pp
+
+    def set_product_wise_production_variance_penalty_factor(self, factor_dict):
+        """
+        factor_dict: e.g. {'P1':0.5, 'P2':0.3}
+        We'll penalize variance for each product i as factor_i * Var(P^i).
+        """
+        self.variance_factor = factor_dict
+
+    def build(self):
+        return PrimaryDemandOptimizationModel(self.current_primary_inventory, self.demand_forecast)
 
 
 if __name__ == '__main__':
-    order_forecast = [
-        [150, 150, 150, 150],
-        [100, 100, 50, 50],
-        [150, 100, 50, 100]
-    ]
-    initial_inventory = [100, 100, 100]
-    planner = ProductionPlanner(order_forecast, initial_inventory, num_virtual_periods=2)
-    result = planner.plan_production()
-    if result:
-        for product, plan in round_production_plan_to10(result['production_plan']).items():
-            print(f"Product {product}: {plan}")
-        for product, plan in result['inventory_plan'].items():
-            print(f"Inv {product}: {plan}")
-        print("Total Production:", result['total_production'])
-        print("Inventory Cost Total:", result['inv_cost_total'])
-        print("Production Cost:", result['prod_cost'])
-        print("Revenue:", result['revenue'])
-        print("Profit:", result['profit'])
-    else:
-        print("No solution found.")
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+
+    engine = create_engine('sqlite:///mydb.sqlite')
+    SessionLocal = sessionmaker(bind=engine)
+    with SessionLocal() as session:
+        planner = ProductionPlannerPyomo(session, num_virtual_periods=0)
+        result = planner.solve()
+        print(result)

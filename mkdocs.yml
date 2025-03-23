@@ -1,4 +1,5 @@
 site_name: Bike Supply Chain
+docs_dir: user-docs/docs
 
 theme:
   name: material
@@ -28,12 +29,12 @@ nav:
   - Start: index.md
   - Einführung: simulation-information.md
   - Berechnung:
-    - Material Planung: calculations/material-planning.md
-    - Materialkosten: calculations/material-costs.md
-    - Lagerkosten: calculations/storage_cost_analysis.md
-    - Arbeitsstationen: calculations/workplaces.md
-    - Arbeitskosten: calculations/labour-costs.md
-    - Produktions Planung: calculations/workstation_plan.md
+      - Material Planung: calculations/material-planning.md
+      - Materialkosten: calculations/material-costs.md
+      - Lagerkosten: calculations/storage_cost_analysis.md
+      - Arbeitsstationen: calculations/workplaces.md
+      - Arbeitskosten: calculations/labour-costs.md
+      - Produktions Planung: calculations/workstation_plan.md
   - Optimierung: optimization.md
   - Python: python-implementation.md
   - PDF: pdf.md
@@ -66,7 +67,7 @@ extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 watch:
-  - includes
+  - user-docs/includes
 
 extra_css:
   - stylesheets/extra.css

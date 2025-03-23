@@ -2,11 +2,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from material.db.models import Base, MaterialGraphORM, Item
-from material.db.models import (
-    Workstation, BoughtItem, ProducedItem,
-    Process, ProcessInput, ProcessOutput
-)
+from material.db.models.base import Base
+from material.db.models.item import Item
+from material.db.models.models import MaterialGraphORM, Workstation, BoughtItem, ProducedItem, Process, ProcessInput, \
+    ProcessOutput
 
 DATABASE_URL = r"sqlite:///test.db"
 engine = create_engine(DATABASE_URL, echo=True)
