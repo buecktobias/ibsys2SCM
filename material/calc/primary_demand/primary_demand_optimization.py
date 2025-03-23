@@ -34,7 +34,7 @@ class ProductionPlanner:
         """
         Build and solve the production plan with the given demand and inventory.
 
-        :param demand_forecast: e.g. {1:{'P1':80,'P2':40}, 2:{'P1':50,...},...}
+        :param demand_forecast: e.g. {1:{Item1:80, Item2:40}, 2:{Item1:50,...},...}
         :param init_inventory: e.g. {'P1':10,'P2':5}
         :return: ProductionSolutionData with production, inventory, costs, revenue, objective
         """

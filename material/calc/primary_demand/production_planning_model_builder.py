@@ -4,6 +4,7 @@ from pyomo.core import ConcreteModel, Var, Constraint, NonNegativeReals
 
 from material.calc.primary_demand.production_planning_attributes import ProductionPlanningAttributes
 from material.core.resource_counter import ItemCounter
+from material.db.models.item import Item
 from material.db.models.periodic_item_quantity import PeriodicItemQuantity
 
 
@@ -23,48 +24,62 @@ class ProductionPlanningModelBuilder:
         :param demand_forecast: e.g. {1: {Item1: 50, Item2:30}, 2:{...}}
         :param init_inventory: e.g. {Item1: 50, Item2:30}
         """
-        self.attrs = attrs
-        self.demand_forecast = demand_forecast
-        self.init_inventory = init_inventory
+        if 0 in demand_forecast:
+            raise ValueError("Period 0 is reserved for initial inventory, so it should not be in the forecast.")
+
+        if 1 not in demand_forecast:
+            raise ValueError("Period 1 must be in the forecast.")
+
+        if len(init_inventory) != len(demand_forecast[1]):
+            raise ValueError("Initial inventory and demand forecast must have the same products.")
+
+        self.attrs: ProductionPlanningAttributes = attrs
+        self.demand_forecast: PeriodicItemQuantity = demand_forecast
+        self.init_inventory: ItemCounter = init_inventory
 
         # Derive sets from the forecast:
-        self._periods = sorted(demand_forecast.keys())  # e.g. [1,2,3,4]
-        product_set = set()
+        self._periods = sorted(demand_forecast.keys())
+        self._products: list[Item] = []
         for period in self._periods:
-            product_set.update(demand_forecast[period].keys())
-        self._products: set[int] = product_set  # e.g. ['P1','P2']
+            self._products.extend(demand_forecast[period].keys())
+        self._products = sorted(set(self._products))
+
+    @property
+    def extended_periods(self):
+        """
+        Extend the periods by 1 to include the initial inventory period.
+        """
+        return [0] + self._periods
 
     def build_pyomo_model(self):
-        model = ConcreteModel("ProductionPlan")
+        model: ConcreteModel = ConcreteModel("ProductionPlan")
 
         # 1) Variables
-        # P[t, i] = production
-        # Inv[t, i] = inventory
+        # P[period, item] = production
+        # Inv[period, item] = inventory
         # We'll iterate over self._periods, self._products
         model.P = Var(((t, i) for t in self._periods for i in self._products),
                       domain=NonNegativeReals)
-        model.Inv = Var(((t, i) for t in self._periods for i in self._products),
+        model.Inv = Var(((t, i) for t in self.extended_periods for i in self._products),
                         domain=NonNegativeReals)
+
+        # Set initial inventory
+        for item, init_inv in self.init_inventory.items():
+            model.Inv[0, item] = init_inv
 
         # 2) Constraints
         # (a) Inventory balance
-        def inv_balance_rule(model, t, i):
-            if t == 0:
-                # first period
-                init_inv = self.init_inventory.get(i, 0.0)
-                return model.Inv[t, i] == init_inv + model.P[t, i] - self.demand_forecast[t][i]
-            else:
-                t_prev = self._periods[t - 1]
-                return model.Inv[t, i] == model.Inv[t_prev, i] + model.P[t, i] - self.demand_forecast[t][i]
+        def inv_balance_rule(model: ConcreteModel, period: int, item: Item):
+            return (model.Inv[period, item] ==
+                    model.Inv[period - 1, item] + model.P[period, item] - self.demand_forecast[period][item])
 
         model.InvBalance = Constraint(list(model.P.keys()), rule=inv_balance_rule)
 
         # (b) Max production per period, if set
-        if self.attrs.max_period_production is not None:
-            def max_prod_rule(mdl, t):
-                return sum(mdl.P[t, i] for i in self._products) <= self.attrs.max_period_production
+        def max_prod_rule(model: ConcreteModel, period: int):
+            return sum(model.P[period, product] for product in self._products) <= self.attrs.max_period_production
 
-            model.MaxProd = Constraint(self._periods, rule=max_prod_rule)
+        model.MaxProd = Constraint(self._periods, rule=max_prod_rule)
 
         # 3) Expressions
 
@@ -80,7 +95,7 @@ class ProductionPlanningModelBuilder:
 
         @model.Expression()
         def inventory_cost(mdl):
-            # sum_{i} [ inv_a + inv_b*( sum_{t}Inv[t,i] )^2 ]
+            # sum_{item} [ inv_a + inv_b*( sum_{period}Inv[period,item] )^2 ]
             expr = 0.0
             for i in self._products:
                 sum_inv_i = sum(mdl.Inv[t, i] for t in self._periods)
@@ -91,9 +106,9 @@ class ProductionPlanningModelBuilder:
         def production_variance(mdl):
             """
             single factor for *all* products:
-            sum_{i in products}( Var(P^i ) ) * smoothing_factor
-            Var(P^i) = (1/|T|)* sum_{t} (P[t,i] - Pbar_i)^2
-            Pbar_i = (1/|T|)* sum_{t} P[t,i]
+            sum_{item in products}( Var(P^item ) ) * smoothing_factor
+            Var(P^item) = (1/|T|)* sum_{period} (P[period,item] - Pbar_i)^2
+            Pbar_i = (1/|T|)* sum_{period} P[period,item]
             """
             Tlen = float(len(self._periods))
             total_var = 0.0
