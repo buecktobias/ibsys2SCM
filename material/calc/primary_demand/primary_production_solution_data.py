@@ -17,9 +17,9 @@ class ProductionSolutionData:
     inventory_cost: float
     variance_penalty: float
     revenue: float
-    objective: float
+    earnings: float
 
-    def print_primary_demand_table(self) -> None:
+    def format_primary_demand_table(self) -> str:
         """
         Print a GitHub-style markdown table showing:
           - Each product as a row
@@ -27,27 +27,42 @@ class ProductionSolutionData:
           - Cell: "d=xx; p=xx; i=xx" with integer rounding
         """
         # Prepare table headers
-        headers = ["Product"] + [f"Period {p}" for p in self.production.keys()]
+        headers = ["Product"] + [f"Period {p}" for p in self.inventory.keys()]
         table = []
 
         for prod in self.production[list(self.production.keys())[0]].keys():
             row = [str(prod)]
-            for p in self.production.keys():
-                d_val = self.demand[p].get(prod, 0.0)
-                p_val = self.production[p].get(prod, 0.0)
-                i_val = self.inventory[p].get(prod, 0.0)
+            for p in self.inventory.keys():
+                d_val = self.demand.get(p, {}).get(prod, None)
+                p_val = self.production.get(p, {}).get(prod, None)
+                i_val = self.inventory.get(p).get(prod)
 
                 # Round to integers
-                d_int = int(round(d_val))
-                p_int = int(round(p_val))
-                i_int = int(round(i_val))
-
-                cell = f"d={d_int}; p={p_int}; i={i_int}"
+                if d_val is not None:
+                    d_int = int(round(d_val))
+                    p_int = int(round(p_val))
+                    i_int = int(round(i_val))
+                    cell = f"d={d_int}; p={p_int}; i={i_int}"
+                else:
+                    cell = f"i={int(round(i_val))}"
                 row.append(cell)
             table.append(row)
 
-        # Print using tabulate in GitHub style
-        print(tabulate(table, headers=headers, tablefmt="github"))
+        return tabulate(table, headers=headers, tablefmt="github")
+
+    def get_full_summary(self):
+        s = f"""
+        Production Solution Data:
+        
+        {self.format_primary_demand_table()}
+        
+        Production Cost: {self.production_cost:.2f}
+        Inventory Cost: {self.inventory_cost:.2f}
+        Variance Penalty: {self.variance_penalty:.2f}
+        Revenue: {self.revenue:.2f}
+        Earnings: {self.earnings:.2f}
+        """
+        return '\n'.join(line.lstrip() for line in s.splitlines())
 
     def __str__(self):
         """
@@ -55,10 +70,11 @@ class ProductionSolutionData:
         """
         return (
             f"ProductionSolutionData(\n"
+            f"  demand={self.demand},\n"
             f"  production_cost={self.production_cost:.2f},\n"
             f"  inventory_cost={self.inventory_cost:.2f},\n"
             f"  variance_penalty={self.variance_penalty:.2f},\n"
             f"  revenue={self.revenue:.2f},\n"
-            f"  objective={self.objective:.2f}\n"
+            f"  earnings={self.earnings:.2f}\n"
             f")"
         )

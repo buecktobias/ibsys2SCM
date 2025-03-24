@@ -21,7 +21,7 @@ class Workstation(Base):
 
 
 class DemandForecast(PeriodicQuantity, Base):
-    __tablename__ = "demand_forecast"
+    __tablename__ = "_demand_forecast"
 
 
 class Inventory(PeriodicQuantity, Base):

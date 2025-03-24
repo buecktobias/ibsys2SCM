@@ -1,11 +1,13 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
 
+from pyomo.contrib import appsi
 from pyomo.environ import SolverFactory, value
 
 from material.calc.primary_demand.primary_production_solution_data import ProductionSolutionData
 from material.calc.primary_demand.production_planning_attributes import ProductionPlanningAttributes
 from material.calc.primary_demand.production_planning_model_builder import ProductionPlanningModelBuilder
 from material.core.resource_counter import ItemCounter
+from material.db.models.item import Item
 from material.db.models.periodic_item_quantity import PeriodicItemQuantity
 
 
@@ -21,7 +23,7 @@ class ProductionPlanner:
     def __init__(self, attrs: ProductionPlanningAttributes):
         """
         :param attrs: ProductionPlanningAttributes containing:
-           inv_a, inv_b, prod_fixed, prod_var, smoothing_factor, max_period_production
+           fixed_inv_cost, variable_linear_cost, prod_fixed, prod_var, smoothing_factor, max_period_production
         """
         self.attrs = attrs
         self.model = None
@@ -36,7 +38,7 @@ class ProductionPlanner:
 
         :param demand_forecast: e.g. {1:{Item1:80, Item2:40}, 2:{Item1:50,...},...}
         :param init_inventory: e.g. {'P1':10,'P2':5}
-        :return: ProductionSolutionData with production, inventory, costs, revenue, objective
+        :return: ProductionSolutionData with production, inventory, costs, revenue, earnings
         """
 
         # 1) Build the pyomo model
@@ -52,8 +54,8 @@ class ProductionPlanner:
         self.solver_results = solver.solve(self.model, tee=False)
 
         model = self.model
-        prod_plan: dict[int, ItemCounter] = defaultdict(ItemCounter)
-        inv_plan: dict[int, ItemCounter] = defaultdict(ItemCounter)
+        prod_plan: PeriodicItemQuantity = defaultdict(Counter[Item])
+        inv_plan: PeriodicItemQuantity = defaultdict(Counter[Item])
 
         for (t, i) in model.P.keys():
             prod_plan[t][i] = int(round(value(model.P[t, i])))
@@ -63,12 +65,12 @@ class ProductionPlanner:
 
         sol_data = ProductionSolutionData(
             demand=demand_forecast,
-            production=PeriodicItemQuantity(prod_plan),
-            inventory=PeriodicItemQuantity(inv_plan),
+            production=prod_plan,
+            inventory=inv_plan,
             production_cost=value(model.production_cost),
             inventory_cost=value(model.inventory_cost),
             variance_penalty=value(model.production_variance),
             revenue=value(model.revenue),
-            objective=value(model.Obj)
+            earnings=value(model.Obj)
         )
         return sol_data

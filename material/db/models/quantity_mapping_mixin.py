@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import Optional
 
 from sqlalchemy import ForeignKey, CheckConstraint
@@ -24,7 +25,7 @@ class QuantityMappingMixin:
         query = session.query(cls)
         query = cls.get_period_filter(query, period)
         rows = query.all()
-        return ItemCounter({row.item: row.quantity for row in rows})
+        return Counter[Item]({row.item: row.quantity for row in rows})
 
     @classmethod
     def get_period_filter(cls, query, period: int):

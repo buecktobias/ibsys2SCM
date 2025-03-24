@@ -1,12 +1,12 @@
+from collections import Counter
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from material.core.resource_counter import ItemCounter
 from material.db.models.base import Base
 from material.db.models.item import Item
 from material.db.models.models import DemandForecast
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity
 
 DATABASE_URL = r"sqlite:///test.db"
 engine = create_engine(DATABASE_URL)
@@ -44,8 +44,7 @@ def test_create_and_fetch_item(db_session: Session):
     result = DemandForecast.get_periodic_item_quantity(db_session)
     print(result)
 
-    assert result == PeriodicItemQuantity(
-        {
-            1: ItemCounter({Item(1): 10, Item(2): 20}),
-            2: ItemCounter({Item(1): 100, Item(2): 20}),
-        })
+    assert result == {
+        1: Counter[Item]({Item(1): 10, Item(2): 20}),
+        2: Counter[Item]({Item(1): 100, Item(2): 20}),
+    }

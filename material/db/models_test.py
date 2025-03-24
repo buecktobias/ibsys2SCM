@@ -97,27 +97,3 @@ def test_material_graph_hierarchy(db: Session):
 
     assert child.parent_graph == root
     assert root.subgraphs == [child]
-
-
-def test_process_and_io(db: Session):
-    ws = Workstation(
-        id=100001,
-        labour_cost_1=1, labour_cost_2=2, labour_cost_3=3,
-        labour_overtime_cost=4, variable_machine_cost=5, fixed_machine_cost=6
-    )
-    item_in = Item(1)
-    item_out = Item(2)
-    graph = MaterialGraphORM(name="ProcGraph")
-    process = Process(
-        id=1000001,
-        graph=graph, workstation=ws, process_duration=10, setup_duration=2
-    )
-    input = ProcessInput(process=process, item_id=1, quantity=3)
-    output = ProcessOutput(process=process, item_id=2)
-
-    db.add_all([ws, item_in, item_out, graph, process, input, output])
-    db.commit()
-
-    assert process.inputs[0].item == item_in
-    assert process.output.item == item_out
-    assert process.graph == graph

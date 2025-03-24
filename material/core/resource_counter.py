@@ -6,9 +6,7 @@ from material.db.models.item import Item
 from material.initialize_db.graph.nodes.graph_nodes import DomainItem
 from material.initialize_db.graph.nodes.mermaid_node import LabeledGraphNode
 
-
-class ItemCounter(Counter[Item]):
-    pass
+type ItemCounter = Counter[Item]
 
 
 @dataclass

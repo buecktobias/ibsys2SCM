@@ -23,7 +23,7 @@ class PeriodicQuantity(QuantityMappingMixin):
     @classmethod
     def get_periodic_item_quantity(cls, session: sqlalchemy.orm.Session) -> PeriodicItemQuantity:
         # Load all rows and convert them to a PeriodicItemQuantity
-        return PeriodicItemQuantity({
+        return {
             period: cls.load_as_counter(session, period)
             for period in cls.unique_periods(session)
-        })
+        }

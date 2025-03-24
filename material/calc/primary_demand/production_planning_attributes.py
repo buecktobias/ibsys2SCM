@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 
 @dataclass
@@ -6,9 +7,8 @@ class ProductionPlanningAttributes:
     """
     Holds the main numeric parameters for production planning.
     """
-    inv_a: float
-    inv_b: float
-    prod_fixed: float
-    prod_var: float
+    inventory_cost_func: Callable[[float], float]
+    production_cost_func: Callable[[float], float]
     smoothing_factor: float
     max_period_production: float = 10e100
+    dummy_periods: int = 0
