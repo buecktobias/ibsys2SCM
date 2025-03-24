@@ -1,11 +1,11 @@
 from collections import defaultdict, Counter
 
-from pyomo.contrib import appsi
 from pyomo.environ import SolverFactory, value
 
-from material.calc.primary_demand.primary_production_solution_data import ProductionSolutionData
-from material.calc.primary_demand.production_planning_attributes import ProductionPlanningAttributes
-from material.calc.primary_demand.production_planning_model_builder import ProductionPlanningModelBuilder
+from material.calc.primary_demand.optimization_model.primary_production_solution_data import ProductionSolutionData
+from material.calc.primary_demand.optimization_model.production_planning_attributes import ProductionPlanningAttributes
+from material.calc.primary_demand.optimization_model.production_planning_model_builder import \
+    ProductionPlanningModelBuilder
 from material.core.resource_counter import ItemCounter
 from material.db.models.item import Item
 from material.db.models.periodic_item_quantity import PeriodicItemQuantity
@@ -54,23 +54,23 @@ class ProductionPlanner:
         self.solver_results = solver.solve(self.model, tee=False)
 
         model = self.model
-        prod_plan: PeriodicItemQuantity = defaultdict(Counter[Item])
-        inv_plan: PeriodicItemQuantity = defaultdict(Counter[Item])
+        prod_plan: dict[int, ItemCounter] = defaultdict(Counter[Item])
+        inv_plan: dict[int, ItemCounter] = defaultdict(Counter[Item])
 
         for (t, i) in model.P.keys():
-            prod_plan[t][i] = int(round(value(model.P[t, i])))
+            prod_plan[t][i] = int(round(value(model.P[t, i]))) * 10
 
         for (t, i) in model.Inv.keys():
-            inv_plan[t][i] = int(round(value(model.Inv[t, i])))
+            inv_plan[t][i] = int(round(value(model.Inv[t, i]))) * 10
 
-        sol_data = ProductionSolutionData(
+        return ProductionSolutionData(
+            production_plan_attributes=self.attrs,
             demand=demand_forecast,
-            production=prod_plan,
-            inventory=inv_plan,
+            production=PeriodicItemQuantity(prod_plan),
+            inventory=PeriodicItemQuantity(inv_plan),
             production_cost=value(model.production_cost),
             inventory_cost=value(model.inventory_cost),
             variance_penalty=value(model.production_variance),
             revenue=value(model.revenue),
-            earnings=value(model.Obj)
+            earnings=value(model.Obj),
         )
-        return sol_data

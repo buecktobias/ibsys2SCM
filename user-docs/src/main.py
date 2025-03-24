@@ -2,18 +2,22 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict
 
+
 @dataclass(frozen=True)
 class Item:
     id: int
     value: float
 
+
 @dataclass(frozen=True)
 class EndProduct(Item):
     pass
 
+
 @dataclass(frozen=True)
 class InHouseProduct(Item):
     pass
+
 
 @dataclass(frozen=True)
 class PurchasePart(Item):
@@ -21,10 +25,12 @@ class PurchasePart(Item):
     order_time: float
     order_time_deviation: float
 
+
 @dataclass
 class InventoryEntry:
     item: Item
     quantity: int
+
 
 @dataclass
 class Inventory:
@@ -37,10 +43,12 @@ class Inventory:
     def calculate_total_value(self) -> float:
         return sum(entry.item.value * entry.quantity for entry in self.entries.values())
 
+
 @dataclass
 class PlanningData:
     forecast: dict[EndProduct, int]
     current_inventory: Inventory
+
 
 @dataclass
 class PrimaryDemandCalculator:
@@ -55,7 +63,7 @@ class PrimaryDemandCalculator:
 
 
 if __name__ == "__main__":
-    loader = XMLDataLoader("data.xml")
+    loader = XMLDataLoader("_data.xml")
     planning_data = loader.load_data()
     calculator = PrimaryDemandCalculator(planning_data)
     primary_demand = calculator.calculate()

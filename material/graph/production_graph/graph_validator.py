@@ -10,7 +10,7 @@ class GraphValidator:
         self.errors: list[str] = []
 
     def _get_node_obj(self, node_id: str):
-        return self.graph.nodes[node_id]["data"]
+        return self.graph.nodes[node_id]["_data"]
 
     def validate(self) -> None:
         self.errors.clear()

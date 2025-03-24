@@ -14,7 +14,7 @@ class ProductionGraph:
     def prune_singleton_produced_items(self):
         to_remove = []
         for node in list(self.nx.nodes):
-            node_data = self.nx.nodes[node].get("data")
+            node_data = self.nx.nodes[node].get("_data")
             # Only consider nodes representing an Item that is produced.
             if isinstance(node_data, Item) and node_data.is_produced():
                 in_edges = list(self.nx.in_edges(node, data="weight"))

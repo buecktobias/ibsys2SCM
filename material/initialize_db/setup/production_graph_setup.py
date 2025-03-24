@@ -1,8 +1,7 @@
-from material.core.resource_counter import ResourceCounterBuilder
 from material.initialize_db.graph.nodes.domainprocess import DomainProcess
 from material.initialize_db.graph.nodes.graph_nodes import DomainItem, DomainBought, DomainFullProduced, \
     DomainStepProduced
-from material.initialize_db.graph.production_graph.base_graph import MaterialProductGraphBuilder
+from material.initialize_db.graph.production_graph.base_graph import MaterialProductGraphBuilder, ResourceCounterBuilder
 
 
 # noinspection PyPep8Naming

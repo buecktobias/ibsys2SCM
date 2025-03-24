@@ -3,9 +3,9 @@ from collections import Counter
 import pytest
 
 from material.calc.primary_demand.math_function_builder import build_polynomial_function
-from material.calc.primary_demand.primary_demand_optimization import ProductionPlanner
-from material.calc.primary_demand.primary_production_solution_data import ProductionSolutionData
-from material.calc.primary_demand.production_planning_attributes import ProductionPlanningAttributes
+from material.calc.primary_demand.optimization_model.primary_demand_optimization import ProductionPlanner
+from material.calc.primary_demand.optimization_model.primary_production_solution_data import ProductionSolutionData
+from material.calc.primary_demand.optimization_model.production_planning_attributes import ProductionPlanningAttributes
 # noinspection PyUnresolvedReferences
 from material.db.models.item import Item
 from material.db.models.models import *
