@@ -3,7 +3,7 @@ import pandas as pd
 
 from matplotlib import pyplot as plt
 
-df = pd.read_csv(r'C:\Users\bueck\PycharmProjects\ibsys2SCM\user-docs\data_analyses\material_costs.csv', delimiter=',',
+df = pd.read_csv(r'/extras/data/material_costs.csv', delimiter=',',
                  decimal=",", thousands=".", encoding='utf-8')
 df.head(40)
 
@@ -59,7 +59,7 @@ df.head()
 # %%
 import seaborn as sns
 
-df = pd.read_csv('material_costs_cleaned_edited.csv', encoding='utf-8')
+df = pd.read_csv('../../extras/data/material_costs_cleaned_edited.csv', encoding='utf-8')
 sns.boxplot(y=df['order_duration'])
 plt.title('Boxplot of Values')
 plt.show()
