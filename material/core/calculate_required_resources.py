@@ -1,16 +1,20 @@
 from collections import Counter
 
+from material.db.models.item import Item
+from material.graph.production_graph.production_graph import ProductionGraph
+from material.initialize_db.graph.nodes.graph_nodes import DomainItem
+
 
 class ResourceCalculator:
-    def __init__(self, productions_graph: MaterialProductGraph):
+    def __init__(self, productions_graph: ProductionGraph):
         self.productions_graph = productions_graph
 
-    def traverse_node(
+    def _traverse_node(
             self,
-            graph: MaterialProductGraph,
-            required_resources: ResourceCounter,
-            inventory: ResourceCounter,
-            node: Node,
+            graph: ProductionGraph,
+            required_resources: Counter[Item],
+            inventory: Counter[Item],
+            node_id: str,
             multiplier: int = 1,
     ) -> None:
         """
@@ -18,15 +22,14 @@ class ResourceCalculator:
         For each predecessor, computes the total required amount, subtracts any available
         inventory, and updates the required_resources counter.
         """
-        g = graph.nx_graph
-        for pred_key in g.predecessors(node.label):
-            pred_node = graph.get_node_by_uid(pred_key)
-            edge_weight = g[pred_key][node.label].get("weight", 1)
+        g = graph.nx
+        for pred_key in g.predecessors(node_id):
+            edge_weight = g[pred_key][node_id].get("weight", 1)
             total_weight = edge_weight * multiplier
-            available = inventory[pred_node]
+            available = inventory[g.nodes[pred_key]["data"]]
             needed = total_weight - available
             required_resources[pred_node] += needed
-            self.traverse_node(graph, required_resources, inventory, pred_node, needed)
+            self._traverse_node(graph, required_resources, inventory, pred_node, needed)
 
     def calculate_required_resources_from_inventory(
             self,
@@ -39,7 +42,7 @@ class ResourceCalculator:
         """
         # Iterate over a copy of the current required_resources entries.
         for node, quantity in list(required_resources):
-            self.traverse_node(graph, required_resources, inventory, node, quantity)
+            self._traverse_node(graph, required_resources, inventory, node, quantity)
         return required_resources
 
     def calculate_required_resources(self, product_id: str) -> ResourceCounter:

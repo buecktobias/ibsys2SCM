@@ -6,7 +6,7 @@ from pyomo.core import ConcreteModel, Var, Constraint, NonNegativeReals
 
 from material.calc.primary_demand.optimization_model.production_planning_attributes import ProductionPlanningAttributes
 from material.core.resource_counter import ItemCounter
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity
+from material.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
 
 
 class ProductionPlanningModelBuilder:

@@ -1,6 +1,6 @@
 import networkx as nx
 
-from material.db.models import Item
+from material.db.models.item import Item
 from material.graph.production_graph.database_graph_loader import DatabaseGraphLoader
 from material.graph.production_graph.nx_graph_builder import NxGraphBuilder
 from material.graph.visualization.mermaid_visualizations import VisualizationMaterialGraph
@@ -33,4 +33,5 @@ class ProductionGraph:
         """Build a new visualization tree that mirrors the MaterialGraphORM tree but only
            includes processes that are still present in the pruned NX graph.
         """
+
         return VisualizationMaterialGraph(self.material_root, self.nx)

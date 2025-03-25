@@ -8,7 +8,7 @@ from material.calc.primary_demand.optimization_model.production_planning_model_b
     ProductionPlanningModelBuilder
 from material.core.resource_counter import ItemCounter
 from material.db.models.item import Item
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity
+from material.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
 
 
 class ProductionPlanner:

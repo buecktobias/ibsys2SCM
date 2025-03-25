@@ -9,7 +9,7 @@ from material.calc.primary_demand.optimization_model.production_planning_attribu
 # noinspection PyUnresolvedReferences
 from material.db.models.item import Item
 from material.db.models.models import *
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity, PeriodicItemQuantityBuilder
+from material.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity, PeriodicItemQuantityBuilder
 
 
 @pytest.fixture

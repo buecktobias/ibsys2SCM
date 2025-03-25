@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:latest
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_PASSWORD: secret
     ports:

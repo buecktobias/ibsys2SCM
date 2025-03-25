@@ -17,10 +17,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Upgrade schema."""
     op.execute("""
-    create view public.process_overview (process_id, graph_label, workstation_id, input_item_ids, output_item_id) as
-SELECT p.id                                      AS process_id,
+    create or replace view public.process_overview
+     (process_id, graph_label, workstation_id, input_item_ids, output_item_id) as
+    SELECT p.id                                  AS process_id,
        graph.name                                AS graph_label,
        p.workstation_id,
        array_agg(pi.item_id ORDER BY pi.item_id) AS input_item_ids,
@@ -37,10 +37,7 @@ alter table public.process_overview
 
     """)
 
-    pass
-
 
 def downgrade() -> None:
     """Downgrade schema."""
     op.execute("drop view public.process_overview;")
-    pass

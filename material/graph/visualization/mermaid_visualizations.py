@@ -9,22 +9,18 @@ from dataclasses import dataclass
 import networkx as nx
 import yaml
 
-from material.db.models import MaterialGraphORM, BoughtItem, Process, ProducedItem
+from material.db.models.models import MaterialGraphORM, BoughtItem, Process, ProducedItem
 
 
 class VisualizationMaterialGraph:
     def __init__(self, orm_node: MaterialGraphORM, nx_graph: nx.DiGraph):
         self.id = orm_node.id
         self.name = orm_node.name
-        # Filter processes: include only those whose process node still exists in the NX graph.
         self.processes = []
         for process in orm_node.processes:
-            # Assume the process node ID in the NX graph is constructed as follows:
             process_node_id = f"{process.id}"
             if nx_graph.has_node(process_node_id):
-                # Optionally, update the process inputs/outputs from the NX graph here.
                 self.processes.append(process)
-        # Recursively build the subgraph visualization structure.
         self.subgraphs = [
             VisualizationMaterialGraph(child, nx_graph)
             for child in orm_node.subgraphs

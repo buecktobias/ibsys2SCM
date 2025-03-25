@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy.orm import Mapped, mapped_column
 
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity
+from material.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
 from material.db.models.quantity_mapping_mixin import QuantityMappingMixin
 
 

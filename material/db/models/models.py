@@ -4,8 +4,9 @@ from sqlalchemy import ForeignKey, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from material.db.models.base import Base
+from material.db.models.graph_node import GraphNode
 from material.db.models.item import Item
-from material.db.models.periodic_quantity import PeriodicQuantity
+from material.db.models.mixins.periodic_quantity import PeriodicQuantity
 from material.db.models.quantity_mapping_mixin import QuantityMappingMixin
 
 
@@ -28,27 +29,23 @@ class Inventory(PeriodicQuantity, Base):
     __tablename__ = "inventory"
 
 
-class BoughtItem(Base):
+class BoughtItem(Item):
     __tablename__ = "bought_item"
-    item_id: Mapped[int] = mapped_column(
-        ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
-    )
+    __mapper_args__ = {"polymorphic_identity": "produced_item"}
+
+    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
     base_price: Mapped[float]
     discount_amount: Mapped[int]
     mean_order_duration: Mapped[float]
     order_std_dev: Mapped[float]
     base_order_cost: Mapped[float]
 
-    item: Mapped[Item] = relationship("Item", back_populates="bought", uselist=False, lazy="joined")
 
-
-class ProducedItem(Base):
+class ProducedItem(Item):
     __tablename__ = "produced_item"
-    item_id: Mapped[int] = mapped_column(
-        ForeignKey("item.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
-    )
+    __mapper_args__ = {"polymorphic_identity": "produced_item"}
 
-    item: Mapped[Item] = relationship("Item", back_populates="produced", uselist=False, lazy="joined")
+    id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
 
 
 class MaterialGraphORM(Base):
@@ -65,10 +62,13 @@ class MaterialGraphORM(Base):
     processes: Mapped[list["Process"]] = relationship(back_populates="graph", lazy="joined")
 
 
-class Process(Base):
+class Process(GraphNode):
     __tablename__ = "process"
     __table_args__ = (CheckConstraint("process_duration >= 0"), CheckConstraint("setup_duration >= 0"))
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(
+        ForeignKey("graph_node.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True
+    )
     graph_id: Mapped[int] = mapped_column(
         ForeignKey("material_graph.id", onupdate="CASCADE", ondelete="CASCADE")
     )

@@ -1,28 +1,22 @@
 import logging
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship, MappedAsDataclass
+from sqlalchemy import String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
-from material.db.models.base import Base
+from material.db.models.graph_node import GraphNode
 
 
-class Item(MappedAsDataclass, Base, unsafe_hash=True):
+class Item(GraphNode):
     __tablename__ = "item"
-    id: Mapped[int] = mapped_column(primary_key=True)
-
-    # noinspection PyUnresolvedReferences
-    bought: Mapped["BoughtItem"] = relationship(
-        "BoughtItem", default=None, back_populates="item", uselist=False, lazy="joined"
+    id: Mapped[int] = mapped_column(
+        ForeignKey("graph_node.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True
     )
-    # noinspection PyUnresolvedReferences
-    produced: Mapped["ProducedItem"] = relationship(
-        "ProducedItem", default=None, back_populates="item", uselist=False, lazy="joined"
-    )
+    type: Mapped[str] = mapped_column(String(50))
 
-    def is_bought(self) -> bool:
-        return self.bought is not None
-
-    def is_produced(self) -> bool:
-        return self.produced is not None
+    __mapper_args__ = {
+        "polymorphic_identity": "item",
+    }
 
     def __lt__(self, other):
         return self.id < other.id
@@ -37,10 +31,11 @@ class Item(MappedAsDataclass, Base, unsafe_hash=True):
         return self.id >= other.id
 
     def __repr__(self):
-        if self.is_bought():
-            return f"K{self.id}"
-        elif self.is_produced():
-            return f"P{self.id}"
-        else:
-            logging.warning(f"Item {self.id} is neither bought nor produced")
-            return f"Item({self.id})"
+        logging.warning(f"Item {self.id} is neither bought nor produced")
+        return f"Item({self.id})"
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)

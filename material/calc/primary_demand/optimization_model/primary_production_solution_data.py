@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from tabulate import tabulate
 
 from material.calc.primary_demand.optimization_model.production_planning_attributes import ProductionPlanningAttributes
-from material.db.models.periodic_item_quantity import PeriodicItemQuantity
+from material.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
 
 
 @dataclass
