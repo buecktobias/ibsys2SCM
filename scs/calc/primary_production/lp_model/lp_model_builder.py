@@ -38,7 +38,7 @@ class ProductionPlanningModelBuilder:
         return [0] + self._periods
 
     def _add_dummy_periods(self):
-        average_item_demands: ItemCounter = Counter(
+        average_item_demands: Counter[Item] = Counter(
                 {
                         item: round(count) for item, count in self._demand_forecast.get_average_values().items()
                 }

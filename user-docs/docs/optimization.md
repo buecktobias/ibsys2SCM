@@ -109,11 +109,11 @@ flowchart TD
     PRIM --> SEK
     SEK --> BESTORD
     SEK --> PRODORD
-class PRODSTR, TEILDAT, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
-class PRIM, NET, SEK, TER, PRODORD, BESTORD, NEWINV calcData;
-classDef inputData fill: green, stroke: white;
-classDef calcData fill: blue, stroke: white;
-classDef resultData fill: yellow, stroke: white;
+    class PRODSTR inputData;
+    class PRIM calcData;
+    classDef inputData fill: green, stroke: white;
+    classDef calcData fill: blue, stroke: white;
+    classDef resultData fill: yellow, stroke: white;
 ```
 
 ## Wichtiges zur Optimierung
@@ -248,14 +248,35 @@ flowchart TD
     EXPECTED_INV_COST --> TOTAL_COST
     REVENUE --> EARNINGS
     TOTAL_COST --> EARNINGS
-class PRODSTR, CAPCOST, SALES, OPEN_SALES, CURINV inputData;
-class PRIM, NET,SEK, TER, PRODORD, BESTORD, NEWINV, WORK_TIMES, WORKSTATION_REQ, PLANNED_INV calcData;
-class EARNINGS, REVENUE,TOTAL_COST, MACHINE_COST, EXPECTED_INV_COST.WORK_COST calcData;
-class RES resultData;
-classDef inputData fill: #223, stroke: white, stroke-width: 2px, color: #fff;
-classDef calcData fill: #333, stroke: white, stroke-width: 2px, color: #fff;
-classDef resultData fill: #232, stroke: white, stroke-width: 2px, color: #fff;
+    class PRODSTR inputData;
+    class PRIM calcData;
+    class EARNINGS calcData;
+    class RES resultData;
+    classDef inputData fill: green, stroke: white, stroke-width: 2px, color: white;
+    classDef calcData fill: gray, stroke: white, stroke-width: 2px, color: white;
+    classDef resultData fill: blue, stroke: white, stroke-width: 2px, color: white;
 ```
+
+````mermaid
+flowchart TD
+    SALES_FORECAST([Sales Forecast])
+    INV([Inventory])
+    OPT_PRIM_PROD["Primary Prod\nMath Optimization"]
+    CALC_RES_DEMANDS["Use BOM to calculate\n the Res Demand for next periods"]
+    OPT_NEXT_PERIOD_PROD["Opt the next period\n best safe stock"]
+    CALC_SECONDARY_PROD["Calc secondary prod"]
+    OPT_PERIOD_ORDERS["Optimize Orders next Periods"]
+    CALC_WS_CAP["Calc Workstation Cap."]
+    SALES_FORECAST --> OPT_PRIM_PROD
+    INV --> OPT_PRIM_PROD
+    OPT_PRIM_PROD --> CALC_RES_DEMANDS
+    CALC_RES_DEMANDS --> OPT_NEXT_PERIOD_PROD
+    OPT_NEXT_PERIOD_PROD --> CALC_SECONDARY_PROD
+    CALC_SECONDARY_PROD --> OPT_PERIOD_ORDERS
+    CALC_SECONDARY_PROD --> CALC_WS_CAP
+    OPT_PERIOD_ORDERS --> RESULT
+    CALC_WS_CAP --> RESULT
+````
 
 !!! question Optimierung
 Ist das ganze nicht ein lineares Optimierungsproblem?
@@ -322,6 +343,108 @@ $$
 P_p(i) >= 0
 $$
 
+Ein komplettes Mathematisches Optimierungsproblem bauen.
+Bei welchem wir unser Inventar von jedem Produkt haben dann haben wir eben die Produktion.
+Und machen es so dass man die Zwischenprodukte genau so viel Produzieren muss wie das Bauteil.
+
+Als Restriktion darf das Inventar natürlich nicht kleiner als 0 sein
+
+Inventar berechnet sich aus vorherigem Inventar und natürlich aus dem Verbrauch, welcher durch die Zwischenprodukte
+berechnet wird.
+Aus der Produktion berechnet sich auch der Bedarf der Arbeitsstationen Setup Costs werden geschätzt.
+
+Wir überschätzen die Rüstzeiten und gehen von vielen Leerzeiten aus.
+Wenn das vorgeschlagene Produktionsprogramm nicht möglich ist, dann geben wir ein negatives oder unendlich schlechtes
+Ergebnis zurück
+
+Eingabe 25 Eigen Produzierte Produkte Anzahl in 10er Schritten;
+
+Eingabe für 25 Kaufprodukte Anzahl Eil und Anzahl Normal.
+
+Und dass dann für die nächsten 4 Perioden.
+
+Also ca. 400 Variablen
+
+Dann Berechnung Inventar aus Produktion und vorherigem Inventar;
+
+Setup Zeit einer Arbeitsstation ist,
+
+
+---
+
+### **1. Gegeben:**
+
+- **$m$** verschiedene Prozesse, die an der Workstation durchgeführt werden.
+- **$N$** Gesamtzahl an durchzuführenden Prozessen (Anzahl der produzierten Einheiten / 10).
+- **\( t_{\text{rüst},i} \)** Rüstzeit für Prozess \( i \) (unterschiedlich für verschiedene Prozesse).
+- **\( f_i = \frac{n_i}{N} \)** Häufigkeit jedes Prozesses \( i \), also sein Anteil an den gesamten 10er-Losen.
+- **Nicht rein zufällige Reihenfolge, aber auch keine vollständige Blockbildung.**
+
+---
+
+### **2. Abschätzung der Wechselanzahl**
+
+Da die Reihenfolge **nicht zufällig** ist, aber auch nicht perfekt gruppiert, nehmen wir eine **gemäßigte
+Wechselwahrscheinlichkeit** an.  
+Eine brauchbare Heuristik dafür ist:
+
+\[
+W = (N - 1) \times \Bigl( 1 - \sum_{i=1}^{m} f_i^p \Bigr)
+\]
+
+mit einem **Anpassungsfaktor \( p \) zwischen 1 und 2**, der zwischen Block- und Zufallsproduktion interpoliert:
+
+- \( p = 1 \) entspricht der rein zufälligen Reihenfolge.
+- \( p = 2 \) entspricht der stark gruppierten Produktion.
+
+Für moderate Fertigungsumstellungen könnte ein Wert von **\( p = 1.5 \)** passend sein.
+
+---
+
+### **3. Abschätzung der Gesamt-Rüstzeit**
+
+Nun multiplizieren wir die Wechselanzahl mit einer gewichteten durchschnittlichen Rüstzeit:
+
+\[
+T_{\text{rüst, gesamt}} \approx W \times \sum_{i=1}^{m} f_i \cdot t_{\text{rüst},i}
+\]
+
+- **\( f_i \cdot t_{\text{rüst},i} \)** gewichtet die Rüstzeit nach Häufigkeit.
+- **\( W \)** ist die geschätzte Anzahl der Wechsel.
+
+Falls alle Rüstzeiten ähnlich sind, kann man auch einfach:
+
+\[
+T_{\text{rüst, gesamt}} \approx W \times \overline{t}_{\text{rüst}}
+\]
+
+verwenden, wobei \(\overline{t}_{\text{rüst}}\) das Mittel der Rüstzeiten ist.
+
+
+-----
 
 
 
+----
+
+
+
+Mögliche Aufzuteilende Aufgaben
+
+### Datenanalyse
+
+Datenanalyse an den Materiaalien, deren Kosten. Die Bestellzeiten sowie deren Kosten
+Die Arbeitsstationen, die Prozesse deren Reihenfolge, längsten Pfade.
+
+Kosten pro Produkt
+
+Analyse von bestehenden Daten aus den Perioden
+
+### Reorder Pointss Berechnen
+
+Berechnung zu Kosten der Bestellungen und mögliche Bestellung
+
+### REST API erstellen
+
+Die Programmierung der REST API
+Tests der REST API

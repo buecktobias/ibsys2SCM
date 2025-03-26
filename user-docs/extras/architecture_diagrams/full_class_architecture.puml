@@ -1,27 +1,25 @@
 @startuml
+
+top to bottom direction
 ' ===== ORM Package =====
+
 package Models {
   class MaterialGraphORM {
     + id: int
     + name: String
   }
 
-  class Process {
+  class Resource{
     + id: int
+  }
+
+  class Process extends Resource {
     + duration: int
   }
-    interface ItemCounter{
-  }
-
-  class ProcessIn implements ItemCounter {
-    + quantity: int
-  }
-
-  class ProcessOut implements ItemCounter {
-  }
-
-  class Item {
+  class Item extends Resource {
     + id: int
+  }
+  class Produced extends Item{
   }
   class Bought extends Item{
   }
@@ -34,35 +32,33 @@ package Models {
     - period: int
   }
 
-  class ExpectedSalesItem implements ItemCounter {
-    - quantity: int
-  }
-
   class Inventory{
     - period: int
   }
-
-  class InventoryItem implements ItemCounter{
-    - quantity: int
-  }
-
 
 
   ' ORM Associations
   MaterialGraphORM "0..1" o-- "n" Process
   MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
-  Process "1" o-- "n" ProcessIn
-  Process "1" o-- "1" ProcessOut
-  ProcessIn o-- Item
-  ProcessOut o-- Item
-  ProcessORM "n" o-- "1" Workstation
-  Inventory "1" o-- "n" InventoryItem
-  InventoryItem o-- Item
+  Process "n" o-- "m" Item
+  Process "n" o-- "1" Workstation
+  Inventory "1" o-- "n" Item
 
-  ExpectedSales "1" o-- "n" ExpectedSalesItem
-  ExpectedSalesItem o-- Item
+  ExpectedSales "1" o-- "n" Item
 }
 
+package optimization {
+    class PlanPrimaryProd{
+        + plan_primary_prod(): Dict<Produced: Int>
+    }
+}
+
+package calc{
+    class CalcResReq {
+        - graph: NxDiGraph
+        + calc_res_req(): Dict<Resource, int>
+    }
+}
 
 
 package Material {
@@ -74,30 +70,35 @@ package Material {
         + subgraphs: List<MaterialGraph>
     }
 
-
-    class CalculateResourceRequirements {
-        - graph: Material.MaterialGraph
-        + calculate_needed_resources(): List<ItemCounter>
+    class NxNode{
+        + id: int
     }
+
+    class NxEdge{
+        + from_node
+        + to_node
+        + weight: int
+    }
+
+    class NxDiGraph{
+    }
+
+    class BuildNxDiGraph{
+        + build_di_graph(m_graph): NxDiGraph
+    }
+
+
+
 
     class CalculateReorderPoints {
         - graph: Material.MaterialGraph
         + calculate_reorder_points(): List<ItemCounter>
     }
 
-}
-package Conversion {
-  class ProcessConverter {
-  }
+    NxDiGraph *-- NxEdge
+    NxDiGraph *-- NxNode
 
-  class GraphConverter {
-  }
 
-  ' Dependencies
-  GraphConverter ..> ProcessConverter
-  GraphConverter ..> Material.MaterialGraph
-  GraphConverter ..> Models.MaterialGraphORM
-  ProcessConverter ..> Process
 }
 
 
@@ -135,9 +136,10 @@ package "Visualization" {
   VisualizationConverter --> Material.MaterialGraph
   VisualizeMermaid --> MermaidBuilder
   VisualizeMermaid --> MaterialGraph
-  VisualizeMermaid ..> Process
 }
-
-Material.MaterialGraph ... Models.MaterialGraphORM
+CalcResReq ..> NxDiGraph
+PlanPrimaryProd ..> Inventory
+PlanPrimaryProd ..> ExpectedSales
+MaterialGraph ... MaterialGraphORM
 
 @enduml

@@ -1,0 +1,91 @@
+@startuml
+
+node Frontend{
+}
+
+node XML_IO{
+    component XMLPeriodReader
+    component XMLPeriodWriter
+}
+node Backend{
+
+
+
+
+    node REST_API as "REST API" {
+    }
+
+
+
+    node Planing{
+        component PrimaryProdPlanner{
+        }
+
+        component ResProductionPlanner{
+        }
+
+        component OrderPlanner{
+        }
+
+    }
+
+    node CoreCalculation{
+        component CalcResReq{
+        }
+        component CalcOrders{
+        }
+        component CalcWsCap{
+        }
+
+        component EstimateCosts
+
+        component EstimateEarnings
+
+        CalcOrders -[hidden]- CalcWsCap
+
+        EstimateCosts -[hidden]- EstimateEarnings
+    }
+
+    node CoreOptimization {
+        component PrimaryDemandOpt{
+        }
+
+        component OptSafetyStock{
+        }
+
+        component OptOrders{
+        }
+
+        PrimaryDemandOpt -[hidden]- OptOrders
+    }
+
+    node Visualization{
+        component VisualizeGraph
+    }
+
+    node ORM{
+    }
+
+    node Postgres {
+    }
+
+
+    CoreCalculation -down--> ORM
+    CoreOptimization -down--> ORM
+
+    CoreOptimization --> CoreCalculation
+    ORM --down-> Postgres
+}
+
+
+
+node SCS{
+}
+
+XML_IO -down-> REST_API
+
+XML_IO ... SCS
+Frontend --> XML_IO
+Frontend --> REST_API
+
+@enduml

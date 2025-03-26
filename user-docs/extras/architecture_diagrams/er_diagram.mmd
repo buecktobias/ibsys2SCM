@@ -1,0 +1,78 @@
+classDiagram
+    direction BT
+    class _demand_forecast {
+        integer quantity
+        integer period
+        integer item_id
+    }
+    class alembic_version {
+        varchar(32) version_num
+    }
+    class bought_item {
+        double precision base_price
+        integer discount_amount
+        double precision mean_order_duration
+        double precision order_std_dev
+        double precision base_order_cost
+        integer id
+    }
+    class graph_node {
+        varchar(50) type
+        integer id
+    }
+    class inventory {
+        integer quantity
+        integer period
+        integer item_id
+    }
+    class item {
+        varchar(50) type
+        integer id
+    }
+    class material_graph {
+        varchar name
+        integer parent_graph_id
+        integer id
+    }
+    class process {
+        integer graph_id
+        integer workstation_id
+        integer process_duration
+        integer setup_duration
+        integer id
+    }
+    class process_input {
+        integer quantity
+        integer process_id
+        integer item_id
+    }
+    class process_output {
+        integer process_id
+        integer item_id
+    }
+    class produced_item {
+        integer id
+    }
+    class workstation {
+        double precision labour_cost_1
+        double precision labour_cost_2
+        double precision labour_cost_3
+        double precision labour_overtime_cost
+        double precision variable_machine_cost
+        double precision fixed_machine_cost
+        integer id
+    }
+
+    _demand_forecast --> item: item_id id
+    bought_item --> item: id
+    inventory --> item: "item_id id"
+    item --> graph_node: id
+    material_graph --> material_graph: "parent_graph_id id"
+    process --> graph_node: id
+    process --> material_graph: graph_id id
+    process --> workstation: "workstation_id id"
+    process_input --> item: "item_id id"
+    process_input --> process: "process_id id"
+    process_output --> item: "item_id id"
+    process_output --> process: "process_id id"
+    produced_item --> item: id

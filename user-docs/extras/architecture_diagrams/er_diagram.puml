@@ -1,0 +1,83 @@
+@startuml
+
+top to bottom direction
+skinparam linetype polyline
+
+class _demand_forecast {
+   quantity: integer
+   period: integer
+   item_id: integer
+}
+class alembic_version {
+   version_num: varchar(32)
+}
+class bought_item {
+   base_price: double
+   discount_amount: integer
+   mean_order_duration: double
+   order_std_dev: double
+   base_order_cost: double
+   id: integer
+}
+class graph_node {
+   type: varchar(50)
+   id: integer
+}
+class inventory {
+   quantity: integer
+   period: integer
+   item_id: integer
+}
+class item {
+   type: varchar(50)
+   id: integer
+}
+class material_graph {
+   name: varchar
+   parent_graph_id: integer
+   id: integer
+}
+class process {
+   graph_id: integer
+   workstation_id: integer
+   process_duration: integer
+   setup_duration: integer
+   id: integer
+}
+class process_input {
+   quantity: integer
+   process_id: integer
+   item_id: integer
+}
+class process_output {
+   process_id: integer
+   item_id: integer
+}
+class produced_item {
+   id: integer
+}
+class workstation {
+   id: integer
+   ----
+   labour_cost_1: double
+   labour_cost_2: double
+   labour_cost_3: double
+   labour_overtime_cost: double
+   variable_machine_cost: double
+   fixed_machine_cost: double
+}
+
+_demand_forecast  --^  item             : "item_id:id"
+bought_item       --^  item             : "id"
+inventory         --^  item             : "item_id:id"
+item              --^  graph_node       : "id"
+material_graph    --^  material_graph   : "parent_graph_id:id"
+process           --^  graph_node       : "id"
+process           --^  material_graph   : "graph_id:id"
+process           --^  workstation      : "workstation_id:id"
+process_input     --^  item             : "item_id:id"
+process_input     --^  process          : "process_id:id"
+process_output    --^  item             : "item_id:id"
+process_output    --^  process          : "process_id:id"
+produced_item     --^  item             : "id"
+@enduml
