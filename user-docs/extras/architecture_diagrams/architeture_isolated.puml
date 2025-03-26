@@ -1,0 +1,99 @@
+@startuml
+
+node REST_API as "REST API" {
+    class PlannerController{
+    }
+
+}
+
+class OrderPlanner{
+}
+
+class WsCapPlanner{
+}
+
+
+class CalcResReq{
+}
+
+
+class CalcOrders{
+}
+class CalcWsCap{
+}
+
+class PrimaryDemandOpt{
+}
+
+class OptSafetyStock{
+}
+
+class OptOrders{
+}
+
+node Domain{
+
+   class Graph{
+   }
+
+   class Workstation{
+   }
+
+   class Inventory{
+   }
+
+   class ResourceReq{
+   }
+
+   class DemandForecast{
+   }
+
+   class SafetyStock{
+   }
+
+   class Order{
+   }
+
+}
+
+
+
+class PrimaryProdPlanner{
+}
+
+class ResProductionPlanner{
+}
+
+CalcResReq <-- Graph
+CalcResReq <-- Inventory
+CalcResReq --> ResourceReq
+
+PrimaryDemandOpt ..> DemandForecast
+PrimaryDemandOpt ..> Inventory
+
+OptSafetyStock <-- DemandForecast
+OptSafetyStock <-- ResourceReq
+OptSafetyStock --> SafetyStock
+
+
+CalcWsCap --> Workstation
+CalcWsCap --> ResourceReq
+
+CalcOrders --> Order
+
+PrimaryProdPlanner ..> PrimaryDemandOpt
+
+ResProductionPlanner ..> CalcResReq
+ResProductionPlanner ..> OptSafetyStock
+
+
+OrderPlanner ..> OptOrders
+OptOrders ..> CalcOrders
+WsCapPlanner ..> CalcWsCap
+
+PlannerController ..> WsCapPlanner
+PlannerController ..> OrderPlanner
+PlannerController ..> ResProductionPlanner
+PlannerController ..> PrimaryProdPlanner
+
+@enduml

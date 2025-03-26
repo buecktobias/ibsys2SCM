@@ -22,7 +22,7 @@ class Workstation(Base):
 
 
 class DemandForecast(PeriodicQuantity, Base):
-    __tablename__ = "_demand_forecast"
+    __tablename__ = "demand_forecast"
 
 
 class Inventory(PeriodicQuantity, Base):
@@ -34,7 +34,6 @@ class BoughtItem(MappedAsDataclass, Item):
     __mapper_args__ = {"polymorphic_identity": "bought_item"}
 
     id: Mapped[int] = mapped_column(ForeignKey("item.id", onupdate="CASCADE"), primary_key=True)
-    type: Mapped[str] = mapped_column(String(50), default="bought_item", init=False)
     base_price: Mapped[float]
     discount_amount: Mapped[int]
     mean_order_duration: Mapped[float]
@@ -50,7 +49,6 @@ class ProducedItem(MappedAsDataclass, Item):
     __mapper_args__ = {"polymorphic_identity": "produced_item"}
 
     id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
-    type: Mapped[str] = mapped_column(String(50), default="produced_item", init=False)
 
     def __hash__(self):
         return hash(self.id)
@@ -72,7 +70,9 @@ class MaterialGraphORM(Base):
 
 class Process(GraphNode):
     __tablename__ = "process"
+    __mapper_args__ = {"polymorphic_identity": "process"}
     __table_args__ = (CheckConstraint("process_duration >= 0"), CheckConstraint("setup_duration >= 0"))
+
     id: Mapped[int] = mapped_column(
             ForeignKey("graph_node.id", onupdate="CASCADE", ondelete="CASCADE"),
             primary_key=True

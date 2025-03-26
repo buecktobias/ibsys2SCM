@@ -1,7 +1,7 @@
 from collections import Counter
 
 from scs.db.models.item import Item
-from scs.graph.production_graph.production_graph import ProductionGraph
+from scs.graph.core.production_graph import ProductionGraph
 
 
 class ResourceCalculator:
@@ -21,7 +21,7 @@ class ResourceCalculator:
         For each predecessor, computes the total required amount, subtracts any available
         inventory, and updates the required_resources counter.
         """
-        g = graph.nx
+        g = graph._nx
         for pred_key in g.predecessors(node_id):
             edge_weight = g[pred_key][node_id].get("weight", 1)
             total_weight = edge_weight * multiplier

@@ -1,16 +1,17 @@
 import networkx as nx
 
 from scs.db.models.item import Item
-from scs.db.models.models import Process
+from scs.db.models.models import BoughtItem, Process, ProducedItem
+from scs.graph.core.production_graph import ProductionGraph
 
 
 class GraphValidator:
-    def __init__(self, graph: nx.DiGraph):
+    def __init__(self, graph: ProductionGraph):
         self.graph = graph
         self.errors: list[str] = []
 
-    def _get_node_obj(self, node_id: str):
-        return self.graph.nodes[node_id]["_data"]
+    def _get_node_obj(self, node_id: int):
+        return self.graph.get_node_by_id(node_id)
 
     def validate(self) -> None:
         self.errors.clear()
@@ -22,26 +23,21 @@ class GraphValidator:
             raise ValueError("\n".join(self.errors))
 
     def _validate_cycle(self):
-        if not nx.is_directed_acyclic_graph(self.graph):
+        if not nx.is_directed_acyclic_graph(self.graph.nx_graph):
             cycle = nx.find_cycle(self.graph, orientation="original")
-            # cycle is a list of (src, dst, dir) tuples
             formatted = " → ".join(f"{u}->{v}" for u, v, _ in cycle)
             self.errors.append(f"Graph contains cycle: {formatted}")
 
     def _validate_connectedness(self):
-        for node in self.graph.nodes:
-            if self.graph.degree(node) == 0:
+        for node in self.graph.node_ids:
+            if self.graph.nx_graph.degree(node) == 0:
                 self.errors.append(f"Isolated node: {node}")
 
     def _validate_edges(self):
-        for src, dst, data in self.graph.edges(data=True):
-            weight = data.get("weight", 1)
-            src_obj = self._get_node_obj(src)
-            dst_obj = self._get_node_obj(dst)
-
-            if isinstance(src_obj, Process) and isinstance(dst_obj, Item):
+        for weighted_edge in self.graph.edges:
+            if isinstance(weighted_edge.from_node, Process) and isinstance(weighted_edge.to_node, Item):
                 # Process → Item (output)
-                if not dst_obj.is_produced():
+                if not isinstance(dst_obj, ProducedItem):
                     self.errors.append(f"Invalid output: Process {src} → non‑produced Item {dst}")
                 if weight != 1:
                     self.errors.append(f"Output edge weight must be 1: {src} → {dst} (got {weight})")
@@ -52,7 +48,7 @@ class GraphValidator:
 
             elif isinstance(src_obj, Item) and isinstance(dst_obj, Process):
                 # Item → Process (input)
-                if not (src_obj.is_produced() or src_obj.is_bought()):
+                if not (isinstance(src_obj, ProducedItem) or isinstance(src_obj, BoughtItem)):
                     self.errors.append(f"Invalid input: non‑item source {src} → Process {dst}")
                 if weight <= 0:
                     self.errors.append(f"Input edge weight must be >0: {src} → {dst} (got {weight})")

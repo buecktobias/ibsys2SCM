@@ -17,6 +17,6 @@ if __name__ == '__main__':
         # Build the visualization material graph (which will include only processes that remain in the pruned NX graph).
         viz_material_graph = prod_graph.build_visualization_material_graph()
 
-        # Now pass both prod_graph.nx and viz_material_graph to your Mermaid exporter.
+        # Now pass both prod_graph._nx and viz_material_graph to your Mermaid exporter.
         mermaid_code = NxToMermaid(viz_material_graph).nx_to_mermaid("Graph New")
         print(mermaid_code)

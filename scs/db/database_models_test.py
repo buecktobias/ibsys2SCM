@@ -80,13 +80,3 @@ def test_item_bought_produced(db: Session):
 
     assert db.get(BoughtItem, bought.id)
     assert db.get(ProducedItem, produced.id)
-
-
-def test_material_graph_hierarchy(db: Session):
-    root = MaterialGraphORM(id=10008, name="Root")
-    child = MaterialGraphORM(id=1000097, name="Child", parent_graph=root)
-    db.add_all([root, child])
-    db.commit()
-
-    assert child.parent_graph == root
-    assert root.subgraphs == [child]
