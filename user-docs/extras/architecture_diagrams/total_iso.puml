@@ -34,7 +34,7 @@ rectangle "3. Optimization Service" as OptService {
 
 rectangle "4. Planning Service" as PlanService {
     [Planner API] as PlannerAPI
-    [Storage / DB]
+    database Postgres
 }
 
 rectangle "5. Output Formatter" as OutputService {

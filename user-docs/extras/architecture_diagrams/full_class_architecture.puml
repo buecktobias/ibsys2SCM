@@ -3,48 +3,121 @@
 top to bottom direction
 ' ===== ORM Package =====
 
-package Models {
-  class MaterialGraphORM {
-    + id: int
-    + name: String
-  }
 
-  class Resource{
-    + id: int
-  }
-
-  class Process extends Resource {
-    + duration: int
-  }
-  class Item extends Resource {
-    + id: int
-  }
-  class Produced extends Item{
-  }
-  class Bought extends Item{
-  }
-
-  class Workstation {
-    + id: int
-  }
-
-  class ExpectedSales {
-    - period: int
-  }
-
-  class Inventory{
-    - period: int
-  }
+package Repositories{
 
 
-  ' ORM Associations
-  MaterialGraphORM "0..1" o-- "n" Process
-  MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
-  Process "n" o-- "m" Item
-  Process "n" o-- "1" Workstation
-  Inventory "1" o-- "n" Item
 
-  ExpectedSales "1" o-- "n" Item
+    package Models {
+        class Order{
+            + quantity: int
+            + price : int
+
+        }
+
+             package result{
+                class MaterialOrder{
+                    + period_ordered: int
+                    + is_supplied: bool
+                }
+
+                class Production{
+                    - produced_item
+                    - quantity
+                }
+
+                class WorkstationCapacity{
+                    + shifts: int
+                    + overtime: int
+                }
+
+             }
+
+
+
+             package input{
+                  class WSPeriod{
+                     + workstation_id: int
+                     + setup_events: int
+                     + idletime: int
+                     + time_needed: int
+                  }
+
+                  enum OrderState{
+                    SEND
+                    APPROVED
+                    REJECTED
+                  }
+
+
+
+                  class SellOrder{
+                      + period_offered: int
+                      + period_sold: int
+                  }
+
+                  class NormalOrder extends SellOrder{
+                  }
+                  class FutureOrder extends SellOrder {
+                  }
+
+                  class DirectOrder extends SellOrder{
+                     + penalty_cost: int
+                     + period_created: int
+                     + amount_sold: int
+                     + order_state: OrderState
+                  }
+
+
+
+                  class Inventory{
+                    - period: int
+                    - item_quantities: dict<Produced, int>
+                  }
+
+                  DirectOrder o-- OrderState
+          }
+
+
+      class MaterialGraphORM {
+        + id: int
+        + name: String
+      }
+
+      class Resource{
+        + id: int
+      }
+
+      class Process extends Resource {
+        + duration: int
+      }
+      class Item extends Resource {
+        + id: int
+      }
+      class Produced extends Item{
+      }
+      class Bought extends Item{
+      }
+
+      class Workstation {
+        + id: int
+      }
+
+      ' ORM Associations
+
+
+
+      MaterialGraphORM "0..1" o-- "n" Process
+      MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
+      Process "n" o-- "m" Item
+      Process "n" o-- "1" Workstation
+      Inventory "1" o-- "n" Item
+      Order "1" o-- "n" Item
+      WSPeriod o-- Workstation
+      WorkstationCapacity o-- Workstation
+      Production o-- Produced
+    }
+
 }
 
 package optimization {
@@ -58,11 +131,18 @@ package calc{
         - graph: NxDiGraph
         + calc_res_req(): Dict<Resource, int>
     }
+
+    class CalculateReorderPoints {
+        - graph: MaterialGraph
+    }
 }
 
 
-package Material {
-
+package Domain {
+    class ExpectedSales {
+        - period: int
+        - item_quantities: dict<Produced, int>
+    }
     class MaterialGraph {
         + id: int
         + name: String
@@ -89,12 +169,6 @@ package Material {
 
 
 
-
-    class CalculateReorderPoints {
-        - graph: Material.MaterialGraph
-        + calculate_reorder_points(): List<ItemCounter>
-    }
-
     NxDiGraph *-- NxEdge
     NxDiGraph *-- NxNode
 
@@ -105,41 +179,55 @@ package Material {
 
 
 package "Visualization" {
-    class VisualizationConverter {
-      + convert(graph): MaterialGraph
+
+    class GraphVisualizer{
+        + visualize()
     }
-  interface MermaidContent {
-    + get_mermaid_code() : String
-  }
 
-  class ClassDef implements MermaidContent {
-    + fill: String
-    + stroke: String
-  }
+    class VisualizationConverter {
+    + convert(graph): MaterialGraph
+    }
 
-  class MermaidStyle implements MermaidContent {
-    + get_mermaid_code() : String
-  }
+    package mermaid{
+      interface MermaidContent {
+        + get_mermaid_code() : String
+      }
 
-  class MermaidBuilder implements MermaidContent {
-    + addNode()
-    + addRounded()
-    + addArrow()
-  }
+      class ClassDef implements MermaidContent {
+        + fill: String
+        + stroke: String
+      }
 
-  class VisualizeMermaid implements MermaidContent {
-    - graph: MaterialGraph
-    + get_mermaid_code() : String
-  }
+      class MermaidStyle implements MermaidContent {
+        + get_mermaid_code() : String
+      }
 
-  ' Visualization Dependencies
-  VisualizationConverter --> Material.MaterialGraph
-  VisualizeMermaid --> MermaidBuilder
-  VisualizeMermaid --> MaterialGraph
+      class MermaidBuilder implements MermaidContent {
+        + addNode()
+        + addRounded()
+        + addArrow()
+      }
+
+      class VisualizeMermaid implements MermaidContent {
+        - graph: MaterialGraph
+        + get_mermaid_code() : String
+      }
+    }
+
+    ' Visualization Dependencies
+    VisualizationConverter ..> MaterialGraph
+    VisualizeMermaid ..> MermaidBuilder
+    VisualizeMermaid ..> MaterialGraph
+
+    GraphVisualizer o--> VisualizationConverter
+    GraphVisualizer ..> MaterialGraph
 }
 CalcResReq ..> NxDiGraph
 PlanPrimaryProd ..> Inventory
 PlanPrimaryProd ..> ExpectedSales
 MaterialGraph ... MaterialGraphORM
+SellOrder -up-|> Order
+MaterialOrder -up-|> Order
 
+NxNode .. Resource
 @enduml
