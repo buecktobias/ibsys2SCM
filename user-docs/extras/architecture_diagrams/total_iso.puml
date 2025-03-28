@@ -1,0 +1,65 @@
+@startuml
+' -----------------------------
+' EXTERNE SYSTEME
+' -----------------------------
+package "Clients" {
+    [Frontend]
+    [Simulation XML Tool (SCS)]
+}
+
+' -----------------------------
+' UI-SCHICHT / ROUTER
+' -----------------------------
+rectangle "REST Gateway / API Gateway" as ApiGateway
+
+' -----------------------------
+' MODULE ALS SERVICES
+' -----------------------------
+rectangle "1. XML I/O Service" as XmlService {
+    [XML Reader] as XmlRead
+    [XML Writer] as XmlWrite
+}
+
+rectangle "2. Calculation Service" as CalcService {
+    [Material Requirement Calc]
+    [Workstation Load Calc]
+    [BOM Explosion]
+}
+
+rectangle "3. Optimization Service" as OptService {
+    [Primary Demand Optimizer]
+    [Safety Stock Optimizer]
+    [Order Optimizer]
+}
+
+rectangle "4. Planning Service" as PlanService {
+    [Planner API] as PlannerAPI
+    [Storage / DB]
+}
+
+rectangle "5. Output Formatter" as OutputService {
+    [Result Assembler]
+}
+
+' -----------------------------
+' KOMMUNIKATION
+' -----------------------------
+Frontend --> ApiGateway
+"SCS" --> XmlRead
+XmlWrite --> "SCS"
+
+ApiGateway --> XmlRead : "POST /convert/xml-to-json"
+ApiGateway --> PlannerAPI : "POST /plan"
+
+PlannerAPI --> CalcService : GET /bom-explode
+PlannerAPI --> CalcService : GET /ws-load
+PlannerAPI --> CalcService : GET /material-req
+
+PlannerAPI --> OptService : POST /optimize/primary-demand
+PlannerAPI --> OptService : POST /optimize/orders
+
+PlannerAPI --> OutputService : POST /assemble
+
+OutputService --> XmlWrite : POST /convert/json-to-xml
+
+@enduml

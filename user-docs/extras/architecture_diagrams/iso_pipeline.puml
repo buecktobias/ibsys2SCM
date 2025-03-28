@@ -1,0 +1,53 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "1. Input Parsing" {
+    component XML_IO {
+        interface IXmlToJson
+        interface IJsonToXml
+    }
+
+    XML_IO --> IXmlToJson
+    XML_IO --> IJsonToXml
+}
+
+package "2. Berechnung (Calculation Layer)" {
+    component BOMExplosion
+    component WorkstationLoadCalc
+    component MaterialReqCalc
+}
+
+package "3. Optimierung (Optimization Layer)" {
+    component PrimaryDemandOpt
+    component SafetyStockOpt
+    component OrderOpt
+
+    PrimaryDemandOpt --> BOMExplosion
+    SafetyStockOpt --> MaterialReqCalc
+    OrderOpt --> WorkstationLoadCalc
+}
+
+package "4. Planung (Planning Layer)" {
+    component ProductionPlanner
+    component OrderPlanner
+    component CapacityPlanner
+
+    ProductionPlanner --> PrimaryDemandOpt
+    OrderPlanner --> OrderOpt
+    CapacityPlanner --> WorkstationLoadCalc
+}
+
+package "5. Output Handling" {
+    component JsonResultBuilder
+    JsonResultBuilder --> ProductionPlanner
+    JsonResultBuilder --> OrderPlanner
+    JsonResultBuilder --> CapacityPlanner
+}
+
+package "6. REST / UI Interface" {
+    component REST_API
+    REST_API --> JsonResultBuilder
+    REST_API --> XML_IO
+}
+
+@enduml
