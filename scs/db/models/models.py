@@ -112,3 +112,189 @@ class ProcessOutput(Base):
 
     item: Mapped[Item] = relationship(lazy="joined")
     process: Mapped[Process] = relationship(back_populates="output", lazy="joined")
+
+
+```python
+from __future__ import annotations
+import datetime
+from sqlalchemy import Column, Integer, DateTime, Interval, Boolean, String, ForeignKey, JSON
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+class Base(DeclarativeBase):
+    pass
+
+class SimulationConfig(Base):
+    __tablename__ = "simulation_config"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    simulation_virtual_start: Mapped[datetime.datetime] = mapped_column(DateTime)
+
+class TimePoint(Base):
+    __tablename__ = "time_point"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    value: Mapped[datetime.datetime] = mapped_column(DateTime)
+
+    @property
+    def in_total_minutes(self) -> int:
+        return int(self.value.timestamp() / 60)
+
+    def in_periods(self) -> int:
+        return self.in_total_minutes
+
+    def in_period_day_minute(self) -> dict:
+        total = self.in_total_minutes
+        day = total // (24 * 60)
+        rem = total % (24 * 60)
+        hour = rem // 60
+        minute = rem % 60
+        return {"period": day, "day": day, "hour": hour, "minute": minute}
+
+class Duration(Base):
+    __tablename__ = "duration"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    value: Mapped[datetime.timedelta] = mapped_column(Interval)
+
+    @property
+    def in_total_minutes(self) -> int:
+        return int(self.value.total_seconds() / 60)
+
+    def in_periods(self) -> int:
+        return self.in_total_minutes
+
+    def in_period_day_minute(self) -> dict:
+        total = self.in_total_minutes
+        day = total // (24 * 60)
+        rem = total % (24 * 60)
+        hour = rem // 60
+        minute = rem % 60
+        return {"period": day, "day": day, "hour": hour, "minute": minute}
+
+class Order(Base):
+    __tablename__ = "order"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    order_kind: Mapped[str] = mapped_column(String(50))
+    created_at_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
+    expected_execution_at_mean_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
+    expected_execution_at_stdv_id: Mapped[int] = mapped_column(ForeignKey("duration.id"))
+    was_executed: Mapped[bool] = mapped_column(Boolean)
+    offered_to_us: Mapped[bool] = mapped_column(Boolean)
+    offered_by_us: Mapped[bool] = mapped_column(Boolean)
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    amount_inv_change: Mapped[int] = mapped_column(Integer)
+    cash_flow_per_item: Mapped[int] = mapped_column(Integer)
+    penalty: Mapped[int] = mapped_column(Integer)
+    creation_cost: Mapped[int] = mapped_column(Integer)
+
+    created_at = relationship("TimePoint", foreign_keys=[created_at_id])
+    expected_execution_at_mean = relationship("TimePoint", foreign_keys=[expected_execution_at_mean_id])
+    expected_execution_at_stdv = relationship("Duration", foreign_keys=[expected_execution_at_stdv_id])
+    item = relationship("Item")
+
+    __mapper_args__ = {
+        "polymorphic_on": order_kind,
+        "polymorphic_identity": "order"
+    }
+
+class BuyOrder(Order):
+    __abstract__ = True
+    def __init__(self, **kwargs: any) -> None:
+        kwargs.setdefault("offered_by_us", False)
+        kwargs.setdefault("offered_to_us", True)
+        super().__init__(**kwargs)
+
+class SellOrder(Order):
+    __abstract__ = True
+    def __init__(self, **kwargs: any) -> None:
+        kwargs.setdefault("offered_by_us", True)
+        kwargs.setdefault("offered_to_us", False)
+        super().__init__(**kwargs)
+
+class NormalOrder(SellOrder):
+    __tablename__ = "normal_order"
+    id: Mapped[int] = mapped_column(ForeignKey("order.id"), primary_key=True)
+    __mapper_args__ = {"polymorphic_identity": "normal_order"}
+
+class DirectOrder(SellOrder):
+    __tablename__ = "direct_order"
+    id: Mapped[int] = mapped_column(ForeignKey("order.id"), primary_key=True)
+    __mapper_args__ = {"polymorphic_identity": "direct_order"}
+
+class MaterialOrder(BuyOrder):
+    __tablename__ = "material_order"
+    id: Mapped[int] = mapped_column(ForeignKey("order.id"), primary_key=True)
+    __mapper_args__ = {"polymorphic_identity": "material_order"}
+
+class MarketPlaceBuy(BuyOrder):
+    __tablename__ = "marketplace_buy"
+    id: Mapped[int] = mapped_column(ForeignKey("order.id"), primary_key=True)
+    __mapper_args__ = {"polymorphic_identity": "marketplace_buy"}
+
+class MarketPlaceSell(SellOrder):
+    __tablename__ = "marketplace_sell"
+    id: Mapped[int] = mapped_column(ForeignKey("order.id"), primary_key=True)
+    __mapper_args__ = {"polymorphic_identity": "marketplace_sell"}
+
+class ItemProduction(Base):
+    __tablename__ = "item_production"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    producing_item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    quantity: Mapped[int] = mapped_column(Integer)
+    est_finish_at_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
+    est_finish_stdv_id: Mapped[int] = mapped_column(ForeignKey("duration.id"))
+
+    producing_item = relationship("Item")
+    est_finish_at = relationship("TimePoint", foreign_keys=[est_finish_at_id])
+    est_finish_stdv = relationship("Duration", foreign_keys=[est_finish_stdv_id])
+
+class WSCapa(Base):
+    __tablename__ = "ws_capa"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shifts: Mapped[int] = mapped_column(Integer)
+    overtime: Mapped[int] = mapped_column(Integer)
+    workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"))
+
+    workstation = relationship("Workstation", back_populates="capa")
+
+class WSUseInfo(Base):
+    __tablename__ = "ws_use_info"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"))
+    setup_events: Mapped[int] = mapped_column(Integer)
+    idletime: Mapped[int] = mapped_column(Integer)
+    time_needed: Mapped[int] = mapped_column(Integer)
+
+    workstation = relationship("Workstation", back_populates="use_info")
+
+class InputInventory(Base):
+    __tablename__ = "input_inventory"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    period_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
+    period = relationship("TimePoint")
+    item_quantities: Mapped[dict] = mapped_column(JSON)
+    item_values: Mapped[dict] = mapped_column(JSON)
+
+class PTimeFormat:
+    def __init__(self, period: int, day: int, hour: int, minute: int):
+        self.period = period
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+
+class TimePointBuilder:
+    @staticmethod
+    def from_minutes(minutes: int) -> TimePoint:
+        dt = datetime.datetime.fromtimestamp(minutes * 60)
+        return TimePoint(value=dt)
+    @staticmethod
+    def from_periods(periods: int) -> TimePoint:
+        dt = datetime.datetime.fromtimestamp(periods * 60)
+        return TimePoint(value=dt)
+
+class TimeDurationBuilder:
+    @staticmethod
+    def from_minutes(minutes: int) -> Duration:
+        td = datetime.timedelta(minutes=minutes)
+        return Duration(value=td)
+    @staticmethod
+    def from_periods(periods: int) -> Duration:
+        td = datetime.timedelta(minutes=periods)
+        return Duration(value=td)
