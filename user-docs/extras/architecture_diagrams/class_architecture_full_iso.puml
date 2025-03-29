@@ -1,0 +1,330 @@
+@startuml
+skinparam Padding 1
+skinparam NodePadding 1
+skinparam HorizontalSpacing 1
+skinparam VerticalSpacing 1
+skinparam nodesep 20
+skinparam ranksep 50
+skinparam linetype polyline
+skinparam groupInheritance 3
+
+
+
+' ===== ORM Package =====
+package repositories{
+    class OrderRORepo{
+        + read_orders()
+    }
+
+    class GraphRORepo{
+        + get_root_graph()
+    }
+
+    class InvRORepo{
+        + get_inv()
+    }
+
+    class WSRORepo{
+        + get_ws()
+    }
+}
+
+
+package models {
+    class SimulationConfig{
+        - simulation_virtual_start: date
+    }
+    class TimePointBuilder{
+        + from_minutes()
+        + from_periods()
+    }
+
+    class TimeDurationBuilder{
+        + from_minutes()
+        + from_periods()
+    }
+
+    class PTimeFormat{
+        period: int
+        day: int
+        hour: int
+        minute: int
+    }
+    interface Time{
+        + in_total_minutes: int
+        + in_periods(): int
+        + in_period_day_minute(): PTimeFormat
+    }
+
+    class TimePoint implements Time{
+        - value: datetime.datetime
+    }
+
+    class Duration implements Time{
+        - value: datetime.timedelta
+    }
+
+    interface InvChange{
+        + item: Item
+        + expected_inv_change_until(period)
+    }
+
+
+    interface Order extends InvChange{
+        + type: OrderType
+        + created_at: TimePoint
+        + expected_execution_at_mean: TimePoint
+        + expected_execution_at_stdv: Duration
+        + was_executed: bool
+        + offered_to_us: bool
+        + offered_by_us: bool
+        + item: Item
+        + amount_inv_change: int
+        + cash_flow_per_item : int
+        + penalty: int
+        + creation_cost: int
+        + total_est_cash_flow_at(time)
+        + est_amount_inv_change_at(time)
+    }
+
+    interface BuyOrder extends Order{
+        + offered_by_us = false
+        + offered_to_us = true
+    }
+    interface SellOrder extends Order{
+        + offered_by_us = true
+        + offered_to_us = false
+    }
+
+    class NormalOrder implements SellOrder{
+    }
+
+    class DirectOrder implements SellOrder{
+    }
+
+    class MaterialOrder implements BuyOrder{
+    }
+
+    class MarketPlaceBuy implements BuyOrder{
+    }
+
+    class MarketPlaceSell implements SellOrder{
+    }
+
+    class ItemProduction implements InvChange{
+            - producing_item
+            - quantity
+            - est_finish_at: TimePoint
+            - est_finish_stdv: Duration
+    }
+
+
+    class WSCapa{
+        + shifts: int
+        + overtime: int
+    }
+
+
+     package input{
+          class WSUseInfo{
+             + workstation_id: int
+             + setup_events: int
+             + idletime: int
+             + time_needed: int
+          }
+
+          class Inventory{
+            - period: TimePoint
+            - item_quantities: dict<Produced, int>
+            - item_values: dict<Produced: int>
+          }
+     }
+
+
+
+    class MaterialGraphORM {
+        + id: int
+        + name: String
+    }
+
+    class Resource{
+        + id: int
+    }
+
+    class Process extends Resource {
+        + duration: int
+    }
+
+    class Item extends Resource {
+        + id: int
+    }
+
+    class Produced extends Item{
+    }
+
+    class Bought extends Item{
+    }
+
+    class Workstation {
+        + id: int
+    }
+
+    ' ORM Associations
+    MaterialGraphORM "0..1" o-- "n" Process
+    MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
+    Process "n" o-- "m" Item
+    Process "n" o-- "1" Workstation
+    Inventory "1" o-- "n" Item
+    Order "1" o-- "n" Item
+    WSUseInfo o-- Workstation
+    WSCapa o-- Workstation
+    Production o-- Produced
+}
+
+
+package optimization {
+    class PlanPrimaryProd{
+        + plan_prim_prod(): Counter<Produced>
+    }
+
+    class OptSafetyInv{
+    }
+
+    class OptOrders{
+    }
+}
+
+package calc{
+    class CalcResReq {
+        + calc_res_req(): Counter<Res>
+    }
+
+    class CalcWSCapa{
+        +calc_ws_capa: dict<WSId, int>
+    }
+
+    class EstInvCost{
+        + est_inv_cost: int
+    }
+
+    class CalcNeededOrders{
+        + calc_needed_orders: list<MaterialOrder>
+    }
+
+    class CalcOrderCosts{
+    }
+
+    class CalcWSCosts{
+    }
+
+    class CalcExpectedInv{
+        + calc_expected_inv(period, day): Inventory
+    }
+
+    class EstEarnings{
+        - orders: list<Order>
+        - production: list<Production>
+        + est_costs()
+        + est_revenue()
+        + est_earnings()
+    }
+}
+
+
+package domain {
+    class InvDTO{
+    }
+    class BuyOrderDTO{
+    }
+
+    class ProductionDTO{
+    }
+
+    class ExpectedSales {
+        - period: int
+        - item_quantities: dict<Produced, int>
+    }
+
+    class MaterialGraph {
+        + id: int
+        + name: String
+        + processes: List<Process>
+        + subgraphs: List<MaterialGraph>
+    }
+    class MaterialNXGraph{
+        to_json
+        from_json
+    }
+
+    class BuildNxDiGraph{
+        + build(m_graph): NxDiGraph
+    }
+    together{
+        class NxNode{
+            + id: int
+        }
+
+        class NxEdge{
+            + from_node
+            + to_node
+            + weight: int
+        }
+
+        class NxDiGraph{
+        }
+
+
+        NxDiGraph *-- NxEdge
+        NxDiGraph *-- NxNode
+    }
+    MaterialNXGraph o-- NxDiGraph
+
+}
+
+
+
+
+package visualization {
+    circle RestAPI
+    rectangle vis  #DDDDDD{
+        class VisController <<control>>{
+        }
+
+        class GraphVisualizer{
+            + visualize()
+        }
+
+        class VisualizationConverter {
+            + convert(graph): MaterialGraph
+        }
+
+        package mermaid{
+        }
+    }
+    RestAPI -> VisController
+    VisController -> GraphVisualizer
+    ' Visualization Dependencies
+    GraphVisualizer o--> VisualizationConverter
+
+    GraphVisualizer ..> mermaid: "use"
+}
+
+repositories -[hidden]- models
+
+GraphRORepo o-> MaterialGraphORM
+OrderRORepo o-> Order
+
+WSRORepo o-> WSUseInfo
+InvRORepo o-> Inventory
+
+PlanPrimaryProd ..> ExpectedSales
+BuildNxDiGraph ..> NxDiGraph
+BuildNxDiGraph ..> MaterialGraph
+MaterialGraph .. GraphRORepo
+visualization.RestAPI -- MaterialGraph
+
+CalcResReq ..> MaterialNXGraph
+CalcResReq ..> PrimProdDTO
+CalcResReq ..> InvDTO
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+
+interface MermaidContent {
+    + get_mermaid_code() : String
+}
+
+class ClassDef implements MermaidContent {
+    + fill: String
+    + stroke: String
+}
+
+class MermaidStyle implements MermaidContent {
+    + get_mermaid_code() : String
+}
+
+class MermaidBuilder implements MermaidContent {
+    + addNode()
+    + addRounded()
+    + addArrow()
+}
+
+class VisualizeMermaid implements MermaidContent {
+    - graph: MaterialGraph
+    + get_mermaid_code() : String
+}
+
+VisualizeMermaid ..> MermaidBuilder
+
+@enduml

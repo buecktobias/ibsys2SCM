@@ -1,128 +1,149 @@
 @startuml
+skinparam Padding 1
+skinparam NodePadding 1
+skinparam HorizontalSpacing 1
+skinparam VerticalSpacing 1
+skinparam nodesep 20
+skinparam ranksep 50
+skinparam linetype polyline
 
-top to bottom direction
 ' ===== ORM Package =====
 
 
-package Repositories{
+package repositories{
+    class OrderRORepo{
+        + read_orders()
+    }
+
+    class GraphRORepo{
+        + get_root_graph()
+    }
+
+    class InvRORepo{
+        + get_inv()
+    }
+
+    class WSRORepo{
+        + get_ws()
+    }
+}
 
 
+package models {
+    class Order{
+        + quantity: int
+        + price : int
+    }
 
-    package Models {
-        class Order{
-            + quantity: int
-            + price : int
-
+     package result{
+        class MaterialOrder{
+            + period_ordered: int
+            + is_supplied: bool
         }
 
-             package result{
-                class MaterialOrder{
-                    + period_ordered: int
-                    + is_supplied: bool
-                }
+        class Production{
+            - produced_item
+            - quantity
+        }
 
-                class Production{
-                    - produced_item
-                    - quantity
-                }
+        class WSCapa{
+            + shifts: int
+            + overtime: int
+        }
 
-                class WorkstationCapacity{
-                    + shifts: int
-                    + overtime: int
-                }
-
-             }
+     }
 
 
 
-             package input{
-                  class WSPeriod{
-                     + workstation_id: int
-                     + setup_events: int
-                     + idletime: int
-                     + time_needed: int
-                  }
+     package input{
+          class WSUseInfo{
+             + workstation_id: int
+             + setup_events: int
+             + idletime: int
+             + time_needed: int
+          }
 
-                  enum OrderState{
-                    SEND
-                    APPROVED
-                    REJECTED
-                  }
-
-
-
-                  class SellOrder{
-                      + period_offered: int
-                      + period_sold: int
-                  }
-
-                  class NormalOrder extends SellOrder{
-                  }
-                  class FutureOrder extends SellOrder {
-                  }
-
-                  class DirectOrder extends SellOrder{
-                     + penalty_cost: int
-                     + period_created: int
-                     + amount_sold: int
-                     + order_state: OrderState
-                  }
-
-
-
-                  class Inventory{
-                    - period: int
-                    - item_quantities: dict<Produced, int>
-                  }
-
-                  DirectOrder o-- OrderState
+          enum OrderState{
+            SEND
+            APPROVED
+            REJECTED
           }
 
 
-      class MaterialGraphORM {
+
+          class SellOrder{
+              + period_offered: int
+              + period_sold: int
+          }
+
+          class NormalOrder extends SellOrder{
+          }
+          class FutureOrder extends SellOrder {
+          }
+
+          class DirectOrder extends SellOrder{
+             + penalty_cost: int
+             + period_created: int
+             + amount_sold: int
+             + order_state: OrderState
+          }
+
+
+
+          class Inventory{
+            - period: int
+            - item_quantities: dict<Produced, int>
+          }
+
+          DirectOrder o-- OrderState
+      }
+
+
+    class MaterialGraphORM {
         + id: int
         + name: String
-      }
-
-      class Resource{
-        + id: int
-      }
-
-      class Process extends Resource {
-        + duration: int
-      }
-      class Item extends Resource {
-        + id: int
-      }
-      class Produced extends Item{
-      }
-      class Bought extends Item{
-      }
-
-      class Workstation {
-        + id: int
-      }
-
-      ' ORM Associations
-
-
-
-      MaterialGraphORM "0..1" o-- "n" Process
-      MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
-      Process "n" o-- "m" Item
-      Process "n" o-- "1" Workstation
-      Inventory "1" o-- "n" Item
-      Order "1" o-- "n" Item
-      WSPeriod o-- Workstation
-      WorkstationCapacity o-- Workstation
-      Production o-- Produced
     }
 
+    class Resource{
+        + id: int
+    }
+
+    class Process extends Resource {
+        + duration: int
+    }
+
+    class Item extends Resource {
+        + id: int
+    }
+
+    class Produced extends Item{
+    }
+    class Bought extends Item{
+    }
+
+    class Workstation {
+        + id: int
+    }
+
+    ' ORM Associations
+
+
+
+    MaterialGraphORM "0..1" o-- "n" Process
+    MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
+    Process "n" o-- "m" Item
+    Process "n" o-- "1" Workstation
+    Inventory "1" o-- "n" Item
+    Order "1" o-- "n" Item
+    WSUseInfo o-- Workstation
+    WSCapa o-- Workstation
+    Production o-- Produced
 }
+
 
 package optimization {
     class PlanPrimaryProd{
-        + plan_primary_prod(): Dict<Produced: Int>
+        + plan_prim_prod(): Counter<Produced>
     }
 }
 
@@ -138,7 +159,7 @@ package calc{
 }
 
 
-package Domain {
+package domain {
     class ExpectedSales {
         - period: int
         - item_quantities: dict<Produced, int>
@@ -150,84 +171,64 @@ package Domain {
         + subgraphs: List<MaterialGraph>
     }
 
+    together{
     class NxNode{
         + id: int
     }
 
-    class NxEdge{
-        + from_node
-        + to_node
-        + weight: int
+        class NxEdge{
+            + from_node
+            + to_node
+            + weight: int
+        }
+
+        class NxDiGraph{
+        }
+
+        class BuildNxDiGraph{
+            + build_di_graph(m_graph): NxDiGraph
+        }
+        NxDiGraph *-- NxEdge
+        NxDiGraph *-- NxNode
     }
-
-    class NxDiGraph{
-    }
-
-    class BuildNxDiGraph{
-        + build_di_graph(m_graph): NxDiGraph
-    }
-
-
-
-    NxDiGraph *-- NxEdge
-    NxDiGraph *-- NxNode
-
 
 }
 
 
 
 
-package "Visualization" {
-
+package visualization {
     class GraphVisualizer{
         + visualize()
     }
 
     class VisualizationConverter {
-    + convert(graph): MaterialGraph
+        + convert(graph): MaterialGraph
     }
 
     package mermaid{
-      interface MermaidContent {
-        + get_mermaid_code() : String
-      }
-
-      class ClassDef implements MermaidContent {
-        + fill: String
-        + stroke: String
-      }
-
-      class MermaidStyle implements MermaidContent {
-        + get_mermaid_code() : String
-      }
-
-      class MermaidBuilder implements MermaidContent {
-        + addNode()
-        + addRounded()
-        + addArrow()
-      }
-
-      class VisualizeMermaid implements MermaidContent {
-        - graph: MaterialGraph
-        + get_mermaid_code() : String
-      }
     }
 
     ' Visualization Dependencies
     VisualizationConverter ..> MaterialGraph
-    VisualizeMermaid ..> MermaidBuilder
-    VisualizeMermaid ..> MaterialGraph
-
     GraphVisualizer o--> VisualizationConverter
     GraphVisualizer ..> MaterialGraph
+
+    GraphVisualizer ..> mermaid: "use"
 }
+repositories -[hidden]- models
+
+GraphRORepo o-> MaterialGraphORM
+OrderRORepo o-> Order
+
+WSRORepo o-> WSUseInfo
+InvRORepo o-> Inventory
+
 CalcResReq ..> NxDiGraph
-PlanPrimaryProd ..> Inventory
 PlanPrimaryProd ..> ExpectedSales
-MaterialGraph ... MaterialGraphORM
 SellOrder -up-|> Order
 MaterialOrder -up-|> Order
-
-NxNode .. Resource
+BuildNxDiGraph ..> NxDiGraph
+BuildNxDiGraph ..> MaterialGraph
+MaterialGraph .. GraphRORepo
 @enduml
