@@ -9,7 +9,3 @@ class WeightedEdge(abc.ABC):
     from_node: GraphNode
     to_node: GraphNode
     weight: int
-
-
-
-class InputEdge

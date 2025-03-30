@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
-from scs.core.domain.iorder import InvChange, IOrder
+from scs.core.domain.orders.iorder import InvChange, IOrder
 from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
 
 
@@ -23,7 +23,11 @@ class DemandForecastDomain(BaseModel):
     periodic_item_quantity: PeriodicItemQuantity
 
 
-class ItemDomain(BaseModel):
+class GraphNodeDomain(BaseModel):
+    id: int
+
+
+class ItemDomain(GraphNodeDomain):
     id: int
 
 
@@ -39,34 +43,10 @@ class ProducedItemDomain(ItemDomain):
     pass
 
 
-class MaterialGraphDomain(BaseModel):
-    id: int
-    name: str
-    parent_graph_id: Optional[int]
-    parent_graph: Optional[MaterialGraphDomain]
-    subgraphs: List[MaterialGraphDomain] = []
-    processes: List[ProcessDomain] = []
-
-
-class ProcessInputDomain(BaseModel):
-    process_id: int
-    quantity: int
-    process: Optional[ProcessDomain]
-
-
-class ProcessOutputDomain(BaseModel):
-    process_id: int
-    item_id: int
-    item: ItemDomain
-    process: Optional[ProcessDomain]
-
-
-class ProcessDomain:
-    id: int
+class ProcessDomain(GraphNodeDomain):
     workstation_id: int
     process_duration: int
     setup_duration: int
-    graph: MaterialGraphDomain
     inputs: Counter[ItemDomain]
     workstation: WorkstationDomain
     output: ProducedItemDomain

@@ -3,7 +3,7 @@ import networkx as nx
 from scs.core.db.models.graph_models import GraphNode, MaterialGraphORM
 from scs.core.db.models.process_models import ProcessORM
 from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
-from scs.graph.core.weighted_edge import WeightedEdge
+from scs.core.domain.weighted_edge import WeightedEdge
 
 
 class ProductionGraph:

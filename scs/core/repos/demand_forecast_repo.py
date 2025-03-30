@@ -16,8 +16,8 @@ class DemandForecastRepository:
         :return: The forecasted demand.
         """
         forecast = self.session.scalar(
-                select(DemandForecastItemORM)
-        ).one_or_none()
+                select(DemandForecastItemORM).where(DemandForecastItemORM.period == period)
+        ).get_periodic_item_quantity()
 
         if forecast:
             return forecast.quantity

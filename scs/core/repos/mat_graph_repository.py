@@ -1,33 +1,45 @@
+import typing
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from scs.core.db.models.graph_models import MaterialGraphORM
+from scs.core.db.models.item_models import BoughtItemORM, Item, ProducedItemORM
+from scs.core.db.models.process_models import ProcessORM
+
+
 class MaterialGraphRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_by_id(self, id: int) -> MaterialGraphDomain:
-        mg = self.session.query(MaterialGraphORM).filter(MaterialGraphORM.id == id).one()
-        parent = None
-        if mg.parent_graph:
-            parent = MaterialGraphDomain(
-                    id=mg.parent_graph.id,
-                    name=mg.parent_graph.name,
-                    parent_graph_id=mg.parent_graph.parent_graph_id,
-                    parent_graph=None,
-                    subgraphs=[],
-                    processes=[]
-            )
-        subs = [MaterialGraphDomain(
-                id=sub.id,
-                name=sub.name,
-                parent_graph_id=sub.parent_graph_id,
-                parent_graph=None,
-                subgraphs=[],
-                processes=[]
-        ) for sub in mg.subgraphs]
-        procs = []
-        return MaterialGraphDomain(
-                id=mg.id,
-                name=mg.name,
-                parent_graph_id=mg.parent_graph_id,
-                parent_graph=parent,
-                subgraphs=subs,
-                processes=procs
-        )
+    def load_processes(self):
+        return self.session.execute(
+                select(ProcessORM)
+        ).unique().scalars().all()
+
+    def load_bought_items(self):
+        return self.session.execute(
+                select(BoughtItemORM)
+        ).unique().scalars().all()
+
+    def load_produced_items(self):
+        return self.session.execute(
+                select(ProducedItemORM)
+        ).unique().scalars().all()
+
+    def get_graph_node_dict(self) -> dict[int, ProcessORM | BoughtItemORM | ProducedItemORM]:
+        return {typing.cast(int, graph_node.id): graph_node for graph_node in
+                list(self.load_bought_items()) + list(self.load_processes()) + list(self.load_produced_items())}
+
+    def get_item(self, item_id: int) -> Item:
+        item = self.session.get(Item, item_id)
+        if item is None:
+            raise ValueError(f"Item {item_id} not found")
+        return typing.cast(item, Item)
+
+    def load_material_graph_root(self) -> MaterialGraphORM:
+        stmt = select(MaterialGraphORM).where(MaterialGraphORM.parent_graph_id.is_(None))
+        root = self.session.execute(stmt).unique().scalars().one_or_none()
+        if root is None:
+            raise ValueError("No root MaterialGraph found (parent_graph_id IS NULL)")
+        return root
