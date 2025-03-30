@@ -22,9 +22,9 @@ def upgrade() -> None:
 
     # Step 1: Add `graph_node` base table (if not exists)
     op.create_table(
-        "graph_node",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("type", sa.String(50), nullable=False),  # Polymorphic discriminator
+            "graph_node",
+            sa.Column("id", sa.Integer, primary_key=True),
+            sa.Column("type", sa.String(50), nullable=False),  # Polymorphic discriminator
     )
 
     # Step 2: Alter `item` to inherit from `graph_node`
@@ -35,21 +35,27 @@ def upgrade() -> None:
     op.alter_column("produced_item", "item_id", new_column_name="id")
 
     # Step 6: Assign polymorphic identities in item and in graph_node table
-    op.execute("""
-    UPDATE item SET type = 'produced_item' WHERE id IN (SELECT id FROM produced_item);
-    UPDATE item SET type = 'bought_item' WHERE id IN (SELECT id FROM bought_item);
-    """)
+    op.execute(
+            """
+                UPDATE item SET type = 'produced_item' WHERE id IN (SELECT id FROM produced_item);
+                UPDATE item SET type = 'bought_item' WHERE id IN (SELECT id FROM bought_item);
+                """
+    )
 
     # Add all ids to graph_node
-    op.execute("""
-        INSERT INTO graph_node (id, type)
-        SELECT id, type FROM item;
-    """)
+    op.execute(
+            """
+                    INSERT INTO graph_node (id, type)
+                    SELECT id, type FROM item;
+                """
+    )
 
-    op.execute("""
-        INSERT INTO graph_node (id, type)
-        SELECT id, 'process' FROM process;
-        """)
+    op.execute(
+            """
+                    INSERT INTO graph_node (id, type)
+                    SELECT id, 'process' FROM process;
+                    """
+    )
 
     # Step 7: Set up polymorphic constraints
     op.alter_column("item", "type", existing_type=sa.String(50), nullable=False)

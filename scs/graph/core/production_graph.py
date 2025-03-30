@@ -1,7 +1,8 @@
 import networkx as nx
 
-from scs.db.models.graph_node import GraphNode
-from scs.db.models.models import BoughtItem, MaterialGraphORM, Process, ProducedItem
+from scs.core.db.models.graph_models import GraphNode, MaterialGraphORM
+from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
 from scs.graph.core.weighted_edge import WeightedEdge
 
 
@@ -9,7 +10,7 @@ class ProductionGraph:
     def __init__(
             self,
             nx_di_graph: nx.DiGraph,
-            node_id_dict: dict[int, Process | BoughtItem, ProducedItem],
+            node_id_dict: dict[int, ProcessORM | BoughtItemORM, ProducedItemORM],
             root_orm_graph: MaterialGraphORM
     ):
         self._nx: nx.DiGraph = nx_di_graph

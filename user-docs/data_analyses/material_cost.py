@@ -14,7 +14,7 @@ df = df.iloc[1:]
 # Artikelnummer: extract numeric part and symbol
 df['article_id'] = df['Artikelnummer'].astype(str).str.extract(r'([\d\.]+)')[0]
 df['article_id'] = df['article_id'].str.replace('.', '', regex=False)
-df['item_type'] = df['Artikelnummer'].astype(str).str.extract(r'([PEK])')[0]
+df['type'] = df['Artikelnummer'].astype(str).str.extract(r'([PEK])')[0]
 
 # Remove Bezeichnung column
 df.drop(columns=['Bezeichnung'], inplace=True, errors='ignore')
@@ -45,10 +45,10 @@ df['order_standard_deviation'] = df['order_86_deviation'] / 1.48
 df.drop(columns=['order_86_deviation'], inplace=True)
 # Lieferzeitabweichung -> order_86_deviation
 
-# Add discount_quantity and discount_amount for item_type K
-df['discount_quantity'] = df.apply(lambda row: row['start_quantity'] if row['item_type'] == 'K' else 0, axis=1)
-df['discount_amount'] = df.apply(lambda row: 0.1 if row['item_type'] == 'K' else 0, axis=1)
-cols = ['article_id', 'item_type', 'used_for_child', 'used_for_men', 'used_for_women',
+# Add discount_quantity and discount_amount for type K
+df['discount_quantity'] = df.apply(lambda row: row['start_quantity'] if row['type'] == 'K' else 0, axis=1)
+df['discount_amount'] = df.apply(lambda row: 0.1 if row['type'] == 'K' else 0, axis=1)
+cols = ['article_id', 'type', 'used_for_child', 'used_for_men', 'used_for_women',
         'start_quantity', 'price_per_part', 'order_price', 'order_duration', 'order_standard_deviation',
         'discount_quantity', 'discount_amount']
 df = df[cols]
@@ -68,7 +68,7 @@ plt.show()
 # %%
 import matplotlib.pyplot as plt
 
-df_k = df[df['item_type'] == 'K']
+df_k = df[df['type'] == 'K']
 kids_cost = (df_k['price_per_part'] * df_k['quantity_used_for_child']).sum()
 men_cost = (df_k['price_per_part'] * df_k['quantity_used_for_men']).sum()
 women_cost = (df_k['price_per_part'] * df_k['quantity_used_for_women']).sum()
@@ -99,7 +99,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Filter only K counter
-df_k = df[df['item_type'] == 'K'].copy()
+df_k = df[df['type'] == 'K'].copy()
 AVERAGE_PRODUCT_DEMAND = 300
 AVERAGE_PRODUCT_PRICE = 200
 # Calculate actual demand from the two columns that give the actual usage

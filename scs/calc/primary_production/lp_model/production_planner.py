@@ -5,8 +5,8 @@ from pyomo.environ import SolverFactory, value
 from scs.calc.primary_production.lp_model.lp_model_builder import ProductionPlanningModelBuilder
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
 from scs.calc.primary_production.lp_model.planner_solution import ProductionSolutionData
-from scs.db.models.item import Item
-from scs.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
+from scs.core.db.models import Item
+from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
 
 
 class ProductionPlanner:

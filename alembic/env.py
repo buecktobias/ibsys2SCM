@@ -5,13 +5,13 @@ from sqlalchemy import pool
 
 from alembic import context
 # noinspection PyUnresolvedReferences
-from scs.db.models.models import *
+from scs.core.db.models.models import *
 # noinspection PyUnresolvedReferences
-from scs.db.models.item import *
+from scs.core.db.models import *
 # noinspection PyUnresolvedReferences
-from scs.db.models.graph_node import *
+from scs.core.db.models.graph_models import *
 
-import scs.db.models.base
+import scs.core.db.models.base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -26,7 +26,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = scs.db.models.base.Base.metadata
+target_metadata = scs.core.db.models.base.Base.metadata
 
 
 # other values from the config, defined by the needs of env.py,

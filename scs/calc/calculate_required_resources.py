@@ -1,6 +1,6 @@
 from collections import Counter
 
-from scs.db.models.item import Item
+from scs.core.db.models.item_models import Item
 from scs.graph.core.production_graph import ProductionGraph
 
 

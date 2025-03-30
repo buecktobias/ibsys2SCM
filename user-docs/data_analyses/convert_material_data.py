@@ -3,8 +3,8 @@ import pandas as pd
 if __name__ == '__main__':
     df = pd.read_csv("../../extras/data/material_costs_cleaned_edited.csv")
 
-    # Filter for item_type 'K' (Bought items)
-    bought_items = df[df["item_type"] == "K"].copy()
+    # Filter for type 'K' (Bought items)
+    bought_items = df[df["type"] == "K"].copy()
 
     # Rename and select required columns for Bought model import
     bought_items = bought_items.rename(

@@ -3,8 +3,10 @@ import typing
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from scs.db.models.item import Item
-from scs.db.models.models import BoughtItem, MaterialGraphORM, Process, ProducedItem
+from scs.core.db.models import Item
+from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.models.graph_models import MaterialGraphORM
+from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
 
 
 class DatabaseGraphLoader:
@@ -13,20 +15,20 @@ class DatabaseGraphLoader:
 
     def load_processes(self):
         return self.session.execute(
-                select(Process)
+                select(ProcessORM)
         ).unique().scalars().all()
 
     def load_bought_items(self):
         return self.session.execute(
-                select(BoughtItem)
+                select(BoughtItemORM)
         ).unique().scalars().all()
 
     def load_produced_items(self):
         return self.session.execute(
-                select(BoughtItem)
+                select(BoughtItemORM)
         ).unique().scalars().all()
 
-    def get_graph_node_dict(self) -> dict[int, Process | BoughtItem | ProducedItem]:
+    def get_graph_node_dict(self) -> dict[int, ProcessORM | BoughtItemORM | ProducedItemORM]:
         return {typing.cast(int, graph_node.id): graph_node for graph_node in
                 list(self.load_bought_items()) + list(self.load_processes()) + list(self.load_produced_items())}
 

@@ -1,6 +1,6 @@
 import networkx as nx
 
-from scs.db.models.graph_node import GraphNode
+from scs.core.db.models.graph_models import GraphNode
 from scs.graph.db.database_graph_loader import DatabaseGraphLoader
 
 

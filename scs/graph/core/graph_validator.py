@@ -1,7 +1,8 @@
 import networkx as nx
 
-from scs.db.models.item import Item
-from scs.db.models.models import BoughtItem, Process, ProducedItem
+from scs.core.db.models import Item
+from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
 from scs.graph.core.production_graph import ProductionGraph
 
 
@@ -35,9 +36,9 @@ class GraphValidator:
 
     def _validate_edges(self):
         for weighted_edge in self.graph.edges:
-            if isinstance(weighted_edge.from_node, Process) and isinstance(weighted_edge.to_node, Item):
-                # Process → Item (output)
-                if not isinstance(dst_obj, ProducedItem):
+            if isinstance(weighted_edge.from_node, ProcessORM) and isinstance(weighted_edge.to_node, Item):
+                # ProcessORM → Item (output)
+                if not isinstance(dst_obj, ProducedItemORM):
                     self.errors.append(f"Invalid output: Process {src} → non‑produced Item {dst}")
                 if weight != 1:
                     self.errors.append(f"Output edge weight must be 1: {src} → {dst} (got {weight})")
@@ -46,9 +47,9 @@ class GraphValidator:
                             f"Process {src} must have exactly one output (out_degree={self.graph.out_degree(src)})"
                     )
 
-            elif isinstance(src_obj, Item) and isinstance(dst_obj, Process):
-                # Item → Process (input)
-                if not (isinstance(src_obj, ProducedItem) or isinstance(src_obj, BoughtItem)):
+            elif isinstance(src_obj, Item) and isinstance(dst_obj, ProcessORM):
+                # Item → ProcessORM (input)
+                if not (isinstance(src_obj, ProducedItemORM) or isinstance(src_obj, BoughtItemORM)):
                     self.errors.append(f"Invalid input: non‑item source {src} → Process {dst}")
                 if weight <= 0:
                     self.errors.append(f"Input edge weight must be >0: {src} → {dst} (got {weight})")

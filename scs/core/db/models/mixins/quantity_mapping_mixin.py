@@ -1,10 +1,10 @@
 from collections import Counter
 from typing import Optional
 
-from sqlalchemy import ForeignKey, CheckConstraint
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, Session, declared_attr
 
-from scs.db.models.item import Item
+from scs.core.db.models.item_models import Item
 
 
 class QuantityMappingMixin:

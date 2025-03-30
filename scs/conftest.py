@@ -23,5 +23,5 @@ def test_engine():
 
 @pytest.fixture(scope="session")
 def real_engine():
-    from scs.db.config import engine
+    from scs.core.db.config import engine
     yield engine

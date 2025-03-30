@@ -1,7 +1,7 @@
 import abc
 from dataclasses import dataclass
 
-from scs.db.models.graph_node import GraphNode
+from scs.core.db.models.graph_models import GraphNode
 
 
 @dataclass()

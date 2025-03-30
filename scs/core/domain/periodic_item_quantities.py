@@ -2,7 +2,7 @@ import dataclasses
 from collections import Counter
 from typing import Iterable
 
-from scs.db.models.item import Item
+from scs.core.db.models.item_models import Item
 
 
 @dataclasses.dataclass

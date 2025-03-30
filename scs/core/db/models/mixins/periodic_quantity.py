@@ -1,8 +1,8 @@
 import sqlalchemy
 from sqlalchemy.orm import Mapped, mapped_column
 
-from scs.db.models.mixins.periodic_item_quantity import PeriodicItemQuantity
-from scs.db.models.mixins.quantity_mapping_mixin import QuantityMappingMixin
+from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
+from scs.core.db.models.mixins.quantity_mapping_mixin import QuantityMappingMixin
 
 
 class PeriodicQuantity(QuantityMappingMixin):

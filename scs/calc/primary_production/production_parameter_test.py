@@ -9,18 +9,18 @@ from scs.calc.primary_production.lp_model.planner_attributes import ProductionPl
 from scs.calc.primary_production.lp_model.planner_solution import ProductionSolutionData
 from scs.calc.primary_production.lp_model.production_planner import ProductionPlanner
 from scs.calc.primary_production.math_function_builder import build_polynomial_function
-from scs.db.models.item import Item
-from scs.db.models.mixins.periodic_item_quantity import PeriodicItemQuantityBuilder
-from scs.db.models.models import ProducedItem
+from scs.core.db.models import Item
+from scs.core.db.models.mixins.periodic_item_quantity import PeriodicItemQuantityBuilder
+from scs.core.db.models.item_models import ProducedItemORM
 
 
 @pytest.fixture
 def demand_data():
     return (
             PeriodicItemQuantityBuilder()
-            .add_product(ProducedItem(1), [100, 100, 50, 150])
-            .add_product(ProducedItem(2), [150, 50, 50, 50])
-            .add_product(ProducedItem(3), [150, 100, 50, 50])
+            .add_product(ProducedItemORM(1), [100, 100, 50, 150])
+            .add_product(ProducedItemORM(2), [150, 50, 50, 50])
+            .add_product(ProducedItemORM(3), [150, 100, 50, 50])
             .build()
     )
 
@@ -29,9 +29,9 @@ def demand_data():
 def init_inventory():
     return Counter[Item](
             {
-                    ProducedItem(1): 100,
-                    ProducedItem(2): 0,
-                    ProducedItem(3): 100
+                    ProducedItemORM(1): 100,
+                    ProducedItemORM(2): 0,
+                    ProducedItemORM(3): 100
             }
     )
 
