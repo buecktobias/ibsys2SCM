@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     for layer, nodes in enumerate(nx.topological_generations(graph)):
         # `multipartite_layout` expects the layer as a node attribute, so add the
-        # numeric layer value as a node attribute
+        # numeric layer minutes as a node attribute
         for node in nodes:
             graph.nodes[node]["layer"] = layer
 

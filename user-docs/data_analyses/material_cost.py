@@ -3,8 +3,10 @@ import pandas as pd
 
 from matplotlib import pyplot as plt
 
-df = pd.read_csv(r'/extras/data/material_costs.csv', delimiter=',',
-                 decimal=",", thousands=".", encoding='utf-8')
+df = pd.read_csv(
+        r'/extras/data/material_costs.csv', delimiter=',',
+        decimal=",", thousands=".", encoding='utf-8'
+)
 df.head(40)
 
 # %%
@@ -109,7 +111,7 @@ df_k['average_demand'] = (df['quantity_used_for_child'] + df['quantity_used_for_
 z = 1.65
 df_k['safety_stock_factor'] = z * df_k['order_standard_deviation'] * df_k['average_demand']
 df_k['start_safety_stock_factor'] = df_k['start_quantity'] / df_k['average_demand'] / AVERAGE_PRODUCT_DEMAND
-# Storage cost depends on the safety stock level and the product value (price_per_part)
+# Storage cost depends on the safety stock level and the product minutes (price_per_part)
 df_k['storage_value_factor'] = df_k['safety_stock_factor'] * df_k['price_per_part']
 df_k['start_storage_value_factor'] = df_k['start_safety_stock_factor'] * df_k['price_per_part']
 # Visualize Safety Stock for each K item
@@ -132,11 +134,13 @@ plt.figure(figsize=(12, 5))
 width = 0.35
 indices = np.arange(len(df_k))
 plt.bar(indices - width / 2, df_k['safety_store_per_revenue'], width, label='Safety Stock Factor')
-plt.bar(indices + width / 2, df_k['start_storage_value_factor'] / AVERAGE_PRODUCT_PRICE, width,
-        label='Start Safety Stock Factor', color='red')
+plt.bar(
+        indices + width / 2, df_k['start_storage_value_factor'] / AVERAGE_PRODUCT_PRICE, width,
+        label='Start Safety Stock Factor', color='red'
+)
 plt.xlabel('Article ID')
 plt.ylabel('Storage Value per one product produced / revenue per product')
-plt.title('Safety Storage value as revenue factor (200) for K Items in regards to the summed demand')
+plt.title('Safety Storage minutes as revenue factor (200) for K Items in regards to the summed demand')
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
@@ -160,20 +164,21 @@ def order_duration_safety_factor(order_duration):
 # %%
 df_k['adjusted_safety_stock_linear'] = df_k['safety_stock_factor'] * df_k['order_duration']
 df_k['adjusted_safety_stock_sqrt'] = df_k['safety_stock_factor'] * df_k['order_duration'].apply(
-    order_duration_safety_factor)
+        order_duration_safety_factor
+)
 
 indices = np.arange(len(df_k))
 width = 0.35
 
 plt.figure(figsize=(12, 5))
 
-# 2. Scatter plot: Order Cost vs Order Duration
+# 2. Scatter plot: IOrder Cost vs IOrder Duration
 plt.scatter(df_k['order_duration'], df_k['order_price'], color='green')
 for i, txt in enumerate(df_k['article_id']):
     plt.annotate(txt, (df_k['order_duration'].iloc[i], df_k['order_price'].iloc[i]))
-plt.xlabel('Order Duration')
-plt.ylabel('Order Price')
-plt.title('Order Cost vs Order Duration')
+plt.xlabel('IOrder Duration')
+plt.ylabel('IOrder Price')
+plt.title('IOrder Cost vs IOrder Duration')
 plt.show()
 
 plt.figure(figsize=(12, 5))
@@ -182,7 +187,7 @@ plt.figure(figsize=(12, 5))
 plt.bar(indices, df_k['adjusted_safety_stock_sqrt'], color='purple')
 plt.xlabel('Article ID')
 plt.ylabel('Adjusted Safety Stock')
-plt.title('Adjusted Safety Stock (Safety Factor * Order Duration)')
+plt.title('Adjusted Safety Stock (Safety Factor * IOrder Duration)')
 plt.xticks(indices)
 plt.tight_layout()
 plt.show()

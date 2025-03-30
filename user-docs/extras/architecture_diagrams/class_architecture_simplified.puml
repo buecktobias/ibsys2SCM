@@ -1,0 +1,386 @@
+@startuml
+
+!include https://raw.githubusercontent.com/patrik-csak/one-dark-plantuml-theme/v1.0.1/theme.puml
+
+skinparam ClassFontColor white
+skinparam ClassAttributeFontColor white
+skinparam ClassFontSize 17
+skinparam CircledCharacterFontColor black
+skinparam CircledCharacterFontSize 18
+skinparam CircledCharacterFontStyle bold
+skinparam CircledCharacterRadius 12
+
+skinparam FontSize #515A5A
+skinparam FontColor white
+skinparam FontStyle bold
+skinparam Padding 1
+skinparam NodePadding 1
+skinparam HorizontalSpacing 1
+skinparam VerticalSpacing 1
+skinparam nodesep 20
+skinparam ranksep 50
+skinparam linetype polyline
+skinparam groupInheritance 3
+
+
+skinparam backgroundColor #333333
+skinparam defaultFontColor white
+
+skinparam class {
+    ArrowColor white
+    BorderColor white
+    BackgroundColor #141424
+}
+
+skinparam class<<ValueModel>> {
+    BackgroundColor #0A3D62
+    BorderColor #1F618D
+}
+
+skinparam class<<Aggregate>> {
+    BackgroundColor #2C3E50
+    BorderColor #566573
+}
+
+skinparam class<<PERSISTENCE>> {
+    BackgroundColor #2E4053
+    BorderColor #5D6D7E
+}
+
+skinparam class<<Service>> {
+    BackgroundColor #283747
+    BorderColor #515A5A
+}
+
+skinparam class<<Builder>> {
+    BackgroundColor #1C2833
+    BorderColor #424949
+}
+
+
+' ===== ORM Package =====
+package repositories{
+    class OrderRORepo{
+        + read_orders()
+    }
+
+    class GraphRORepo{
+        + get_root_graph()
+    }
+
+    class InvRORepo{
+        + get_inv()
+    }
+
+    class WSRORepo{
+        + get_ws()
+    }
+}
+
+
+package models {
+    package type{
+        class Time<<ValueModel>>
+    }
+    together{
+        interface InventoryChangeAggregate <<Aggregate>>{
+            + inventory_changes: list<InvChange>
+            + expected_inv_change_between(from, until): float
+            + total_est_cash_flow_between(from, until): int
+            + get_cash_flow_per_item() : int
+        }
+
+        interface InvChange{
+            + item: Item
+            + quantity: -1 | 1
+            + inv_change_between(from, until): float
+        }
+
+        abstract class EstimatedInvChange implements InvChange{
+            + expected_execution_mean: Time
+            + expected_execution_stdv: Time
+        }
+
+        abstract class CertainInvChange implements InvChange{
+            + execution_at: Time
+        }
+
+
+        interface Order extends InventoryChangeAggregate{
+            + get_created_at(): Time
+            + is_incoming(): bool
+            + get_item(): Item
+            + get_penalty(): int
+            + get_order_cost(): int
+        }
+
+        interface  BuyOrder extends Order{
+            + incoming = true
+        }
+        interface SellOrder extends Order{
+            + incoming = false
+        }
+
+        abstract class OrderItem implements InvChange{
+            + item: Item
+            + quantity: -1 | 1
+            + price: int
+        }
+
+        class NormalOrderItem extends CertainInvChange, OrderItem{
+            + item: Item
+            + quantity = +1
+            + execution_at: Time
+        }
+
+        class DirectOrderItem extends CertainInvChange, OrderItem{
+            + item: Item
+            + quantity = +1
+            + execution_at: Time
+        }
+
+        class ConcreteOrder implements Order{
+            + created_at: Time
+            + is_executed: bool
+            + incoming: bool
+            + order_items
+        }
+
+        class NormalOrder extends ConcreteOrder implements SellOrder{
+        }
+
+
+        NormalOrder o-- NormalOrderItem
+
+        class DirectOrder extends ConcreteOrder implements SellOrder{
+            - penalty_per_item
+        }
+        DirectOrder o-- DirectOrderItem
+
+
+        class MaterialOrderItem extends EstimatedInvChange, OrderItem{
+            + quantity = -1
+        }
+
+        class MaterialOrder extends ConcreteOrder implements BuyOrder{
+        }
+        MaterialOrder o-- MaterialOrderItem
+
+        class ItemProductionItem extends EstimatedInvChange{
+        }
+
+        class ItemProduction extends InventoryChangeAggregate{
+        }
+        ItemProduction o-- ItemProductionItem
+    }
+
+
+    class WSCapa{
+        + shifts: int
+        + overtime: int
+    }
+
+
+     package input{
+          class WSUseInfo{
+             + workstation_id: int
+             + setup_events: int
+             + idletime: int
+             + time_needed: int
+          }
+
+          class Inventory{
+            - period: TimePoint
+            - item_quantities: dict<Produced, int>
+            - item_values: dict<Produced: int>
+          }
+     }
+
+
+
+    class MaterialGraphORM {
+        + id: int
+        + name: String
+    }
+
+    class Resource{
+        + id: int
+    }
+
+    class Process extends Resource {
+        + duration: int
+    }
+
+    class Item extends Resource {
+        + id: int
+    }
+
+    class Produced extends Item{
+    }
+
+    class Bought extends Item{
+    }
+
+    class Workstation {
+        + id: int
+    }
+
+    ' ORM Associations
+    MaterialGraphORM "0..1" o-- "n" Process
+    MaterialGraphORM "0..1" o--- "n" MaterialGraphORM: "subgraph"
+    Process "n" o-- "m" Item
+    Process "n" o-- "1" Workstation
+    Inventory "1" o-- "n" Item
+    Order "1" o-- "n" Item
+    WSUseInfo o-- Workstation
+    WSCapa o-- Workstation
+    Production o-- Produced
+}
+
+
+package optimization {
+    class PlanPrimaryProd{
+        + plan_prim_prod(): Counter<Produced>
+    }
+
+    class OptSafetyInv{
+    }
+
+    class OptOrders{
+    }
+}
+
+package calc{
+    class CalcResReq {
+        + calc_res_req(): Counter<Res>
+    }
+
+    class CalcWSCapa{
+        +calc_ws_capa: dict<WSId, int>
+    }
+
+    class EstInvCost{
+        + est_inv_cost: int
+    }
+
+    class CalcNeededOrders{
+        + calc_needed_orders: list<MaterialOrder>
+    }
+
+    class CalcOrderCosts{
+    }
+
+    class CalcWSCosts{
+    }
+
+    class CalcExpectedInv{
+        + calc_expected_inv(period, day): Inventory
+    }
+
+    class EstEarnings{
+        - orders: list<Order>
+        - production: list<Production>
+        + est_costs()
+        + est_revenue()
+        + est_earnings()
+    }
+}
+
+
+package domain {
+    class InvDTO{
+    }
+    class BuyOrderDTO{
+    }
+
+    class ProductionDTO{
+    }
+
+    class ExpectedSales {
+        - period: int
+        - item_quantities: dict<Produced, int>
+    }
+
+    class MaterialGraph {
+        + id: int
+        + name: String
+        + processes: List<Process>
+        + subgraphs: List<MaterialGraph>
+    }
+    class MaterialNXGraph{
+        to_json
+        from_json
+    }
+
+    class BuildNxDiGraph{
+        + build(m_graph): NxDiGraph
+    }
+    together{
+        class NxNode{
+            + id: int
+        }
+
+        class NxEdge{
+            + from_node
+            + to_node
+            + weight: int
+        }
+
+        class NxDiGraph{
+        }
+
+
+        NxDiGraph *-- NxEdge
+        NxDiGraph *-- NxNode
+    }
+    MaterialNXGraph o-- NxDiGraph
+
+}
+
+
+
+
+package visualization {
+    circle RestAPI
+    rectangle vis{
+        class VisController <<control>>{
+        }
+
+        class GraphVisualizer{
+            + visualize()
+        }
+
+        class VisualizationConverter {
+            + convert(graph): MaterialGraph
+        }
+
+        package mermaid{
+        }
+    }
+    RestAPI -> VisController
+    VisController -> GraphVisualizer
+    ' Visualization Dependencies
+    GraphVisualizer o--> VisualizationConverter
+
+    GraphVisualizer ..> mermaid: "use"
+}
+
+repositories -[hidden]- models
+
+GraphRORepo o-> MaterialGraphORM
+OrderRORepo o-> Order
+
+WSRORepo o-> WSUseInfo
+InvRORepo o-> Inventory
+
+PlanPrimaryProd ..> ExpectedSales
+BuildNxDiGraph ..> NxDiGraph
+BuildNxDiGraph ..> MaterialGraph
+MaterialGraph .. GraphRORepo
+visualization.RestAPI -- MaterialGraph
+
+CalcResReq ..> MaterialNXGraph
+CalcResReq ..> PrimProdDTO
+CalcResReq ..> InvDTO
+
+@enduml

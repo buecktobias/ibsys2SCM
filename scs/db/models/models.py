@@ -11,6 +11,7 @@ from scs.db.models.graph_node import GraphNode
 from scs.db.models.item import Item
 from scs.db.models.mixins.periodic_quantity import PeriodicQuantity
 from scs.db.models.mixins.quantity_mapping_mixin import QuantityMappingMixin
+from scs.db.types import DomainSimTime, PeriodTime, SimTime
 
 
 class Workstation(Base):
@@ -120,49 +121,7 @@ class ProcessOutput(Base):
 class SimulationConfig(Base):
     __tablename__ = "simulation_config"
     id: Mapped[int] = mapped_column(primary_key=True)
-    simulation_virtual_start: Mapped[datetime.datetime] = mapped_column(DateTime)
-
-
-class TimePoint(Base):
-    __tablename__ = "time_point"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    value: Mapped[datetime.datetime] = mapped_column(DateTime)
-
-    @property
-    def in_total_minutes(self) -> int:
-        return int(self.value.timestamp() / 60)
-
-    def in_periods(self) -> int:
-        return self.in_total_minutes
-
-    def in_period_day_minute(self) -> dict:
-        total = self.in_total_minutes
-        day = total // (24 * 60)
-        rem = total % (24 * 60)
-        hour = rem // 60
-        minute = rem % 60
-        return {"period": day, "day": day, "hour": hour, "minute": minute}
-
-
-class Duration(Base):
-    __tablename__ = "duration"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    value: Mapped[datetime.timedelta] = mapped_column(Interval)
-
-    @property
-    def in_total_minutes(self) -> int:
-        return int(self.value.total_seconds() / 60)
-
-    def in_periods(self) -> int:
-        return self.in_total_minutes
-
-    def in_period_day_minute(self) -> dict:
-        total = self.in_total_minutes
-        day = total // (24 * 60)
-        rem = total % (24 * 60)
-        hour = rem // 60
-        minute = rem % 60
-        return {"period": day, "day": day, "hour": hour, "minute": minute}
+    current_sim_time: Mapped[SimTime] = mapped_column(SimTime)
 
 
 class Order(Base):
@@ -190,24 +149,6 @@ class Order(Base):
             "polymorphic_on": order_kind,
             "polymorphic_identity": "order"
     }
-
-
-class BuyOrder(Order):
-    __abstract__ = True
-
-    def __init__(self, **kwargs: any) -> None:
-        kwargs.setdefault("offered_by_us", False)
-        kwargs.setdefault("offered_to_us", True)
-        super().__init__(**kwargs)
-
-
-class SellOrder(Order):
-    __abstract__ = True
-
-    def __init__(self, **kwargs: any) -> None:
-        kwargs.setdefault("offered_by_us", True)
-        kwargs.setdefault("offered_to_us", False)
-        super().__init__(**kwargs)
 
 
 class NormalOrder(SellOrder):
@@ -245,19 +186,17 @@ class ItemProduction(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     producing_item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
     quantity: Mapped[int] = mapped_column(Integer)
-    est_finish_at_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
-    est_finish_stdv_id: Mapped[int] = mapped_column(ForeignKey("duration.id"))
+    est_finish_at: Mapped[DomainSimTime] = mapped_column(SimTime)
+    est_finish_stdv: Mapped[DomainSimTime] = mapped_column(SimTime)
 
     producing_item = relationship("Item")
-    est_finish_at = relationship("TimePoint", foreign_keys=[est_finish_at_id])
-    est_finish_stdv = relationship("Duration", foreign_keys=[est_finish_stdv_id])
 
 
 class WSCapa(Base):
     __tablename__ = "ws_capa"
     id: Mapped[int] = mapped_column(primary_key=True)
     shifts: Mapped[int] = mapped_column(Integer)
-    overtime: Mapped[int] = mapped_column(Integer)
+    overtime: Mapped[SimTime] = mapped_column(Integer)
     workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"))
 
     workstation = relationship("Workstation", back_populates="capa")
@@ -268,8 +207,8 @@ class WSUseInfo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"))
     setup_events: Mapped[int] = mapped_column(Integer)
-    idletime: Mapped[int] = mapped_column(Integer)
-    time_needed: Mapped[int] = mapped_column(Integer)
+    idletime: Mapped[DomainSimTime] = mapped_column(SimTime)
+    time_needed: Mapped[DomainSimTime] = mapped_column(SimTime)
 
     workstation = relationship("Workstation", back_populates="use_info")
 
@@ -277,39 +216,4 @@ class WSUseInfo(Base):
 class InputInventory(Base):
     __tablename__ = "input_inventory"
     id: Mapped[int] = mapped_column(primary_key=True)
-    period_id: Mapped[int] = mapped_column(ForeignKey("time_point.id"))
-    period = relationship("TimePoint")
-    item_quantities: Mapped[dict] = mapped_column(JSON)
-    item_values: Mapped[dict] = mapped_column(JSON)
-
-
-class PTimeFormat:
-    def __init__(self, period: int, day: int, hour: int, minute: int):
-        self.period = period
-        self.day = day
-        self.hour = hour
-        self.minute = minute
-
-
-class TimePointBuilder:
-    @staticmethod
-    def from_minutes(minutes: int) -> TimePoint:
-        dt = datetime.datetime.fromtimestamp(minutes * 60)
-        return TimePoint(value=dt)
-
-    @staticmethod
-    def from_periods(periods: int) -> TimePoint:
-        dt = datetime.datetime.fromtimestamp(periods * 60)
-        return TimePoint(value=dt)
-
-
-class TimeDurationBuilder:
-    @staticmethod
-    def from_minutes(minutes: int) -> Duration:
-        td = datetime.timedelta(minutes=minutes)
-        return Duration(value=td)
-
-    @staticmethod
-    def from_periods(periods: int) -> Duration:
-        td = datetime.timedelta(minutes=periods)
-        return Duration(value=td)
+    period: Mapped[DomainSimTime] = mapped_column(PeriodTime)
