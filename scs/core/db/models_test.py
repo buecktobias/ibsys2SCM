@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from scs.core.db.models.base import Base
-from scs.core.db.models.item_models import BoughtItemORM, Item, ProducedItemORM
+from scs.core.db.models.item_models import BoughtItemORM, ItemORM, ProducedItemORM
 from scs.core.db.models.graph_models import MaterialGraphORM
 from scs.core.db.models.ws_models import WorkstationORM
 
@@ -24,11 +24,11 @@ def db_session(test_engine):
 
 
 def test_create_and_fetch_item(db_session: Session):
-    new_item = Item(id=999)
+    new_item = ItemORM(id=999)
     db_session.add(new_item)
     db_session.commit()
 
-    fetched = db_session.get(Item, 999)
+    fetched = db_session.get(ItemORM, 999)
     assert fetched is not None
     assert fetched.id == 999
 

@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from scs.core.db.models.graph_models import MaterialGraphORM
-from scs.core.db.models.item_models import BoughtItemORM, Item, ProducedItemORM
+from scs.core.db.models.item_models import BoughtItemORM, ItemORM, ProducedItemORM
 from scs.core.db.models.process_models import ProcessORM
 
 
@@ -31,11 +31,11 @@ class MaterialGraphRepository:
         return {typing.cast(int, graph_node.id): graph_node for graph_node in
                 list(self.load_bought_items()) + list(self.load_processes()) + list(self.load_produced_items())}
 
-    def get_item(self, item_id: int) -> Item:
-        item = self.session.get(Item, item_id)
+    def get_item(self, item_id: int) -> ItemORM:
+        item = self.session.get(ItemORM, item_id)
         if item is None:
             raise ValueError(f"Item {item_id} not found")
-        return typing.cast(item, Item)
+        return typing.cast(item, ItemORM)
 
     def load_material_graph_root(self) -> MaterialGraphORM:
         stmt = select(MaterialGraphORM).where(MaterialGraphORM.parent_graph_id.is_(None))

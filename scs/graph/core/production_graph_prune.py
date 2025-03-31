@@ -3,7 +3,7 @@ class NetworkXGraphPrune:
         to_remove = []
         for node in list(self.nx.node_ids):
             node_data = self.nx.node_ids[node].get("data")
-            # Only consider nodes representing an Item that is produced.
+            # Only consider nodes representing an ItemORM that is produced.
             if isinstance(node_data, Item):
                 in_edges = list(self.nx.in_edges(node, data="weight"))
                 out_edges = list(self.nx.out_edges(node, data="weight"))

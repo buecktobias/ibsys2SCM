@@ -1,9 +1,9 @@
 import networkx as nx
 
-from scs.core.db.models.graph_models import GraphNode, MaterialGraphORM
+from scs.core.db.models.graph_models import GraphNodeORM, MaterialGraphORM
 from scs.core.db.models.process_models import ProcessORM
 from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
-from scs.core.domain.weighted_edge import WeightedEdge
+from scs.graph.core.weighted_edge import WeightedEdge
 
 
 class ProductionGraph:
@@ -17,7 +17,7 @@ class ProductionGraph:
         self._node_id_dict = node_id_dict
         self._root_or_graph = root_orm_graph
 
-    def get_node_by_id(self, node_id: int) -> GraphNode:
+    def get_node_by_id(self, node_id: int) -> GraphNodeORM:
         return self._node_id_dict[node_id]
 
     @property

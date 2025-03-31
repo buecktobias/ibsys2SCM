@@ -3,7 +3,7 @@ import networkx as nx
 from scs.core.db.models import Item
 from scs.core.db.models.process_models import ProcessORM
 from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
-from scs.core.domain.production_graph import ProductionGraph
+from scs.graph.core.production_graph import ProductionGraph
 
 
 class GraphValidator:
@@ -37,7 +37,7 @@ class GraphValidator:
     def _validate_edges(self):
         for weighted_edge in self.graph.edges:
             if isinstance(weighted_edge.from_node, ProcessORM) and isinstance(weighted_edge.to_node, Item):
-                # ProcessORM → Item (output)
+                # ProcessORM → ItemORM (output)
                 if not isinstance(dst_obj, ProducedItemORM):
                     self.errors.append(f"Invalid output: Process {src} → non‑produced Item {dst}")
                 if weight != 1:
@@ -48,7 +48,7 @@ class GraphValidator:
                     )
 
             elif isinstance(src_obj, Item) and isinstance(dst_obj, ProcessORM):
-                # Item → ProcessORM (input)
+                # ItemORM → ProcessORM (input)
                 if not (isinstance(src_obj, ProducedItemORM) or isinstance(src_obj, BoughtItemORM)):
                     self.errors.append(f"Invalid input: non‑item source {src} → Process {dst}")
                 if weight <= 0:

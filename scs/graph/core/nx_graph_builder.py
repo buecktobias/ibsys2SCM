@@ -1,7 +1,7 @@
 import networkx as nx
 
-from scs.core.db.models.graph_models import GraphNode
-from scs.core.domain.entities import GraphNodeDomain, ProcessDomain
+from scs.core.domain.item_models import GraphNodeDomain
+from scs.core.domain.process_domain_model import ProcessDomain
 
 
 class NxGraphBuilder:

@@ -1,33 +1,21 @@
 import sqlalchemy
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import declared_attr, Mapped, mapped_column, relationship
 
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
-from scs.core.db.models.mixins.quantity_mapping_mixin import QuantityMappingMixin
+from scs.core.db.models.item_models import ItemORM
 
 
-class PeriodicQuantity(QuantityMappingMixin):
+class QuantityMixin:
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
+    quantity: Mapped[int] = mapped_column(default=0)
+
+    @declared_attr
+    def item(self) -> Mapped[ItemORM]:
+        return relationship(
+                ItemORM,
+                lazy="joined"
+        )
+
+
+class PeriodicQuantityMixin(QuantityMixin):
     period: Mapped[int] = mapped_column(primary_key=True)
-
-    @classmethod
-    def get_period_filter(cls, query, period: int):
-        return query.filter_by(period=period)
-
-    @classmethod
-    def unique_periods(cls, session: sqlalchemy.orm.Session) -> list[int]:
-        # Get all distinct periods
-        return list(
-                session.scalars(
-                        session.query(cls.period)
-                        .distinct()
-                ).all()
-        )
-
-    @classmethod
-    def get_periodic_item_quantity(cls, session: sqlalchemy.orm.Session) -> PeriodicItemQuantity:
-        # Load all rows and convert them to a PeriodicItemQuantity
-        return PeriodicItemQuantity(
-                {
-                        period: cls.load_as_counter(session, period)
-                        for period in cls.unique_periods(session)
-                }
-        )

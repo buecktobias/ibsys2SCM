@@ -1,7 +1,7 @@
 from collections import Counter
 
-from scs.core.db.models.item_models import Item
-from scs.core.domain.production_graph import ProductionGraph
+from scs.core.db.models.item_models import ItemORM
+from scs.graph.core.production_graph import ProductionGraph
 
 
 class ResourceCalculator:
@@ -11,8 +11,8 @@ class ResourceCalculator:
     def _traverse_node(
             self,
             graph: ProductionGraph,
-            required_resources: Counter[Item],
-            inventory: Counter[Item],
+            required_resources: Counter[ItemORM],
+            inventory: Counter[ItemORM],
             node_id: str,
             multiplier: int = 1,
     ) -> None:

@@ -1,16 +1,8 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from scs.db.models import (
-    Workstation, DemandForecast, BoughtItem, ProducedItem, MaterialGraphORM,
-    Process, ProcessInput, ProcessOutput, SimulationConfig, Order, NormalOrder,
-    DirectOrder, MaterialOrder, ItemProduction, WSCapa, WSUseInfo, InventoryResultItem
-)
-from scs.domain import (
-    WorkstationDomain, DemandForecastDomain, BoughtItemDomain, ProducedItemDomain,
-    MaterialGraphDomain, ProcessDomain, ProcessInputDomain, ProcessOutputDomain,
-    SimulationConfigDomain, OrderDomain, NormalOrderDomain, DirectOrderDomain,
-    MaterialOrderDomain, ItemProductionDomain, WSCapaDomain, WSUseInfoDomain,
-    InventoryResultItemDomain, ItemDomain
-)
+
+from scs.core.db.models.ws_models import WorkstationORM
+from scs.core.domain.ws_domain_model import WorkstationDomain
 
 
 class WorkstationRepository:
@@ -18,7 +10,7 @@ class WorkstationRepository:
         self.session = session
 
     def get_by_id(self, id: int) -> WorkstationDomain:
-        ws = self.session.query(Workstation).filter(Workstation.id == id).one()
+        ws = self.session.execute(select(WorkstationORM).filter_by(id=id)).scalars().one()
         return WorkstationDomain(
                 id=ws.id,
                 labour_cost_1=ws.labour_cost_1,

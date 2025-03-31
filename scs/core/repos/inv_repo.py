@@ -1,14 +1,21 @@
-class InventoryResultItemRepository:
-    def __init__(self, session: Session):
+from collections import Counter
+
+import sqlalchemy
+
+from scs.core.db.models.inv_model import InventoryItemORM
+from scs.core.db.models.item_models import ItemORM
+from scs.core.domain.item_models import ItemDomain
+
+
+class InventoryRepo:
+    def __init__(self, session: sqlalchemy.orm.Session):
         self.session = session
 
-    def get_by_key(self, period: int, item_id: int) -> InventoryResultItemDomain:
-        inv = self.session.query(InventoryResultItem).filter(
-                InventoryResultItem.period == period,
-                InventoryResultItem.item_id == item_id
-        ).one()
-        return InventoryResultItemDomain(
-                period=inv.period,
-                item_id=inv.item_id,
-                quantity=inv.quantity
-        )
+    def get_inventory_for_period(self, period: int) -> Counter[ItemDomain]:
+        """
+        Get the inventory for a specific period.
+
+        :param period: The period for which to get the inventory.
+        :return: A Counter of ItemDomain objects with their quantities.
+        """
+        return InventoryItemORM.load_as_counter(self.session, period)
