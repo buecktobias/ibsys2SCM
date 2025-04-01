@@ -1,4 +1,4 @@
-from scs.core.db.models.graph.graph_node import GraphNodeORM
+from scs.core.db.models.graph.graph_node_orm import GraphNodeORM
 from scs.core.db.models.process_models import ProcessORM
 from scs.core.domain.item_models import GraphNodeDomain
 from scs.core.domain.process_domain_model import ProcessDomain

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.periodic.demand_model import DemandForecastItemORM
+from scs.core.db.models.periodic.demand_forecast_item_orm import DemandForecastItemORM
 from scs.core.repos.mixins.period_qty_mixin import PeriodQtyMixin
 
 

@@ -1,4 +1,4 @@
-from scs.core.db.models.ws_models import WorkstationORM
+from scs.core.db.models.workstation_orm import WorkstationORM
 from scs.core.domain.ws_domain_model import WorkstationDomain
 from scs.core.mapper.base_mapper import BaseMapper
 

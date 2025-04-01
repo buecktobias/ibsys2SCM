@@ -2,7 +2,8 @@ import collections
 from collections import Counter
 from typing import Optional
 
-from scs.core.db.models.mixins.periodic_quantity import PeriodMixin, QuantityMixin
+from scs.core.db.models.mixins.quantity_mixin import QuantityMixin
+from scs.core.db.models.mixins.period_mixin import PeriodMixin
 from scs.core.domain.item_models import ItemDomain
 from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
 from scs.core.repos.mixins.period_repo_mixin import PeriodRepoMixin
