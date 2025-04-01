@@ -3,7 +3,7 @@ import networkx as nx
 from scs.core.db.models import Item
 from scs.core.db.models.process_models import ProcessORM
 from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
-from scs.graph.core.production_graph import ProductionGraph
+from scs.core.domain.production_graph import ProductionGraph
 
 
 class GraphValidator:

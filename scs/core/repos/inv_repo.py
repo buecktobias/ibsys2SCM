@@ -2,8 +2,7 @@ from collections import Counter
 
 import sqlalchemy
 
-from scs.core.db.models.inv_model import InventoryItemORM
-from scs.core.db.models.item_models import ItemORM
+from scs.core.db.models.periodic.inv_model import InventoryItemORM
 from scs.core.domain.item_models import ItemDomain
 
 

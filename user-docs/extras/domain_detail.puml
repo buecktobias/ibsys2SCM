@@ -1,0 +1,142 @@
+@startuml
+!include https://raw.githubusercontent.com/buecktobias/plantuml-dark-theme/refs/heads/master/dark-puml-css/theme.puml
+
+' Database Layer
+database PostgreSQL {
+    !include ./architecture_diagrams/er/er_diagram.puml
+    hide private members
+}
+
+' Persistence / ORM Layer
+package ORM {
+    class Order {
+        + quantity: int
+        + price: int
+    }
+
+    class Inventory {
+        - period: int
+        - item_quantities: dict<Produced, int>
+    }
+
+    class MaterialGraphORM {
+        + id: int
+        + name: String
+    }
+
+    class Resource {
+        + id: int
+    }
+
+    class Process extends Resource {
+        + duration: int
+    }
+
+    class Item extends Resource {
+        + id: int
+    }
+
+    class Produced extends Item {
+    }
+
+    class Bought extends Item {
+    }
+
+    class Workstation {
+        + id: int
+    }
+
+    ' ORM Associations
+    MaterialGraphORM "0..1" o-- "n" Process
+    MaterialGraphORM "0..1" o--- "n" MaterialGraphORM : "subgraph"
+    Process "n" o-- "m" Item
+    Process "n" o-- "1" Workstation
+    Inventory "1" o-- "n" Item
+
+    ' Link ORM to the Database
+
+}
+
+' Domain Layer (Pure Business Objects)
+package Domain {
+    class OrderDomain {
+        + quantity: int
+        + price: int
+    }
+
+    class InventoryDomain {
+        - period: int
+        - itemQuantities: dict<ProducedDomain, int>
+    }
+
+    class MaterialGraph {
+        + id: int
+        + name: String
+    }
+
+    class ResourceDomain {
+        + id: int
+    }
+
+    class ProcessDomain extends ResourceDomain {
+        + duration: int
+    }
+
+    class ItemDomain extends ResourceDomain {
+        + id: int
+    }
+
+    class ProducedDomain extends ItemDomain {
+    }
+
+    class BoughtDomain extends ItemDomain {
+    }
+
+    class WorkstationDomain {
+        + id: int
+    }
+}
+
+' Mapper Layer (Mapping between ORM and Domain)
+package Mapper {
+    class OrderMapper
+    class InventoryMapper
+    class MaterialGraphMapper
+
+    ' Indicate that mappers know both sides
+    OrderMapper ..> Order : "maps"
+    OrderMapper ..> OrderDomain : "to Domain"
+
+    InventoryMapper ..> Inventory : "maps"
+    InventoryMapper ..> InventoryDomain : "to Domain"
+
+    MaterialGraphMapper ..> MaterialGraphORM : "maps"
+    MaterialGraphMapper ..> MaterialGraph : "to Domain"
+}
+
+' Repository Layer (Abstraction over persistence)
+package Repo {
+    class OrderRepository
+    class InventoryRepository
+    class MaterialGraphRepository
+
+    ' Repositories use mappers to convert ORM objects into Domain objects.
+    OrderRepository ..> OrderMapper : "uses"
+    InventoryRepository ..> InventoryMapper : "uses"
+    MaterialGraphRepository ..> MaterialGraphMapper : "uses"
+
+    ' Repositories return Domain objects
+    OrderRepository --> OrderDomain : "returns"
+    InventoryRepository --> InventoryDomain : "returns"
+    MaterialGraphRepository --> MaterialGraph : "returns"
+}
+
+' Layer layout hints (from top to bottom)
+' Domain on top, then Mapper, then Repository, then ORM, then Database
+Domain -[hidden]-> Mapper
+Mapper -[hidden]-> Repo
+Repo -[hidden]-> ORM
+ORM -[hidden]-> PostgreSQL
+
+ORM ..> PostgreSQL : persists
+@enduml

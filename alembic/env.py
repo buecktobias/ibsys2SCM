@@ -9,7 +9,7 @@ from scs.core.db.models.models import *
 # noinspection PyUnresolvedReferences
 from scs.core.db.models import *
 # noinspection PyUnresolvedReferences
-from scs.core.db.models.graph_models import *
+from scs.core.db.models.graph.material_graph_orm import *
 
 import scs.core.db.models.base
 

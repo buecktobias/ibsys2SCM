@@ -1,0 +1,95 @@
+@startuml
+
+top to bottom direction
+skinparam linetype polyline
+skinparam class<<relation>> {
+  BorderColor #00ACC1
+  FontStyle italic
+}
+
+entity item {
+  + id: integer
+  - type: varchar(50)
+}
+
+entity workstation {
+  + id: integer
+  ----
+  - labour_cost_1: double
+  - labour_cost_2: double
+  - labour_cost_3: double
+  - labour_overtime_cost: double
+  - variable_machine_cost: double
+  - fixed_machine_cost: double
+}
+
+entity graph_node {
+  + id: integer {PK#}
+  - type: varchar(50)
+}
+
+entity material_graph {
+  + id: integer
+  # parent_graph_id: integer
+  - name: varchar
+}
+
+entity process {
+  + id: integer
+  # graph_id: integer
+  # workstation_id: integer
+  - process_duration: integer
+  - setup_duration: integer
+}
+
+entity process_input <<relation>> {
+  # process_id: integer
+  # item_id: integer
+  - quantity: integer
+}
+
+entity process_output <<relation>> {
+  # process_id: integer
+  # item_id: integer
+}
+
+entity bought_item {
+  + id: integer
+  - base_price: double
+  - discount_amount: integer
+  - mean_order_duration: double
+  - order_std_dev: double
+  - base_order_cost: double
+}
+
+entity produced_item {
+  + id: integer
+}
+
+entity inventory {
+  # item_id: integer
+  + period: integer
+  - quantity: integer
+}
+
+entity demand_forecast {
+  # item_id: integer
+  + period: integer
+  - quantity: integer
+}
+
+demand_forecast  }o--  item: has
+bought_item ||-- item: is
+inventory }o-- item: has
+item ||-- graph_node: is
+material_graph }|-- material_graph   : "is subgraph of"
+process ||-- graph_node: is
+process ||-- material_graph   : part of
+process           --^  workstation      : "workstation_id:id"
+process_input     --^  item             : "item_id:id"
+process_input     --^  process          : "process_id:id"
+process_output    --^  item             : "item_id:id"
+process_output    --^  process          : "process_id:id"
+produced_item     --^  item             : "id"
+
+@enduml

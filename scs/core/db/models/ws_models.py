@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped
 
-from scs.core.db.models.base import Base, IdMixin
-from scs.core.db.types import DomainSimTime, PeriodTime, SimTime
+from scs.core.db.models.base import Base
+from scs.core.db.models.mixins.id_mixin import IdMixin
 
 
 class WorkstationORM(IdMixin, Base):

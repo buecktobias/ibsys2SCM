@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import ForeignKey, ForeignKeyConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, MappedAsDataclass
 
-from scs.core.db.models.graph_models import GraphNodeORM
+from scs.core.db.models.graph.graph_node import GraphNodeORM
 
 
 class ItemORM(GraphNodeORM):

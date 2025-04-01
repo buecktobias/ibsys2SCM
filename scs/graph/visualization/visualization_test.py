@@ -3,8 +3,8 @@ import networkx as nx
 
 from scs.core.db.config import engine
 from scs.graph.db.database_graph_loader import DatabaseGraphLoader
-from scs.graph.core.graph_validator import GraphValidator
-from scs.graph.core.nx_graph_builder import NxGraphBuilder
+from scs.core.domain.graph.graph_validator import GraphValidator
+from scs.core.domain.graph.nx_graph_builder import NxGraphBuilder
 
 if __name__ == "__main__":
     from sqlalchemy.orm import sessionmaker

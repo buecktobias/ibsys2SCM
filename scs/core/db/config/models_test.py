@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from scs.core.db.models.base import Base
 from scs.core.db.models.item_models import BoughtItemORM, ItemORM, ProducedItemORM
-from scs.core.db.models.graph_models import MaterialGraphORM
+from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
 from scs.core.db.models.ws_models import WorkstationORM
 
 

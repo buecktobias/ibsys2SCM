@@ -33,6 +33,16 @@ class ItemDomain(GraphNodeDomain, abc.ABC):
 
 
 class BoughtItemDomain(ItemDomain):
+    """
+    Represents an item that has been bought.
+    Attributes:
+        base_price: float
+        discount_amount: int
+        mean_order_duration: float
+        order_std_dev: float
+        base_order_cost: float
+
+    """
     base_price: float
     discount_amount: int
     mean_order_duration: float

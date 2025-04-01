@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from scs.core.db.models.base import Base
 from scs.core.db.models.item_models import ItemORM, ProducedItemORM
 from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
-from scs.core.db.models.demand_model import DemandForecastORM
+from scs.core.db.models.periodic.demand_model import DemandForecastORM
 
 DATABASE_URL = r"sqlite:///test.db"
 engine = create_engine(DATABASE_URL)

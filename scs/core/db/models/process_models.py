@@ -4,7 +4,7 @@ from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from scs.core.db.models.base import Base
-from scs.core.db.models.graph_models import GraphNodeORM, MaterialGraphORM
+from scs.core.db.models.graph.graph_node import GraphNodeORM
 from scs.core.db.models.item_models import ItemORM
 from scs.core.db.models.mixins.periodic_quantity import QuantityMixin
 from scs.core.db.models.ws_models import WorkstationORM
@@ -27,6 +27,8 @@ class ProcessORM(GraphNodeORM):
     process_duration_minutes: Mapped[int]
     setup_duration_minutes: Mapped[int]
 
+    # noinspection PyUnresolvedReferences
+    graph: Mapped["MaterialGraphORM"] = relationship(back_populates="processes", uselist=False, lazy="joined")
     inputs: Mapped[list["ProcessInputORM"]] = relationship(back_populates="process", lazy="joined")
     workstation: Mapped[WorkstationORM] = relationship(lazy="joined")
     output: Mapped["ProcessOutputORM"] = relationship(back_populates="process", uselist=False, lazy="joined")
@@ -34,7 +36,6 @@ class ProcessORM(GraphNodeORM):
 
 class ProcessInputORM(QuantityMixin, Base):
     __tablename__ = "process_input"
-    __table_args__ = (CheckConstraint("quantity >= 1"),)
     process_id: Mapped[int] = mapped_column(
             ForeignKey("process.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )

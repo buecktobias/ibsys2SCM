@@ -1,7 +1,7 @@
 from collections import Counter
 
 from scs.core.db.models.item_models import ItemORM
-from scs.graph.core.production_graph import ProductionGraph
+from scs.core.domain.production_graph import ProductionGraph
 
 
 class ResourceCalculator:

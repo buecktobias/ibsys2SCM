@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.demand_model import DemandForecastItemORM
+from scs.core.db.models.periodic.demand_model import DemandForecastItemORM
+from scs.core.repos.mixins.period_qty_mixin import PeriodQtyMixin
 
 
-class DemandForecastRepository:
+class DemandForecastRepository(PeriodQtyMixin[DemandForecastItemORM]):
     def __init__(self, session: Session):
         self.session = session
 
