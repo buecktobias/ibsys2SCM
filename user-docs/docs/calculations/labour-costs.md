@@ -8,6 +8,7 @@ Sei
 
 - $B = 480$ Minuten, die Basisarbeitszeit pro Schicht, und
 - $PCap_d(ws) \in [0,1440]$ die geplante Kapazität pro Tag in Minuten für eine Workstation $ws$
+test
 
 ### Anzahl Schichten
 
