@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.15.1",
     "cvxpy>=1.6.4",
+    "fastapi>=0.115.12",
     "frozendict>=2.4.6",
     "jupyter>=1.1.1",
     "markdown-include>=0.8.1",

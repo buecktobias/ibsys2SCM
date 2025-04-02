@@ -1,11 +1,11 @@
 from scs.core.db.models.item_models import BoughtItemORM
-from scs.core.domain.item_models import BoughtItemDomain
+from scs.core.domain.item_models import BoughtItem
 from scs.core.mapper.base_mapper import BaseMapper
 
 
-class BoughtItemMapper(BaseMapper[BoughtItemORM, BoughtItemDomain]):
-    def convert_to_domain(self, orm_obj: BoughtItemORM) -> BoughtItemDomain:
-        return BoughtItemDomain(
+class BoughtItemMapper(BaseMapper[BoughtItemORM, BoughtItem]):
+    def convert_to_domain(self, orm_obj: BoughtItemORM) -> BoughtItem:
+        return BoughtItem(
                 id=orm_obj.id,
                 base_price=orm_obj.base_price,
                 discount_amount=orm_obj.discount_amount,

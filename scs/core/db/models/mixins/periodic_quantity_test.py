@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from scs.core.db.models.base import Base
 from scs.core.db.models.item_models.produced_item_orm import ProducedItemORM
 from scs.core.db.models.periodic.demand_forecast_item_orm import DemandForecastItemORM
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
 
 # Database connection setup
 DATABASE_URL = r"sqlite:///test.db"

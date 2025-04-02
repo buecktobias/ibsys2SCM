@@ -3,7 +3,7 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class WorkstationDomain(BaseModel):
+class Workstation(BaseModel):
     """
     Represents a workstation in the production system.
     Attributes:

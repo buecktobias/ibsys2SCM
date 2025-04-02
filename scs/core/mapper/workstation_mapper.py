@@ -1,11 +1,11 @@
 from scs.core.db.models.workstation_orm import WorkstationORM
-from scs.core.domain.ws_domain_model import WorkstationDomain
+from scs.core.domain.ws_domain_model import Workstation
 from scs.core.mapper.base_mapper import BaseMapper
 
 
-class WorkstationMapper(BaseMapper[WorkstationORM, WorkstationDomain]):
-    def convert_to_domain(self, orm_obj: WorkstationORM) -> WorkstationDomain:
-        return WorkstationDomain(
+class WorkstationMapper(BaseMapper[WorkstationORM, Workstation]):
+    def convert_to_domain(self, orm_obj: WorkstationORM) -> Workstation:
+        return Workstation(
                 id=orm_obj.id,
                 labour_cost_1=orm_obj.labour_cost_1,
                 labour_cost_2=orm_obj.labour_cost_2,

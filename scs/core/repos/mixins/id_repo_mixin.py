@@ -6,7 +6,8 @@ from scs.core.db.models.mixins.id_mixin import IdMixin
 
 
 class IdRepoMixin[T: IdMixin](abc.ABC):
-    session = sqlalchemy.orm.Session
+    def __init__(self, session: sqlalchemy.orm.Session):
+        self.session = session
 
     def find_by_id(self, id: int) -> T | None:
         return self.session.execute(

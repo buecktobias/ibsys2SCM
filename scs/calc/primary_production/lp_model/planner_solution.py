@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from tabulate import tabulate
 
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
+from scs.core.domain.periodic_quantities.periodic_item_quantities import PeriodicItemQuantity
 
 
 @dataclass

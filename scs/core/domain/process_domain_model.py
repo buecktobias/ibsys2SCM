@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from collections import Counter
 
-from scs.core.domain.item_models import GraphNodeDomain, ItemDomain, ProducedItemDomain
-from scs.core.domain.ws_domain_model import WorkstationDomain
+from scs.core.domain.item_models import GraphNode, Item, ProducedItem
+from scs.core.domain.ws_domain_model import Workstation
 
 
-class ProcessDomain(GraphNodeDomain):
+class Process(GraphNode):
     process_duration: int
     setup_duration: int
-    inputs: Counter[ItemDomain]
-    workstation: WorkstationDomain
-    output: ProducedItemDomain
+    inputs: Counter[Item]
+    workstation: Workstation
+    output: ProducedItem

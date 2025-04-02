@@ -1,8 +1,6 @@
 import networkx as nx
 
-from scs.core.db.models import Item
-from scs.core.db.models.process_models import ProcessORM
-from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
+from scs.core.domain.graph.edge_models import ProcessInputEdge
 from scs.core.domain.production_graph import ProductionGraph
 
 
@@ -34,25 +32,15 @@ class GraphValidator:
             if self.graph.nx_graph.degree(node) == 0:
                 self.errors.append(f"Isolated node: {node}")
 
+    def __validate_input_edge(self, input_edge: ProcessInputEdge):
+        if (out_degree := self.graph.out_degree(input_edge.from_node)) != 1:
+            raise RuntimeError(
+                    f"Process {input_edge.from_node} must have exactly one output"
+                    f" (out_degree={out_degree})"
+            )
+
     def _validate_edges(self):
-        for weighted_edge in self.graph.edges:
-            if isinstance(weighted_edge.from_node, ProcessORM) and isinstance(weighted_edge.to_node, Item):
-                # ProcessORM → ItemORM (output)
-                if not isinstance(dst_obj, ProducedItemORM):
-                    self.errors.append(f"Invalid output: Process {src} → non‑produced Item {dst}")
-                if weight != 1:
-                    self.errors.append(f"Output edge weight must be 1: {src} → {dst} (got {weight})")
-                if self.graph.out_degree(src) != 1:
-                    self.errors.append(
-                            f"Process {src} must have exactly one output (out_degree={self.graph.out_degree(src)})"
-                    )
-
-            elif isinstance(src_obj, Item) and isinstance(dst_obj, ProcessORM):
-                # ItemORM → ProcessORM (input)
-                if not (isinstance(src_obj, ProducedItemORM) or isinstance(src_obj, BoughtItemORM)):
-                    self.errors.append(f"Invalid input: non‑item source {src} → Process {dst}")
-                if weight <= 0:
-                    self.errors.append(f"Input edge weight must be >0: {src} → {dst} (got {weight})")
-
-            else:
-                self.errors.append(f"Invalid edge direction/type: {src} ({type(src_obj)}) → {dst} ({type(dst_obj)})")
+        incoming_edges = [
+                edge for edge in self.graph.edges if isinstance(edge, ProcessInputEdge)
+        ]
+        all([self.__validate_input_edge(incoming_edge) for incoming_edge in incoming_edges])

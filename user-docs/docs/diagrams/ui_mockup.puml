@@ -1,0 +1,18 @@
+@startuml
+skinparam handwritten true
+skinparam classAttributeIconSize 0
+
+rectangle "📦 Primary Production Planning" {
+  rectangle "📊 Demand Forecast\n(P1: 150, P2: 100, P3: 50)" as DF
+
+  rectangle "📝 Input: Planned Production" {
+    [P1: ____ units]
+    [P2: ____ units]
+    [P3: ____ units]
+  }
+
+  rectangle "➡️ Button: Next" {
+    [Next →]
+  }
+}
+@enduml

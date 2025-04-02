@@ -1,0 +1,111 @@
+@startuml
+title REST API with DTOs
+
+package "Game API" {
+  interface GameAPI {
+    +POST /game/{id}
+  }
+
+  interface PeriodResultAPI {
+    +GET /game/{id}/period-result/{period}
+    +PUT /game/{id}/period-result/{period}
+  }
+
+  interface PrimaryPlanAPI {
+    +GET /game/{id}/primary-plan/{period}
+    +POST /game/{id}/primary-plan/{period}/calculate
+    +PATCH /game/{id}/primary-plan/{period}
+  }
+
+  interface ProductionAPI {
+    +GET /game/{id}/production/{period}
+    +POST /game/{id}/production/{period}/calculate
+    +PATCH /game/{id}/production/{period}
+  }
+
+  interface OrderAPI {
+    +GET /game/{id}/order/{period}
+    +POST /game/{id}/order/{period}/calculate
+    +PATCH /game/{id}/order/{period}
+  }
+
+  interface WorkstationCapacityAPI {
+    +GET /game/{id}/workstation-capacity/{period}
+    +POST /game/{id}/workstation-capacity/{period}/calculate
+    +PATCH /game/{id}/workstation-capacity/{period}
+  }
+
+  interface SimulationInputAPI {
+    +GET /game/{id}/simulation-input/{period}
+  }
+}
+
+class GameDTO {
+  +id: int
+}
+
+class PeriodResultDTO {
+  +game_id: int
+  +period: int
+  +xml_file: XMLFile
+}
+
+class PrimaryPlanDTO {
+  +game_id: int
+  +period: int
+  +planned_items: List<str>
+}
+
+class ProductionDTO {
+  +game_id: int
+  +period: int
+  +article_id: str
+  +quantity: int
+  +priority: int
+}
+
+class OrderDTO {
+  +game_id: int
+  +period: int
+  +article_id: str
+  +quantity: int
+  +mode: OrderMode
+}
+
+class WorkstationCapacityDTO {
+  +game_id: int
+  +period: int
+  +workstation_id: int
+  +shifts: int
+  +overtime: int
+}
+
+class SimulationInputDTO {
+  +game_id: int
+  +period: int
+  +xml_file: XMLFile
+}
+
+enum OrderMode {
+  normal
+  fast
+}
+
+GameAPI --> GameDTO
+PeriodResultAPI --> PeriodResultDTO
+PrimaryPlanAPI --> PrimaryPlanDTO
+ProductionAPI --> ProductionDTO
+OrderAPI --> OrderDTO
+WorkstationCapacityAPI --> WorkstationCapacityDTO
+SimulationInputAPI --> SimulationInputDTO
+OrderDTO --> OrderMode
+
+note right of PeriodResultDTO::xml_file
+  Points to an uploaded XML file
+end note
+
+note right of SimulationInputDTO::xml_file
+  Points to an uploaded XML file
+end note
+
+@enduml

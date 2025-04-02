@@ -5,8 +5,8 @@ from pyomo import environ as pyo
 from pyomo.core import ConcreteModel, Var, Constraint, NonNegativeReals
 
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
-from scs.core.db.models import Item
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
+from scs.core.domain.item_models import Item
+from scs.core.domain.periodic_quantities.periodic_item_quantities import PeriodicItemQuantity
 
 
 class ProductionPlanningModelBuilder:

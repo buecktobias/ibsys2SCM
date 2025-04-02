@@ -5,8 +5,8 @@ from pyomo.environ import SolverFactory, value
 from scs.calc.primary_production.lp_model.lp_model_builder import ProductionPlanningModelBuilder
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
 from scs.calc.primary_production.lp_model.planner_solution import ProductionSolutionData
-from scs.core.db.models import Item
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
+from scs.core.domain.item_models import Item
+from scs.core.domain.periodic_quantities.periodic_item_quantities import PeriodicItemQuantity
 
 
 class ProductionPlanner:
@@ -53,8 +53,8 @@ class ProductionPlanner:
         self.solver_results = solver.solve(self.model, tee=False)
 
         model = self.model
-        prod_plan: dict[int, ItemCounter] = defaultdict(Counter[Item])
-        inv_plan: dict[int, ItemCounter] = defaultdict(Counter[Item])
+        prod_plan: dict[int, Counter[Item]] = defaultdict(Counter[Item])
+        inv_plan: dict[int, Counter[Item]] = defaultdict(Counter[Item])
 
         for (t, i) in model.P.keys():
             prod_plan[t][i] = int(round(value(model.P[t, i]))) * 10

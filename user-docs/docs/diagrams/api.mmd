@@ -1,0 +1,14 @@
+graph TD
+    Book["/book"]
+    Author["/author"]
+    Order["/order"]
+    Book -->|GET| Book
+    Book -->|POST| Book
+    Book -->|GET| BookID["/book/{id}"]
+    BookID -->|PUT| BookID
+    BookID -->|DELETE| BookID
+    Author -->|GET| Author
+    Author -->|POST| Author
+    Author -->|GET| AuthorID["/author/{id}"]
+    Order -->|GET| Order
+    Order -->|POST| Order

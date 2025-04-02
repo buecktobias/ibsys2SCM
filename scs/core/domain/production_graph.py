@@ -1,24 +1,27 @@
 import networkx as nx
 
-from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
 from scs.core.db.models.graph.graph_node_orm import GraphNodeORM
-from scs.core.db.models.process_models import ProcessORM
-from scs.core.db.models.item_models import BoughtItemORM, ProducedItemORM
-from scs.core.domain.graph.weighted_edge import WeightedEdge
+from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
+from scs.core.db.models.item_models.bought_item_orm import BoughtItemORM
+from scs.core.db.models.item_models.produced_item_orm import ProducedItemORM
+from scs.core.db.models.process_models.process_orm import ProcessORM
+from scs.core.domain.graph.edge_models import WeightedEdge
+from scs.core.domain.item_models import BoughtItem, GraphNode, ProducedItem
+from scs.core.domain.process_domain_model import Process
 
 
 class ProductionGraph:
     def __init__(
             self,
             nx_di_graph: nx.DiGraph,
-            node_id_dict: dict[int, ProcessORM | BoughtItemORM, ProducedItemORM],
+            node_id_dict: dict[int, Process | BoughtItem, ProducedItem],
             root_orm_graph: MaterialGraphORM
     ):
         self._nx: nx.DiGraph = nx_di_graph
         self._node_id_dict = node_id_dict
         self._root_or_graph = root_orm_graph
 
-    def get_node_by_id(self, node_id: int) -> GraphNodeORM:
+    def get_node_by_id(self, node_id: int) -> GraphNode:
         return self._node_id_dict[node_id]
 
     @property
@@ -39,3 +42,7 @@ class ProductionGraph:
                 ) for from_node, to_node, weight in
                 self.nx_graph.edges(data="weight", default=1)
         ]
+
+    def out_degree(self, node: GraphNode) -> int:
+        node_id = node.id
+        return len(self.nx_graph.out_degree(node_id))

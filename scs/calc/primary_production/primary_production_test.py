@@ -7,10 +7,10 @@ from scs.calc.primary_production.lp_model.planner_attributes import ProductionPl
 from scs.calc.primary_production.lp_model.planner_solution import ProductionSolutionData
 from scs.calc.primary_production.lp_model.production_planner import ProductionPlanner
 from scs.calc.primary_production.math_function_builder import build_polynomial_function
-from scs.core.db.models import Item
-from scs.core.db.models.mixins.periodic_item_quantity import PeriodicItemQuantityBuilder
-from scs.core.domain.periodic_item_quantities import PeriodicItemQuantity
-from scs.core.db.models.item_models import ProducedItemORM
+from scs.core.db.models.item_models.produced_item_orm import ProducedItemORM
+from scs.core.domain.item_models import Item, ProducedItem
+from scs.core.domain.periodic_quantities.periodic_item_quantities import PeriodicItemQuantity
+from scs.core.domain.periodic_quantities.periodic_item_quantities_builder import PeriodicItemQuantityBuilder
 
 
 @pytest.fixture
@@ -36,16 +36,16 @@ def multi_product_data():
     builder = PeriodicItemQuantityBuilder()
     demand_data: PeriodicItemQuantity = (
             builder
-            .add_product(ProducedItemORM(1), [80, 100, 50, 100])
-            .add_product(ProducedItemORM(2), [0, 0, 0, 100])
-            .add_product(ProducedItemORM(3), [50, 0, 0, 100])
+            .add_product(ProducedItem(id=1), [80, 100, 50, 100])
+            .add_product(ProducedItem(id=2), [0, 0, 0, 100])
+            .add_product(ProducedItem(id=3), [50, 0, 0, 100])
             .build()
     )
     init_inv = Counter[Item](
             {
-                    ProducedItemORM(1): 100,
-                    ProducedItemORM(2): 50,
-                    ProducedItemORM(3): 0
+                    ProducedItem(id=1): 100,
+                    ProducedItem(id=2): 50,
+                    ProducedItem(id=3): 0
             }
     )
 
@@ -74,16 +74,16 @@ def test_single_product_optimization(single_product_data):
 def test_multi_product_optimization(multi_product_data):
     demand_data: PeriodicItemQuantity = (
             PeriodicItemQuantityBuilder()
-            .add_product(ProducedItemORM(1), [80, 100, 50, 100])
+            .add_product(ProducedItem(id=1), [80, 100, 50, 100])
             .add_product(ProducedItemORM(2), [0, 0, 0, 100])
             .add_product(ProducedItemORM(3), [50, 0, 100, 10])
             .build()
     )
     init_inv = Counter[Item](
             {
-                    ProducedItemORM(1): 100,
-                    ProducedItemORM(2): 50,
-                    ProducedItemORM(3): 0
+                    ProducedItem(id=1): 100,
+                    ProducedItem(id=2): 50,
+                    ProducedItem(id=3): 0
             }
     )
 
@@ -146,7 +146,7 @@ def test_small_production_limit(single_product_data):
 
     solution.format_primary_demand_table()
     for period in demand_data.get_periods():
-        prod_amount = solution.production.get_value_for_item(period, ProducedItemORM(1))
+        prod_amount = solution.production.get_value_for_item(period, ProducedItem(id=1))
         assert prod_amount <= 50 + 1e-6
 
 
