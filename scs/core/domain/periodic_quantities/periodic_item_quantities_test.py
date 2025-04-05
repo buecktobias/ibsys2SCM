@@ -107,7 +107,7 @@ def test_with_starting_period(sample_periodic_item_quantity):
     assert adjusted.highest_period == expected_start + 2
     assert adjusted.get_periods() == [5, 6, 7]
 
-    for original_period, adjusted_period in zip(original.get_periods(), adjusted.get_periods()):
+    for original_period, adjusted_period in zip(original.get_periods(), adjusted.get_periods(), strict=False):
         for item in original.get_unique_items():
             assert original.get_value_for_item(original_period, item) == adjusted.get_value_for_item(
                     adjusted_period,

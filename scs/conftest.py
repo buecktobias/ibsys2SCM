@@ -1,8 +1,9 @@
 import logging
 import os
 import random
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 import pytest
 from sqlalchemy import create_engine, Engine
@@ -34,7 +35,7 @@ def test_engine():
 
 
 @pytest.fixture(scope="session")
-def engine() -> Generator[Engine, Any, None]:
+def engine() -> Generator[Engine, Any]:
     """Sets up the database tables before all tests and tears them down afterwards."""
     sqlite_path = "test.db"
     database_url = f"sqlite:///{sqlite_path}"
@@ -53,7 +54,7 @@ def delete_test_db(path: Path | str):
 
 
 @pytest.fixture(scope="session")
-def db_session(engine) -> Generator[Session, Any, None]:
+def db_session(engine) -> Generator[Session, Any]:
     """Provides a transaction-scoped SQLAlchemy session for each test."""
     with Session(engine) as session:
         yield session

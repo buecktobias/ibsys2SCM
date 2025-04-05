@@ -2,7 +2,7 @@ from collections import Counter
 
 from pyomo import environ as pyo
 # noinspection PyUnresolvedReferences
-from pyomo.core import ConcreteModel, Var, Constraint, NonNegativeReals
+from pyomo.core import ConcreteModel, Constraint, NonNegativeReals, Var
 
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
 from scs.core.domain.item_models import Item

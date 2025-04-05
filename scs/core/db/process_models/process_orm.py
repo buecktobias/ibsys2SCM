@@ -25,9 +25,9 @@ class ProcessORM(GraphNodeORM):
     setup_duration_minutes: Mapped[int]
 
     # noinspection PyUnresolvedReferences
-    graph: Mapped["MaterialGraphORM"] = relationship(back_populates="processes", uselist=False, lazy="joined")
+    graph: Mapped[MaterialGraphORM] = relationship(back_populates="processes", uselist=False, lazy="joined")
     # noinspection PyUnresolvedReferences
-    inputs: Mapped[list["ProcessInputORM"]] = relationship(back_populates="process", lazy="joined")
+    inputs: Mapped[list[ProcessInputORM]] = relationship(back_populates="process", lazy="joined")
     workstation: Mapped[WorkstationORM] = relationship(lazy="joined")
     # noinspection PyUnresolvedReferences
-    output: Mapped["ProcessOutputORM"] = relationship(back_populates="process", uselist=False, lazy="joined")
+    output: Mapped[ProcessOutputORM] = relationship(back_populates="process", uselist=False, lazy="joined")

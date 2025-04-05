@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 
 from pydantic import BaseModel
 
@@ -21,7 +20,7 @@ class PeriodResultDTO(BaseModel):
 class PrimaryPlanDTO(BaseModel):
     game_id: int
     period: int
-    planned_items: List[str]
+    planned_items: list[str]
 
 
 class ProductionDTO(BaseModel):

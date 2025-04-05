@@ -16,6 +16,6 @@ class ProcessOutputORM(Base):
     )
 
     # noinspection PyUnresolvedReferences
-    item: Mapped["ItemORM"] = relationship(lazy="joined")
+    item: Mapped[ItemORM] = relationship(lazy="joined")
     # noinspection PyUnresolvedReferences
-    process: Mapped["ProcessORM"] = relationship(back_populates="output", lazy="joined")
+    process: Mapped[ProcessORM] = relationship(back_populates="output", lazy="joined")

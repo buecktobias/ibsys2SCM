@@ -27,4 +27,4 @@ class ProcessInputORM(QuantityMixin, Base):
             ForeignKey("process.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True
     )
     # noinspection PyUnresolvedReferences
-    process: Mapped["ProcessORM"] = relationship(back_populates="inputs", lazy="joined")
+    process: Mapped[ProcessORM] = relationship(back_populates="inputs", lazy="joined")

@@ -8,7 +8,9 @@ from scs.calc.primary_production.lp_model.planner_solution import ProductionSolu
 from scs.calc.primary_production.lp_model.production_planner import ProductionPlanner
 from scs.calc.primary_production.math_function_builder import build_polynomial_function
 from scs.core.domain.item_models import Item, ProducedItem
-from scs.core.domain.periodic_quantities.periodic_item_quantities_builder import PeriodicItemQuantityBuilder
+from scs.core.domain.periodic_quantities.periodic_item_quantities_builder import (
+    PeriodicItemQuantityBuilder,
+)
 
 
 # noinspection PyUnresolvedReferences

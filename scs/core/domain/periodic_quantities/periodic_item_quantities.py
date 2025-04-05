@@ -1,6 +1,6 @@
 import dataclasses
 from collections import Counter
-from typing import Iterable
+from collections.abc import Iterable
 
 from scs.core.domain.item_models import Item
 
@@ -20,7 +20,7 @@ class PeriodicItemQuantity:
     def __assert_each_period_has_same_items(self):
         items = self.get_unique_items()
         if any(items != set(self._data[period].keys()) for period in self.get_periods()):
-            raise ValueError(f"Items are not the same in every period !")
+            raise ValueError("Items are not the same in every period !")
 
     def __assert_not_empty(self):
         if len(self._data.items()) == 0:

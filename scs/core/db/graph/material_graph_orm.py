@@ -34,7 +34,7 @@ class MaterialGraphORM(IdMixin, Base):
     """
     __tablename__ = "material_graph"
     name: Mapped[str]
-    parent_graph_id: Mapped[Optional[int]] = mapped_column(
+    parent_graph_id: Mapped[int | None] = mapped_column(
             ForeignKey("material_graph.id", onupdate="CASCADE", ondelete="SET NULL")
     )
 

@@ -8,8 +8,7 @@ from dataclasses import dataclass
 
 import networkx as nx
 import yaml
-
-from material.db.models.models import MaterialGraphORM, BoughtItem, Process, ProducedItem
+from material.db.models.models import BoughtItem, MaterialGraphORM, Process, ProducedItem
 
 
 class VisualizationMaterialGraph:
@@ -22,8 +21,8 @@ class VisualizationMaterialGraph:
             if nx_graph.has_node(process_node_id):
                 self.processes.append(process)
         self.subgraphs = [
-            VisualizationMaterialGraph(child, nx_graph)
-            for child in orm_node.subgraphs
+                VisualizationMaterialGraph(child, nx_graph)
+                for child in orm_node.subgraphs
         ]
 
 
@@ -117,15 +116,15 @@ class NxToMermaid:
         self.mermaid = MermaidStringBuilder()
         self.duplicate_bought_nodes: Counter[BoughtItem] = Counter()
         settings = {
-            "title": "Material Flow",
-            "config": {
-                "theme": "dark",
-                "themeVariables": {"darkMode": True},
-                "flowchart": {
-                    "curve": "linear",
-                    "defaultRenderer": "elk",
-                },
-            }
+                "title": "Material Flow",
+                "config": {
+                        "theme": "dark",
+                        "themeVariables": {"darkMode": True},
+                        "flowchart": {
+                                "curve": "linear",
+                                "defaultRenderer": "elk",
+                        },
+                }
         }
         self.mermaid.init_mermaid(settings, "flowchart LR")
         self.class_defs: dict[str, MermaidClass] = {}
@@ -190,7 +189,7 @@ class NxToMermaid:
         return self.mermaid.get_mermaid_content()
 
     def save_html(self, mermaid_code, graph_name):
-        with open(f"diagrams/template.html", encoding="utf-8") as f:
+        with open("diagrams/template.html", encoding="utf-8") as f:
             html = f.read()
         result = re.sub(r"{{\s*mermaidContent\s*}}", mermaid_code, html)
         result = re.sub(r"{{\s*diagram_title\s*}}", graph_name, result)
