@@ -22,8 +22,19 @@ class PeriodicItemQuantity:
         if any(items != set(self._data[period].keys()) for period in self.get_periods()):
             raise ValueError(f"Items are not the same in every period !")
 
+    def __assert_not_empty(self):
+        if len(self._data.items()) == 0:
+            raise ValueError("Input data cannot be empty!")
+
+    def __assert_period_items_not_empty(self):
+        for period, item_counts in self._data.items():
+            if len(item_counts) == 0:
+                raise ValueError(f"No items found in period {period}!")
+
     def __post_init__(self):
         self.__assert_each_period_has_same_items()
+        self.__assert_not_empty()
+        self.__assert_period_items_not_empty()
 
     @property
     def highest_period(self):

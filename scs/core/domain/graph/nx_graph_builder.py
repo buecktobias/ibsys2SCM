@@ -8,14 +8,14 @@ class NxGraphBuilder:
     def __init__(self):
         self.graph = nx.DiGraph()
 
-    def add_edge(self, from_node: GraphNode, to_node: GraphNode, weight: int = 1):
-        self.graph.add_node(from_node)
-        self.graph.add_node(to_node)
+    def _add_edge(self, from_node: GraphNode, to_node: GraphNode, weight: int = 1):
+        self.graph.add_node(from_node.id)
+        self.graph.add_node(to_node.id)
         self.graph.add_edge(from_node.id, to_node.id, weight=weight)
 
-    def build_from_database(self, processes: list[Process]) -> nx.DiGraph:
+    def build_from_processes(self, processes: list[Process]) -> nx.DiGraph:
         for process in processes:
             for inp, quantity in process.inputs.items():
-                self.add_edge(inp, process, weight=quantity)
-            self.add_edge(process, process.output)
+                self._add_edge(inp, process, weight=quantity)
+            self._add_edge(process, process.output)
         return self.graph

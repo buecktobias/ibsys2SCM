@@ -5,6 +5,8 @@ description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.15.1",
+    "auto-codebase-documenter>=1.2",
+    "coverage>=7.8.0",
     "cvxpy>=1.6.4",
     "fastapi>=0.115.12",
     "frozendict>=2.4.6",
@@ -22,6 +24,7 @@ dependencies = [
     "pydantic>=2.11.1",
     "pyomo[optional]>=6.9.1",
     "pytest>=8.3.5",
+    "pytest-cov>=6.1.0",
     "pyyaml>=6.0.2",
     "scipy>=1.15.2",
     "sqlalchemy>=2.0.39",

@@ -13,6 +13,6 @@ class NetworkXGraphPrune:
                         pred = in_edges[0][0]
                         succ = out_edges[0][1]
                         # Reconnect predecessor to successor.
-                        self.nx.add_edge(pred, succ, weight=1)
+                        self.nx._add_edge(pred, succ, weight=1)
                         to_remove.append(node)
         self.nx.remove_nodes_from(to_remove)

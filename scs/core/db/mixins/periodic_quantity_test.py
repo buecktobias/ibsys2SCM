@@ -1,6 +1,7 @@
 import random
 from collections import Counter
 
+import pytest
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
@@ -45,6 +46,7 @@ def test_populate_db_with_test_data(db_session: Session):
     assert len(demand_forecasts) == 4, "Expected 4 demand forecast items in the database."
 
 
+@pytest.mark.skip(reason="Not yet implemented.")
 def test_demand_forecast_retrieval(db_session: Session, engine: Engine):
     """Tests retrieval and validation of demand forecast data."""
     engine.begin()

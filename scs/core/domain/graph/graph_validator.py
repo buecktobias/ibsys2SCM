@@ -6,7 +6,7 @@ from scs.core.domain.production_graph import ProductionGraph
 
 class GraphValidator:
     def __init__(self, graph: ProductionGraph):
-        self.graph = graph
+        self.graph: ProductionGraph = graph
         self.errors: list[str] = []
 
     def _get_node_obj(self, node_id: int):
@@ -23,7 +23,7 @@ class GraphValidator:
 
     def _validate_cycle(self):
         if not nx.is_directed_acyclic_graph(self.graph.nx_graph):
-            cycle = nx.find_cycle(self.graph, orientation="original")
+            cycle = nx.find_cycle(self.graph.nx_graph, orientation="original")
             formatted = " → ".join(f"{u}->{v}" for u, v, _ in cycle)
             self.errors.append(f"Graph contains cycle: {formatted}")
 

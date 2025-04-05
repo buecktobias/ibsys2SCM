@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 from pathlib import Path
 from typing import Any, Generator
 
@@ -8,6 +9,10 @@ from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import Session
 
 from scs.core.db.base import Base
+from scs.core.db.item_models.produced_item_orm import ProducedItemORM
+from scs.tests.item_factory import ItemFactory
+from scs.tests.process_factory import ProcessFactory
+from scs.tests.workstation_factory import WorkstationFactory
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -55,9 +60,24 @@ def db_session(engine) -> Generator[Session, Any, None]:
         session.rollback()
 
 
-@pytest.fixture(scope="function")
-def clean_db_session(engine):
-    """Provides a transaction-scoped SQLAlchemy session for each test, but deletes all data after each test."""
-    yield db_session
-    db_session.rollback()
-    db_session.query(Base).delete()
+@pytest.fixture(scope="session")
+def random_produced_item():
+    return ProducedItemORM(id=random.randint(1, 10 ** 8))
+
+
+@pytest.fixture(scope="session")
+def item_factory():
+    return ItemFactory()
+
+
+@pytest.fixture(scope="session")
+def workstation_factory():
+    return WorkstationFactory()
+
+
+@pytest.fixture(scope="session")
+def process_factory(item_factory, workstation_factory):
+    return ProcessFactory(
+            item_factory=item_factory,
+            workstation_factory=workstation_factory
+    )
