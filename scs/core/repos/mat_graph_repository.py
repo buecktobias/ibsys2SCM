@@ -3,9 +3,8 @@ import typing
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
-from scs.core.db.models.item_models import BoughtItemORM, ItemORM, ProducedItemORM
-from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.graph.material_graph_orm import MaterialGraphORM
+from scs.core.db.process_models import ProcessORM
 
 
 class MaterialGraphRepository:

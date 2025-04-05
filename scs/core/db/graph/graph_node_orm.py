@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from sqlalchemy import String
+from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from scs.core.db.models.base import Base
-from scs.core.db.models.mixins.id_mixin import IdMixin
+from scs.core.db.base import Base
 
 
-class GraphNodeORM(IdMixin, Base):
+class GraphNodeORM(Base):
     """
     Represents a GraphNode in the database.
 
@@ -25,9 +24,28 @@ class GraphNodeORM(IdMixin, Base):
             polymorphic discriminator as 'type'.
     """
     __tablename__ = "graph_node"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     type: Mapped[str] = mapped_column(String(50))
 
     __mapper_args__ = {
             "polymorphic_identity": "graph_node",
             "polymorphic_on": "type",
     }
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __lt__(self, other):
+        return self.id < other.id
+
+    def __le__(self, other):
+        return self.id <= other.id
+
+    def __gt__(self, other):
+        return self.id > other.id
+
+    def __ge__(self, other):
+        return self.id >= other.id

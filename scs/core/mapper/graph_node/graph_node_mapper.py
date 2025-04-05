@@ -1,10 +1,9 @@
-from scs.core.db.models.graph.graph_node_orm import GraphNodeORM
-from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.graph.graph_node_orm import GraphNodeORM
+from scs.core.db.process_models import ProcessORM
 from scs.core.domain.item_models import GraphNode
 from scs.core.domain.process_domain_model import Process
 from scs.core.mapper.base_mapper import BaseMapper
 from scs.core.mapper.graph_node.process_mapper import ProcessMapper
-from scs.core.repos.ws_repo import WorkstationRepository
 
 
 class GraphNodeMapper(BaseMapper[GraphNodeORM, GraphNode]):

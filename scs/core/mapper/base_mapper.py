@@ -2,7 +2,7 @@ import abc
 
 from pydantic import BaseModel
 
-from scs.core.db.models.base import Base
+from scs.core.db.base import Base
 
 
 class BaseMapper[T_ORM: Base, T_Domain: BaseModel](abc.ABC):

@@ -1,4 +1,4 @@
-from scs.core.db.models.process_models import ProcessORM
+from scs.core.db.process_models import ProcessORM
 from scs.core.domain.process_domain_model import Process
 from scs.core.mapper.base_mapper import BaseMapper
 from scs.core.mapper.workstation_mapper import WorkstationMapper

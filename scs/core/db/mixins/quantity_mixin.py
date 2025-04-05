@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import declared_attr, Mapped, mapped_column, relationship
 
-from scs.core.db.models.base import Base
-from scs.core.db.models.item_models.item_orm import ItemORM
+from scs.core.db.base import Base
+from scs.core.db.item_models.item_orm import ItemORM
 
 
 class QuantityMixin(Base):

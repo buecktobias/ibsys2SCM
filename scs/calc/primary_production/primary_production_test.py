@@ -1,16 +1,17 @@
 from collections import Counter
 
 import pytest
-# noinspection PyUnresolvedReferences
 
 from scs.calc.primary_production.lp_model.planner_attributes import ProductionPlanningAttributes
 from scs.calc.primary_production.lp_model.planner_solution import ProductionSolutionData
 from scs.calc.primary_production.lp_model.production_planner import ProductionPlanner
 from scs.calc.primary_production.math_function_builder import build_polynomial_function
-from scs.core.db.models.item_models.produced_item_orm import ProducedItemORM
 from scs.core.domain.item_models import Item, ProducedItem
 from scs.core.domain.periodic_quantities.periodic_item_quantities import PeriodicItemQuantity
 from scs.core.domain.periodic_quantities.periodic_item_quantities_builder import PeriodicItemQuantityBuilder
+
+
+# noinspection PyUnresolvedReferences
 
 
 @pytest.fixture
@@ -20,11 +21,11 @@ def single_product_data():
     """
     demand_data: PeriodicItemQuantity = PeriodicItemQuantity(
             {
-                    1: Counter[Item]({ProducedItemORM(1): 80}),
-                    2: Counter[Item]({ProducedItemORM(1): 50})
+                    1: Counter[Item]({ProducedItem(id=1): 80}),
+                    2: Counter[Item]({ProducedItem(id=1): 50})
             }
     )
-    init_inv = Counter[Item]({ProducedItemORM(1): 10})
+    init_inv = Counter[Item]({ProducedItem(id=1): 10})
     return demand_data, init_inv
 
 
@@ -75,8 +76,8 @@ def test_multi_product_optimization(multi_product_data):
     demand_data: PeriodicItemQuantity = (
             PeriodicItemQuantityBuilder()
             .add_product(ProducedItem(id=1), [80, 100, 50, 100])
-            .add_product(ProducedItemORM(2), [0, 0, 0, 100])
-            .add_product(ProducedItemORM(3), [50, 0, 100, 10])
+            .add_product(ProducedItem(id=2), [0, 0, 0, 100])
+            .add_product(ProducedItem(id=3), [50, 0, 100, 10])
             .build()
     )
     init_inv = Counter[Item](

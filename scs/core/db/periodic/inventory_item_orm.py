@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from scs.core.db.models.base import Base
-from scs.core.db.models.mixins.period_mixin import PeriodMixin
+from scs.core.db.base import Base
+from scs.core.db.mixins.period_mixin import PeriodMixin
 
 
 class InventoryItemORM(PeriodMixin, Base):

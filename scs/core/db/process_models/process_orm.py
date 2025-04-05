@@ -3,9 +3,8 @@ from __future__ import annotations
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from scs.core.db.models.graph.graph_node_orm import GraphNodeORM
-from scs.core.db.models.process_models import ProcessInputORM, ProcessOutputORM
-from scs.core.db.models.workstation_orm import WorkstationORM
+from scs.core.db.graph.graph_node_orm import GraphNodeORM
+from scs.core.db.workstation_orm import WorkstationORM
 
 
 class ProcessORM(GraphNodeORM):
@@ -27,6 +26,8 @@ class ProcessORM(GraphNodeORM):
 
     # noinspection PyUnresolvedReferences
     graph: Mapped["MaterialGraphORM"] = relationship(back_populates="processes", uselist=False, lazy="joined")
+    # noinspection PyUnresolvedReferences
     inputs: Mapped[list["ProcessInputORM"]] = relationship(back_populates="process", lazy="joined")
     workstation: Mapped[WorkstationORM] = relationship(lazy="joined")
+    # noinspection PyUnresolvedReferences
     output: Mapped["ProcessOutputORM"] = relationship(back_populates="process", uselist=False, lazy="joined")

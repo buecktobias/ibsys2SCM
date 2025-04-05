@@ -1,10 +1,6 @@
 import networkx as nx
 
-from scs.core.db.models.graph.graph_node_orm import GraphNodeORM
-from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
-from scs.core.db.models.item_models.bought_item_orm import BoughtItemORM
-from scs.core.db.models.item_models.produced_item_orm import ProducedItemORM
-from scs.core.db.models.process_models.process_orm import ProcessORM
+from scs.core.db.graph.material_graph_orm import MaterialGraphORM
 from scs.core.domain.graph.edge_models import WeightedEdge
 from scs.core.domain.item_models import BoughtItem, GraphNode, ProducedItem
 from scs.core.domain.process_domain_model import Process

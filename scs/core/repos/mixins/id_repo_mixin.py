@@ -2,7 +2,7 @@ import abc
 
 import sqlalchemy
 
-from scs.core.db.models.mixins.id_mixin import IdMixin
+from scs.core.db.mixins import IdMixin
 
 
 class IdRepoMixin[T: IdMixin](abc.ABC):

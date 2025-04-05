@@ -1,26 +1,10 @@
-import pytest
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.base import Base
-from scs.core.db.models.item_models import BoughtItemORM, ItemORM, ProducedItemORM
-from scs.core.db.models.graph.material_graph_orm import MaterialGraphORM
-from scs.core.db.models.workstation_orm import WorkstationORM
-
-
-@pytest.fixture(scope="session", autouse=True)
-def setup_database(test_engine):
-    """Create all tables before any tests, then drop them when done."""
-    Base.metadata.create_all(test_engine)
-    yield
-    Base.metadata.drop_all(test_engine)
-
-
-@pytest.fixture(scope="function")
-def db_session(test_engine):
-    """Provides a clean SQLAlchemy Session for each test."""
-    with Session(test_engine) as session:
-        yield session
-        session.rollback()
+from scs.core.db.graph.material_graph_orm import MaterialGraphORM
+from scs.core.db.item_models.bought_item_orm import BoughtItemORM
+from scs.core.db.item_models.item_orm import ItemORM
+from scs.core.db.item_models.produced_item_orm import ProducedItemORM
+from scs.core.db.workstation_orm import WorkstationORM
 
 
 def test_create_and_fetch_item(db_session: Session):

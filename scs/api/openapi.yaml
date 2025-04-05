@@ -1,0 +1,696 @@
+openapi: 3.1.0
+info:
+  title: Simulation Planning API
+  description: "\n# \U0001F680 Simulation Planning API\n\nThis API supports simulation-based\
+    \ production planning. It allows you to:\n\n- \u270D\uFE0F Create and manage simulation\
+    \ runs\n- \U0001F4C5 Submit or calculate plans for a specific period\n- \U0001F522\
+    \ Retrieve production, orders, workstation capacity, and simulation results\n\n\
+    ## Key Concepts\n\n- **Simulation Run**: A planning session identified by a unique\
+    \ `game_id`\n- **Period**: Each simulation run consists of multiple periods\n\
+    - **DTOs**: Request and response schemas used in planning, all versioned under\
+    \ v1\n    "
+  version: 1.0.0
+paths:
+  /api/v1/game/{id}:
+    post:
+      summary: Create Simulation Run
+      description: Create a new simulation run (planning session).
+      operationId: create_game_api_v1_game__id__post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            description: Unique simulation run ID
+            title: Id
+          description: Unique simulation run ID
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/period-result/{period}:
+    get:
+      summary: Get Period Result
+      description: Retrieve the simulation result (XML) for a specific period.
+      operationId: get_period_result_api_v1_game__id__period_result__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodResultDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      summary: Save Period Result
+      description: Save or update the simulation result XML for a period.
+      operationId: update_period_result_api_v1_game__id__period_result__period__put
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeriodResultDTO'
+            example:
+              game_id: 1
+              period: 1
+              xml_file:
+                content: <xml></xml>
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/primary-plan/{period}:
+    get:
+      summary: Get Primary Plan
+      description: Retrieve the primary production plan for a period.
+      operationId: get_primary_plan_api_v1_game__id__primary_plan__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrimaryPlanDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      summary: Update Primary Plan
+      description: Update the primary production plan manually.
+      operationId: update_primary_plan_api_v1_game__id__primary_plan__period__patch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrimaryPlanDTO'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/primary-plan/{period}/calculate:
+    post:
+      summary: Calculate Primary Plan
+      description: Calculate a primary plan from simulation inputs.
+      operationId: calculate_primary_plan_api_v1_game__id__primary_plan__period__calculate_post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrimaryPlanDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/production/{period}:
+    get:
+      summary: Get Production Plan
+      description: Retrieve the production item configuration for a period.
+      operationId: get_production_api_v1_game__id__production__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductionDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      summary: Update Production
+      description: Modify the production details for a period.
+      operationId: update_production_api_v1_game__id__production__period__patch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductionDTO'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/production/{period}/calculate:
+    post:
+      summary: Calculate Production
+      description: Calculate the recommended production setup.
+      operationId: calculate_production_api_v1_game__id__production__period__calculate_post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductionDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/order/{period}:
+    get:
+      summary: Get Orders
+      description: Get all order details for a period.
+      operationId: get_orders_api_v1_game__id__order__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      summary: Update Orders
+      description: Update order decisions (e.g. quantity, mode).
+      operationId: update_orders_api_v1_game__id__order__period__patch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/order/{period}/calculate:
+    post:
+      summary: Calculate Orders
+      description: Automatically determine optimal ordering strategy.
+      operationId: calculate_orders_api_v1_game__id__order__period__calculate_post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/workstation-capacity/{period}:
+    get:
+      summary: Get Workstation Capacity
+      description: Get current shift and overtime settings per workstation.
+      operationId: get_workstation_capacity_api_v1_game__id__workstation_capacity__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkstationCapacityDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      summary: Update Workstation Capacity
+      description: Modify existing shift/overtime plan manually.
+      operationId: update_workstation_capacity_api_v1_game__id__workstation_capacity__period__patch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkstationCapacityDTO'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/workstation-capacity/{period}/calculate:
+    post:
+      summary: Calculate Workstation Capacity
+      description: Calculate workstation shifts and overtime needs based on plan.
+      operationId: calculate_workstation_capacity_api_v1_game__id__workstation_capacity__period__calculate_post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkstationCapacityDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/game/{id}/simulation-input/{period}:
+    get:
+      summary: Get Simulation Input
+      description: Retrieve XML simulation input for the specified period.
+      operationId: get_simulation_input_api_v1_game__id__simulation_input__period__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+        - name: period
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Period
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationInputDTO'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    GameDTO:
+      properties:
+        id:
+          type: integer
+          title: Id
+      type: object
+      required:
+        - id
+      title: GameDTO
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    OrderDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        article_id:
+          type: string
+          title: Article Id
+        quantity:
+          type: integer
+          title: Quantity
+        mode:
+          $ref: '#/components/schemas/OrderMode'
+      type: object
+      required:
+        - game_id
+        - period
+        - article_id
+        - quantity
+        - mode
+      title: OrderDTO
+    OrderMode:
+      type: string
+      enum:
+        - normal
+        - fast
+      title: OrderMode
+    PeriodResultDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        xml_file:
+          $ref: '#/components/schemas/XMLFile'
+      type: object
+      required:
+        - game_id
+        - period
+        - xml_file
+      title: PeriodResultDTO
+    PrimaryPlanDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        planned_items:
+          items:
+            type: string
+          type: array
+          title: Planned Items
+      type: object
+      required:
+        - game_id
+        - period
+        - planned_items
+      title: PrimaryPlanDTO
+    ProductionDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        article_id:
+          type: string
+          title: Article Id
+        quantity:
+          type: integer
+          title: Quantity
+        priority:
+          type: integer
+          title: Priority
+      type: object
+      required:
+        - game_id
+        - period
+        - article_id
+        - quantity
+        - priority
+      title: ProductionDTO
+    SimulationInputDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        xml_file:
+          $ref: '#/components/schemas/XMLFile'
+      type: object
+      required:
+        - game_id
+        - period
+        - xml_file
+      title: SimulationInputDTO
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+    WorkstationCapacityDTO:
+      properties:
+        game_id:
+          type: integer
+          title: Game Id
+        period:
+          type: integer
+          title: Period
+        workstation_id:
+          type: integer
+          title: Workstation Id
+        shifts:
+          type: integer
+          title: Shifts
+        overtime:
+          type: integer
+          title: Overtime
+      type: object
+      required:
+        - game_id
+        - period
+        - workstation_id
+        - shifts
+        - overtime
+      title: WorkstationCapacityDTO
+    XMLFile:
+      properties:
+        content:
+          type: string
+          title: Content
+      type: object
+      required:
+        - content
+      title: XMLFile

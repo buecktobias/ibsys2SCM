@@ -1,4 +1,4 @@
-from scs.core.db.models.item_models import BoughtItemORM
+from scs.core.db.item_models import BoughtItemORM
 from scs.core.domain.item_models import BoughtItem
 from scs.core.mapper.base_mapper import BaseMapper
 

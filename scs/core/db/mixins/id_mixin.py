@@ -1,7 +1,7 @@
 from sqlalchemy import Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from scs.core.db.models.base import Base
+from scs.core.db.base import Base
 
 
 class IdMixin(Base):

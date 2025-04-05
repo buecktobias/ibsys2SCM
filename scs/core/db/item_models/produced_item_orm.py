@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, MappedAsDataclass
+from sqlalchemy.orm import Mapped, mapped_column
 
-from scs.core.db.models.item_models.item_orm import ItemORM
+from scs.core.db.item_models.item_orm import ItemORM
 
 
-class ProducedItemORM(MappedAsDataclass, ItemORM):
+class ProducedItemORM(ItemORM):
     """
     Represents a produced item within the database.
 
@@ -25,7 +25,4 @@ class ProducedItemORM(MappedAsDataclass, ItemORM):
     __tablename__ = "produced_item"
     __mapper_args__ = {"polymorphic_identity": __tablename__}
 
-    id: Mapped[int] = mapped_column(ForeignKey(ItemORM.id), primary_key=True)
-
-    def __hash__(self):
-        return hash(self.id)
+    id: Mapped[int] = mapped_column(ForeignKey(ItemORM.id, onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)

@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.workstation_orm import WorkstationORM
+from scs.core.db.workstation_orm import WorkstationORM
 from scs.core.domain.ws_domain_model import Workstation
 
 

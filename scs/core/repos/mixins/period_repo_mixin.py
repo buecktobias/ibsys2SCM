@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from scs.core.db.models.mixins.period_mixin import PeriodMixin
+from scs.core.db.mixins.period_mixin import PeriodMixin
 
 
 class PeriodRepoMixin[T: PeriodMixin](abc.ABC):

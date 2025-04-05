@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Mapped
 
-from scs.core.db.models.base import Base
-from scs.core.db.models.mixins.id_mixin import IdMixin
+from scs.core.db.base import Base
+from scs.core.db.mixins.id_mixin import IdMixin
 
 
 class WorkstationORM(IdMixin, Base):
